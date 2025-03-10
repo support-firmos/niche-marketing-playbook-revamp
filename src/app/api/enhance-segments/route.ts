@@ -59,43 +59,69 @@ export async function POST(request: Request) {
       `;
 
     
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
-        'X-Title': 'Market Segment Research',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-001',
-        messages: [{ role: 'user', content: prompt }],
-        stream: false,
-        max_tokens: 20000,
-        temperature: 1,
-      }),
-    });
+    // Try with different models if the first one fails
+    const availableModels = [
+      'google/gemini-2.0-flash-001',
+      'qwen/qwq-32b',
+      'deepseek/deepseek-r1-zero:free'
+    ];
     
-    const responseText = await response.text();
+    let lastError = null;
+    let responseData = null;
     
-    if (!response.ok) {
-      console.error('OpenRouter error response:', responseText);
-      return NextResponse.json({ 
-        error: `OpenRouter API error: ${response.status}`,
-        details: responseText
-      }, { status: 500 });
+    // Try each model until one works
+    for (const model of availableModels) {
+      try {
+        console.log(`Trying model: ${model}`);
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
+            'X-Title': 'Market Segment Research',
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: prompt }],
+            stream: false,
+            max_tokens: 25000,
+            temperature: 0.8,
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Error with model ${model}:`, errorText);
+          lastError = `OpenRouter API error with model ${model}: ${response.status} - ${errorText}`;
+          continue; // Try the next model
+        }
+        
+        responseData = await response.json();
+        console.log(`Success with model: ${model}`);
+        break; // We got a successful response, break out of the loop
+        
+      } catch (modelError: any) {
+        console.error(`Error with model ${model}:`, modelError);
+        lastError = `Error with model ${model}: ${modelError.message}`;
+        continue; // Try the next model
+      }
     }
     
-    const data = JSON.parse(responseText);
-    if (!data.choices?.[0]?.message) {
+    // If we've tried all models and still don't have a response, throw the last error
+    if (!responseData) {
+      throw new Error(lastError || 'All models failed');
+    }
+    
+    if (!responseData.choices?.[0]?.message) {
       return NextResponse.json({ 
         error: 'Invalid response format from OpenRouter',
-        details: responseText 
+        details: responseData 
       }, { status: 500 });
     }
       
     return NextResponse.json({ 
-      result: data.choices[0].message.content 
+      result: responseData.choices[0].message.content 
     });
   } catch (error) {
     console.error('Error enhancing segments:', error);

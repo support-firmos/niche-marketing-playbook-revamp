@@ -1,4 +1,4 @@
-// src/app/api/generate-segments/route.ts
+// src/app/api/sales-nav/route.ts
 import { NextResponse } from 'next/server';
 
 // Set maximum duration to 60 seconds
@@ -9,14 +9,21 @@ export const runtime = 'edge';
 
 export async function POST(request: Request) {
   try {
-    const { segmentInfo } = await request.json();
+    const requestData = await request.json();
+    const { industry, segments } = requestData;
     
-    if (!segmentInfo || typeof segmentInfo !== 'string') {
+    if (!segments || typeof segments !== 'string') {
       return NextResponse.json({ error: 'Invalid segment information' }, { status: 400 });
     }
+    
+    // Add industry context if available
+    const industryContext = industry ? `Industry context: ${industry}` : '';
+    
     // Modified section of the prompt in src/app/api/generate-segments/route.ts
     const prompt = `
     You are a specialized LinkedIn Sales Navigator outreach strategist with deep expertise in B2B targeting and account-based marketing. Your task is to transform the segment information below into a structured LinkedIn Sales Navigator targeting strategy for fractional CFO services.
+
+    ${industryContext}
 
     FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a segment with two attributes, namely name and content:
     [
@@ -93,199 +100,91 @@ export async function POST(request: Request) {
     - Provide in-depth, detailed explanations for "Why This Segment?" and "Key Challenges" sections
     - End after completing the last segment with no closing remarks
 
-    ${segmentInfo.substring(0, 20000)}
+    ${segments.substring(0, 20000)}
     `;
+
+    // Try with different models if the first one fails
+    const availableModels = [
+      'google/gemini-2.0-flash-001',
+      'qwen/qwq-32b',
+      'deepseek/deepseek-r1-zero:free'
+    ];
     
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
-        'X-Title': 'LinkedIn Sales Navigator Targeting',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-001',
-        messages: [{ role: 'user', content: prompt }],
-        stream: false,
-        max_tokens: 20000,
-        temperature: 1,
-      }),
-    });
+    let lastError = null;
+    let responseData = null;
     
-    const responseText = await response.text();
-    
-    if (!response.ok) {
-      console.error('OpenRouter error response:', responseText);
-      return NextResponse.json({ 
-        error: `OpenRouter API error: ${response.status}`,
-        details: responseText
-      }, { status: 500 });
+    // Try each model until one works
+    for (const model of availableModels) {
+      try {
+        console.log(`Trying model: ${model} for sales nav generation`);
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
+            'X-Title': 'Market Segment Research',
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { 
+                role: 'user', 
+                content: `Here are the market segments to create LinkedIn Sales Navigator targeting strategies for:\n\n${segments}\n\n${prompt}` 
+              }
+            ],
+            stream: false,
+            max_tokens: 25000,
+            temperature: 0.7,
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Error with model ${model}:`, errorText);
+          lastError = `OpenRouter API error with model ${model}: ${response.status} - ${errorText}`;
+          continue; // Try the next model
+        }
+        
+        responseData = await response.json();
+        console.log(`Success with model: ${model}`);
+        break; // We got a successful response, break out of the loop
+        
+      } catch (modelError: any) {
+        console.error(`Error with model ${model}:`, modelError);
+        lastError = `Error with model ${model}: ${modelError.message}`;
+        continue; // Try the next model
+      }
     }
+    
+    // If we've tried all models and still don't have a response, throw the last error
+    if (!responseData) {
+      throw new Error(lastError || 'All models failed');
+    }
+    
+    console.log('Sales Navigator API response received');
+    
+    // Extract the content from the response
+    const content = responseData.choices[0].message.content;
+    let parsedSegments = [];
     
     try {
-      const data = JSON.parse(responseText);
-      if (!data.choices?.[0]?.message) {
-        return NextResponse.json({ 
-          error: 'Invalid response format from OpenRouter',
-          details: responseText 
-        }, { status: 500 });
-      }
-      
-      const content = data.choices[0].message.content;
-      
-      // More aggressive cleaning of the content to handle various LLM formatting issues
-      let cleanedContent = content;
-      
-      // Remove any markdown code blocks (with or without language specifier)
-      if (cleanedContent.includes('```')) {
-        // Handle ```json blocks
-        cleanedContent = cleanedContent.replace(/```json\n/g, '').replace(/\n```/g, '');
-        // Handle ``` blocks without language specifier
-        cleanedContent = cleanedContent.replace(/```\n/g, '').replace(/\n```/g, '');
-        // Handle any remaining ``` markers (no newlines)
-        cleanedContent = cleanedContent.replace(/```/g, '');
-      }
-      
-      // Remove any text before the first [ and after the last ]
-      const jsonStartIndex = cleanedContent.indexOf('[');
-      const jsonEndIndex = cleanedContent.lastIndexOf(']');
-      
-      if (jsonStartIndex !== -1 && jsonEndIndex !== -1 && jsonEndIndex > jsonStartIndex) {
-        cleanedContent = cleanedContent.substring(jsonStartIndex, jsonEndIndex + 1);
-      }
-      
-      // Fix common JSON formatting issues
-      // Replace single quotes with double quotes (if they're used for JSON properties)
-      cleanedContent = cleanedContent.replace(/'([^']+)':/g, '"$1":');
-      
-      console.log('Cleaned content:', cleanedContent.substring(0, 100) + '...');
-      
-      // Try to parse the content as JSON
-      try {
-        // This will throw if content is not valid JSON
-        const parsedSegments = JSON.parse(cleanedContent);
-        
-        // Create a more consistent readable text format for display
-        let readableContent = '';
-        
-        if (Array.isArray(parsedSegments)) {
-          parsedSegments.forEach((segment, index) => {
-            if (segment.name && segment.content) {
-              // Add segment name as a header with consistent formatting
-              readableContent += `${index + 1}. ${segment.name.toUpperCase()}\n`;
-              readableContent += '='.repeat(segment.name.length + 4) + '\n\n';
-              
-              // Process the content to ensure proper formatting
-              let formattedContent = segment.content.trim();
-              
-              // Standardize section formatting with consistent spacing
-              const sections = [
-                { pattern: /Why This Segment\?/g, title: 'Why This Segment?', length: 18 },
-                { pattern: /Key Challenges:/g, title: 'Key Challenges:', length: 15 },
-                { pattern: /🎯 Sales Navigator Filters:/g, title: '🎯 Sales Navigator Filters:', length: 25 },
-                { pattern: /Best Intent Data Signals/g, title: 'Best Intent Data Signals', length: 24 }
-              ];
-              
-              // Apply consistent formatting to each section
-              sections.forEach(section => {
-                formattedContent = formattedContent.replace(
-                  section.pattern,
-                  `\n${section.title}\n${'-'.repeat(section.length)}\n`
-                );
-              });
-              
-              // Ensure emoji consistency
-              formattedContent = formattedContent.replace(/👉/g, '👉 '); // Ensure space after emoji
-              formattedContent = formattedContent.replace(/✅/g, '✅ '); // Ensure space after emoji
-              formattedContent = formattedContent.replace(/🔹/g, '🔹 '); // Ensure space after emoji
-              
-              // Fix any double spacing issues
-              formattedContent = formattedContent.replace(/\s{3,}/g, '\n\n');
-              
-              // Add the formatted content
-              readableContent += formattedContent + '\n\n';
-              
-              // Add consistent separator between segments
-              if (index < parsedSegments.length - 1) {
-                readableContent += '\n' + '*'.repeat(50) + '\n\n';
-              }
-            }
-          });
-        }
-        
-        // Ensure we have valid readable content
-        const finalReadableContent = readableContent.trim() || JSON.stringify(parsedSegments, null, 2);
-        
-        // Log the final content length to help with debugging
-        console.log(`Final content length: ${finalReadableContent.length} characters`);
-        
-        // Return both the readable text for display and structured data for segment selection
-        return NextResponse.json({
-          result: finalReadableContent, // Readable text or fallback to JSON
-          segments: parsedSegments, // Structured data for segment selection
-          format: readableContent.trim() ? 'formatted' : 'json' // Indicate which format was used
-        });
-      } catch (jsonError) {
-        console.error('Error parsing LLM response as JSON:', jsonError);
-        
-        // Try to extract anything that looks like JSON from the content
-        let extractedJson = '';
-        // Use a regex that's compatible with the current TypeScript configuration
-        // Instead of /s flag (which requires ES2018+), use [\s\S]* to match any character including newlines
-        const jsonMatch = cleanedContent.match(/\[\s*\{[\s\S]*\}\s*\]/);
-        if (jsonMatch) {
-          extractedJson = jsonMatch[0];
-          console.log('Extracted potential JSON:', extractedJson.substring(0, 100) + '...');
-          
-          try {
-            // Try to parse the extracted JSON
-            const extractedSegments = JSON.parse(extractedJson);
-            console.log('Successfully parsed extracted JSON');
-            
-            return NextResponse.json({
-              result: JSON.stringify(extractedSegments, null, 2),
-              segments: extractedSegments,
-              format: 'json',
-              warning: 'Used fallback JSON extraction'
-            });
-          } catch (extractError) {
-            console.error('Failed to parse extracted JSON:', extractError);
-          }
-        }
-        
-        // Format the raw content for better display
-        const formattedContent = content
-          .replace(/```json/g, '')
-          .replace(/```/g, '')
-          .trim();
-        
-        // Create a fallback segment from the raw content
-        const fallbackSegments = [{
-          name: "Generated Segment (Parsing Error)",
-          content: formattedContent.substring(0, 1000) // Limit content length
-        }];
-        
-        // If all parsing fails, return the formatted raw content with fallback segments
-        return NextResponse.json({
-          result: formattedContent,
-          segments: fallbackSegments, // Provide at least one segment for selection
-          error: 'Failed to parse LLM response as JSON. Returning formatted raw content.',
-          format: 'raw'
-        });
-      }
-    } catch (parseError) {
-      console.error('Error parsing JSON response:', parseError);
-      return NextResponse.json({ 
-        error: 'Failed to parse API response',
-        details: responseText 
-      }, { status: 500 });
+      // Try to parse the JSON response
+      parsedSegments = JSON.parse(content.replace(/```json|```/g, '').trim());
+      console.log(`Successfully parsed ${parsedSegments.length} segments from response`);
+    } catch (error) {
+      console.error('Error parsing segments JSON:', error);
+      console.log('Raw content:', content.substring(0, 500) + '...');
     }
+    
+    return NextResponse.json({ 
+      result: {
+        content,
+        segments: parsedSegments
+      }
+    });
   } catch (error) {
     console.error('Error generating segments:', error);
-    return NextResponse.json({ 
-      error: 'Failed to generate strategy',
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to generate segments' }, { status: 500 });
   }
 }

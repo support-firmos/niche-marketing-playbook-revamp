@@ -2,130 +2,211 @@
 import { NextResponse } from 'next/server';
 
 // Set maximum duration to 60 seconds
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 // Use Edge runtime for better performance with long-running requests
 export const runtime = 'edge';
 
 export async function POST(request: Request) {
   try {
-    let segment;
-    segment = await request.json();
-    segment = segment.segmentInfo;
-    const prompt = `You are an expert AI copywriter tasked with creating a highly detailed, industry-specific marketing playbook for high-ticket advisory and accounting services based on the provided deep segment research. Your goal is to transform the segment research into concrete, actionable marketing guidance with specific examples, metrics, and strategies.
+    const requestData = await request.json();
+    let segmentData;
+    
+    // Handle different input formats
+    if (requestData.segmentInfo) {
+      if (typeof requestData.segmentInfo === 'string') {
+        segmentData = requestData.segmentInfo;
+      } else if (typeof requestData.segmentInfo === 'object') {
+        // If it's the formatted deep segment research object
+        if (requestData.segmentInfo.originalContent) {
+          if (requestData.segmentInfo.originalContent.allSegments) {
+            // Extract and process all segments
+            const segments = requestData.segmentInfo.originalContent.allSegments;
+            console.log(`Processing ${segments.length} segments for playbook`);
+            segmentData = segments.map((segment: any, index: number) => {
+              return `
+===== SEGMENT ${index + 1}: ${segment.name || 'Unnamed Segment'} =====
 
-    ## Your Task
-    Create a comprehensive marketing playbook that leverages ALL insights from the provided segment research. Extract specific details, examples, metrics, and industry terminology from the research to ensure the playbook is deeply relevant and practical, not generic or high-level.
+${segment.deepResearch || 'No deep research available for this segment'}
+              `;
+            }).join('\n\n');
+          } else if (requestData.segmentInfo.originalContent.combinedResearch) {
+            // Use the combined research if available
+            segmentData = requestData.segmentInfo.originalContent.combinedResearch;
+          } else {
+            // Fallback to the displayContent
+            segmentData = requestData.segmentInfo.displayContent || JSON.stringify(requestData.segmentInfo, null, 2);
+          }
+        } else {
+          // Try to stringify the object
+          segmentData = JSON.stringify(requestData.segmentInfo, null, 2);
+        }
+      }
+    } else {
+      return NextResponse.json({ error: 'No segment information provided' }, { status: 400 });
+    }
     
-    ## Format Requirements
-    - Create a compelling title: "Advisory and Accounting Services Marketing Playbook: *Segment Title"
-    - Format each section with a clear, numbered emoji header (e.g., "🔹 1️⃣ TARGET AUDIENCE 🔹")
-    - Use clean section dividers (✧═══════════════✧) between major sections
-    - Use number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣) at the start of each point
-    - Do NOT use markdown formatting (no **, no *, no ## or #)
-    - Begin directly with the title and first section (no narrative introduction)
-    - Keep each point substantive, specific, and actionable
+    console.log('Segment data prepared for playbook generation');
     
-    ## Marketing Playbook Sections
-    For each section below, provide EXACTLY 5 points that offer concrete, specific insights directly extracted from the segment research:
+    const prompt = `You are an expert AI copywriter tasked with creating a single, cohesive marketing playbook for high-ticket advisory and accounting services that incorporates insights from ALL market segment research provided. Your goal is to create ONE unified playbook, not a collection of segment-specific strategies.
+
+## Your Task
+Create a comprehensive, integrated marketing playbook that synthesizes insights from all segment research into a unified strategy. Rather than addressing segments separately, find the common themes, patterns, and synergies to develop an overarching approach that works across all segments while acknowledging important variations.
+
+## Format Requirements - FOLLOW THESE EXACTLY
+- Begin with a compelling title that references specific industry segments covered in your playbook (e.g., "Financial Strategy Mastery: Unified Marketing Playbook for Property Management, Development & Brokerage Services")
+- Format each section with a clear, numbered emoji header exactly like this: "🔹 1️⃣ TARGET AUDIENCE 🔹"
+- Use consistent section dividers exactly like this: "✧═══════════════✧" between major sections
+- For each numbered point within sections, start with the exact number emoji (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣)
+- Use exactly 5 points for each section, each starting with the corresponding number emoji
+- Each point must be a SINGLE PARAGRAPH (not multiple paragraphs)
+- Each point must be substantive and detailed (4-6 sentences minimum)
+- Do NOT use markdown formatting (no **, no *, no ## or #)
+- Begin directly with the title and first section (no narrative introduction)
+
+## Marketing Playbook Structure
+Your playbook MUST follow this EXACT structure and format:
+
+[COMPELLING TITLE THAT REFERENCES SPECIFIC INDUSTRY SEGMENTS]
+
+✧═══════════════✧
+
+🔹 1️⃣ UNIFIED AUDIENCE APPROACH 🔹
+
+1️⃣ [First detailed point as a single paragraph with 4-6 sentences]
+2️⃣ [Second detailed point as a single paragraph with 4-6 sentences]
+3️⃣ [Third detailed point as a single paragraph with 4-6 sentences]
+4️⃣ [Fourth detailed point as a single paragraph with 4-6 sentences]
+5️⃣ [Fifth detailed point as a single paragraph with 4-6 sentences]
+
+✧═══════════════✧
+
+🔹 2️⃣ UNIVERSAL PAIN POINTS 🔹
+
+1️⃣ [First detailed point as a single paragraph with 4-6 sentences]
+2️⃣ [Second detailed point as a single paragraph with 4-6 sentences]
+3️⃣ [Third detailed point as a single paragraph with 4-6 sentences]
+4️⃣ [Fourth detailed point as a single paragraph with 4-6 sentences]
+5️⃣ [Fifth detailed point as a single paragraph with 4-6 sentences]
+
+[CONTINUE THIS EXACT FORMAT FOR ALL REMAINING SECTIONS]
+
+## Marketing Playbook Sections
+For each section below, provide EXACTLY 5 points that offer concrete, specific insights drawing from ALL segments in the research:
+
+🔹 1️⃣ UNIFIED AUDIENCE APPROACH 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create a unified approach to targeting all audience segments. Identify common characteristics, overlapping needs, and shared decision patterns. Focus on creating a single messaging framework that resonates across all identified segments.]
+
+🔹 2️⃣ UNIVERSAL PAIN POINTS 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract the most significant pain points that appear across multiple segments. Focus on those that represent common ground and create a unified approach to addressing them through advisory and accounting services.]
+
+🔹 3️⃣ INTEGRATED FEAR MITIGATION 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Develop a comprehensive approach to addressing fears and concerns across all segments. Create unified messaging that addresses these fears, acknowledging variations while focusing on common solutions.]
+
+🔹 4️⃣ UNIVERSAL GOALS AND ASPIRATIONS 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Identify overarching goals that span across segments and develop unified approaches to helping clients achieve them. Connect advisory services to these universal aspirations.]
+
+🔹 5️⃣ COMPREHENSIVE OBJECTION HANDLING 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create a unified objection-handling strategy that addresses the most important concerns across all segments. For each objection, develop a universal counter-argument that works regardless of segment.]
+
+🔹 6️⃣ CORE VALUE PROPOSITION 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Develop a single, powerful value proposition that aligns with the core values of all segments. Focus on the universal benefits that resonate across all audience groups.]
+
+🔹 7️⃣ UNIFIED DECISION-MAKING FRAMEWORK 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create a universal framework for understanding and influencing the decision-making process across all segments. Identify common stages, stakeholders, and considerations that apply broadly.]
+
+🔹 8️⃣ UNIVERSAL METRICS AND KPIs 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Identify key performance indicators and metrics that matter across all segments. Develop a unified measurement framework that demonstrates the value of advisory services regardless of client segment.]
+
+🔹 9️⃣ INTEGRATED COMMUNICATION STRATEGY 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Develop one comprehensive communication approach that works across all segments. Focus on channels, messaging formats, and cadence that effectively reach and engage all audience groups.]
+
+🔹 🔟 UNIFIED CONTENT FRAMEWORK 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create a content strategy that addresses universal needs while accommodating segment variations. Identify themes, formats, and distribution approaches that work across all segments with minor adaptations.]
+
+🔹 1️⃣1️⃣ VERSATILE LEAD MAGNETS 🔹
+[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Develop lead magnet concepts that appeal to all segments, with slight modifications if needed. Focus on resources that address universal pain points while being adaptable to different contexts.]
+
+## Segment Research:
+${segmentData}
+
+Important notes:
+- Create a compelling title that CLEARLY NAMES the specific industry segments covered in the playbook (e.g., real estate development, property management, brokerage, STR management, etc.)
+- Format each numbered point with its own number emoji (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣) - EACH POINT NEEDS ITS OWN NUMBER EMOJI
+- Each point must be a SINGLE paragraph (not multiple short paragraphs)
+- Focus on creating ONE unified playbook, not a collection of segment-specific approaches
+- Identify common patterns and themes across ALL segments and build a comprehensive strategy around them
+- Where segments differ significantly, develop adaptable approaches that work with minor modifications
+- Extract SPECIFIC details from the research - do not generalize or water down
+- Use EXACT terminology, examples, metrics, and concerns found in the research
+- For any point where the research provides detailed context (e.g., "Why it's a fear" or "Industry Insights"), include these specific details rather than summarizing
+- Maintain the depth and specificity of the original research in your playbook points
+- If the research uses specific numbers or percentages, include these exact figures
+- Include actual scenarios, consequences, and benefits mentioned in the research
+- When describing how advisory and accounting services help, use the exact solutions mentioned in the research
+- If the research includes specific industry challenges or trends, incorporate these directly
+- Make each point highly detailed (4-6 sentences minimum) using content directly from the research
+`;
     
-    ✧═══════════════✧
+    // Try with different models if the first one fails
+    const availableModels = [
+      'google/gemini-2.0-flash-001',
+      'qwen/qwq-32b',
+      'deepseek/deepseek-r1-zero:free'
+    ];
     
-    🔹 1️⃣ TARGET AUDIENCE 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract specific audience profiles directly from the research. Include exact job titles, company sizes, and growth stages mentioned. Focus on the exact pain points, needs, and characteristics described in the research rather than generic descriptions.]
+    let lastError = null;
+    let responseData = null;
     
-    ✧═══════════════✧
+    // Try each model until one works
+    for (const model of availableModels) {
+      try {
+        console.log(`Trying model: ${model} for playbook generation`);
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
+            'X-Title': 'Market Segment Research',
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: prompt }],
+            stream: false,
+            max_tokens: 25000,
+            temperature: 0.8,
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Error with model ${model}:`, errorText);
+          lastError = `OpenRouter API error with model ${model}: ${response.status} - ${errorText}`;
+          continue; // Try the next model
+        }
+        
+        responseData = await response.json();
+        console.log(`Success with model: ${model}`);
+        break; // We got a successful response, break out of the loop
+        
+      } catch (modelError: any) {
+        console.error(`Error with model ${model}:`, modelError);
+        lastError = `Error with model ${model}: ${modelError.message}`;
+        continue; // Try the next model
+      }
+    }
     
-    🔹 2️⃣ PAIN POINTS 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Use the exact pain points mentioned in the research. Include specific examples, scenarios, and quantifiable impacts described in the research. For each pain point, add how advisory and accounting services directly address this challenge based on information in the research.]
-    
-    ✧═══════════════✧
-    
-    🔹 3️⃣ FEARS AND CONCERNS 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract the exact fears and concerns mentioned in the research. For each fear, include the "Why it's a fear" context, the "Worst-Case Scenario" details, and the "How Advisory and Accounting Services Can Help" specifics directly from the research.]
-    
-    ✧═══════════════✧
-    
-    🔹 4️⃣ GOALS AND ASPIRATIONS 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Use the exact goals mentioned in the research. For each goal, include the "Why it's a goal" context, relevant "Industry Insights," and the specific "How Advisory and Accounting Services Can Help" details directly from the research.]
-    
-    ✧═══════════════✧
-    
-    🔹 5️⃣ OBJECTIONS 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract the exact objections mentioned in the research. Format as "Objection: [exact objection from research]" followed by "Counter: [exact counter-argument from research]" on the same point.]
-    
-    ✧═══════════════✧
-    
-    🔹 6️⃣ CORE VALUES 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract the exact values mentioned in the research. For each value, include the "Why it matters" context, specific "Industry Insights," and the precise "How Advisory and Accounting Services Can Help" details directly from the research.]
-    
-    ✧═══════════════✧
-    
-    🔹 7️⃣ DECISION-MAKING PROCESS 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract the exact decision-making processes mentioned in the research. For each process, include the "How they make decisions" details, specific "Industry Insights," and the precise "How Advisory and Accounting Services Can Help" information directly from the research.]
-    
-    ✧═══════════════✧
-    
-    🔹 8️⃣ KEY METRICS 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract industry-specific metrics mentioned or implied in the research. Use exact numbers, percentages, and benchmarks found in the research. For each metric, explain precisely how advisory and accounting services impact this metric based on information in the research.]
-    
-    ✧═══════════════✧
-    
-    🔹 9️⃣ COMMUNICATION PREFERENCES 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract the exact communication preferences mentioned in the research. For each preference, include the "Why It Matters" context, specific "Industry Insights," and the precise "How Advisory and Accounting Services Can Help" details directly from the research.]
-    
-    ✧═══════════════✧
-    
-    🔹 🔟 CONTENT TONE AND STYLE 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Based on the research, determine the content style that would resonate with this segment. Include industry-specific terminology found in the research, communication norms mentioned or implied, and examples that relate directly to the segment's concerns and values.]
-    
-    ✧═══════════════✧
-    
-    🔹 1️⃣1️⃣ LEAD MAGNET TITLES 🔹
-    [Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create industry-specific lead magnet titles that directly address the pain points, fears, and goals identified in the research. Each title should use industry terminology found in the research and connect to a specific need or challenge mentioned.]
-    
-    ✧═══════════════✧
-    
-    ## Segment Research:
-    ${segment}
-    
-    Important notes:
-    - Extract SPECIFIC details from the research - do not generalize or water down
-    - Use EXACT terminology, examples, metrics, and concerns found in the research
-    - For any point where the research provides detailed context (e.g., "Why it's a fear" or "Industry Insights"), include these specific details rather than summarizing
-    - Maintain the depth and specificity of the original research in your playbook points
-    - If the research uses specific numbers or percentages, include these exact figures
-    - Include actual scenarios, consequences, and benefits mentioned in the research
-    - When describing how advisory and accounting services help, use the exact solutions mentioned in the research
-    - If the research includes specific industry challenges or trends, incorporate these directly
-    - Make each point highly detailed (4-6 sentences minimum) using content directly from the research
-    `;
-    
-    // Use non-streaming approach for this first prompt
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
-        'X-Title': 'Market Segment Research',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-001',
-        messages: [{ role: 'user', content: prompt }],
-        stream: false,
-        max_tokens: 25000,
-        temperature: 0.8,
-      }),
-    });
-    
-    const data = await response.json();
+    // If we've tried all models and still don't have a response, throw the last error
+    if (!responseData) {
+      throw new Error(lastError || 'All models failed');
+    }
     
     return NextResponse.json({ 
-      result: data.choices[0].message.content 
+      result: responseData.choices[0].message.content 
     });
   } catch (error) {
-    console.error('Error generating segments:', error);
-    return NextResponse.json({ error: 'Failed to generate segments' }, { status: 500 });
+    console.error('Error generating playbook:', error);
+    return NextResponse.json({ error: 'Failed to generate playbook' }, { status: 500 });
   }
 }

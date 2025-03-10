@@ -1,4 +1,4 @@
-// src/app/api/deep-segment-research/route.ts
+// src/app/api/deep-segment/route.ts
 import { NextResponse } from 'next/server';
 
 // Set maximum duration to 60 seconds
@@ -10,42 +10,71 @@ export const runtime = 'nodejs';
 export async function POST(request: Request) {
   try {
     const requestData = await request.json();
-    let segmentInfo;
     console.log('Request data:', JSON.stringify(requestData));
     
-    // Handle both string and object formats
-    if (typeof requestData.segmentInfo === 'string') {
-      segmentInfo = requestData.segmentInfo;
-    } else if (requestData.segmentInfo && typeof requestData.segmentInfo === 'object') {
-      console.log('Segment info is an object:', requestData.segmentInfo);
-      
-      // If it's an object with content property, use that
-      if (requestData.segmentInfo.content) {
-        segmentInfo = requestData.segmentInfo.content;
-        console.log('Using content property:', segmentInfo.substring(0, 100) + '...');
-      } else {
-        // Otherwise stringify the whole object
-        segmentInfo = JSON.stringify(requestData.segmentInfo);
-        console.log('Stringified object:', segmentInfo.substring(0, 100) + '...');
-      }
+    // Handle both segments array or a single string input
+    let segments;
+    if (requestData.segments && Array.isArray(requestData.segments)) {
+      segments = requestData.segments;
+    } else if (requestData.segmentInfo) {
+      console.log('Single segment info detected, converting to array');
+      segments = [requestData.segmentInfo];
     } else {
-      console.log('Invalid segment info:', requestData.segmentInfo);
-      return NextResponse.json({ error: 'Invalid segment information' }, { status: 400 });
+      console.log('Invalid segments data:', requestData);
+      return NextResponse.json({ error: 'Invalid segments information' }, { status: 400 });
     }
     
-    // Extract segment name for the title
-    let segmentName = "";
-    if (typeof requestData.segmentInfo === 'object' && requestData.segmentInfo.name) {
-      segmentName = requestData.segmentInfo.name;
-      console.log('Extracted segment name:', segmentName);
-    }
+    console.log(`Processing ${segments.length} segments`);
     
-    // Remove emoji numbers if present in the segment name
-    segmentName = segmentName.replace(/^\d️⃣\s*/, '');
-    console.log('Cleaned segment name:', segmentName);
-    segmentName = segmentName.replace(/^\d️⃣\s*/, '');
+    // Process all segments
+    const results = await Promise.all(segments.map(async (segment: any) => {
+      // Handle segment info as either string or object
+      let segmentInfo;
+      let segmentName = "";
+      
+      if (typeof segment === 'string') {
+        segmentInfo = segment;
+      } else if (typeof segment === 'object') {
+        if (segment.content) {
+          segmentInfo = segment.content;
+        } else {
+          segmentInfo = JSON.stringify(segment);
+        }
+        
+        if (segment.name) {
+          segmentName = segment.name;
+          // Remove emoji numbers if present in the segment name
+          segmentName = segmentName.replace(/^\d️⃣\s*/, '');
+          segmentName = segmentName.replace(/^\d️⃣\s*/, '');
+        }
+      }
+      
+      // Generate deep segment research for this segment
+      const result = await generateDeepSegmentResearch(segmentInfo, segmentName);
+      return {
+        name: segmentName,
+        deepResearch: result
+      };
+    }));
     
-    const prompt = `You are an empathetic B2B Researcher capable of deeply understanding and embodying the Ideal Customer Profile (ICP) for high-ticket advisory and consulting services.
+    // Combine all results
+    const combinedResults = {
+      allSegments: results,
+      // Join all deep research content for using in the playbook
+      combinedResearch: results.map(r => r.deepResearch).join('\n\n====================\n\n')
+    };
+    
+    return NextResponse.json({ result: combinedResults });
+    
+  } catch (error) {
+    console.error('Error in deep segment research:', error);
+    return NextResponse.json({ error: 'Failed to generate deep segment research' }, { status: 500 });
+  }
+}
+
+// Helper function to generate deep segment research for a single segment
+async function generateDeepSegmentResearch(segmentInfo: string, segmentName: string) {
+  const prompt = `You are an empathetic B2B Researcher capable of deeply understanding and embodying the Ideal Customer Profile (ICP) for high-ticket advisory and consulting services.
 
 ## Your Task
 Analyze the ICP below provided below and generate a comprehensive market research profile following the exact structure below. Use the information to identify the most relevant and impactful insights.
@@ -270,258 +299,211 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💎 VALUES 💎
 
 1️⃣ [Value 1 title]
-[A comprehensive explanation of the value. Must align the value to real-world business decisions. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help preserve that value. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
 
 
 2️⃣ [Value 2 title]
-[A comprehensive explanation of the value. Must align the value to real-world business decisions. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help preserve that value. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
 
 
 3️⃣ [Value 3 title]
-[A comprehensive explanation of the value. Must align the value to real-world business decisions. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help preserve that value. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
 
 
 4️⃣ [Value 4 title]
-[A comprehensive explanation of the value. Must align the value to real-world business decisions. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help preserve that value. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
 
 
 5️⃣ [Value 5 title]
-[A comprehensive explanation of the value. Must align the value to real-world business decisions. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help preserve that value. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
 
 ---------------------------------------------------------------------------------
 
-🔄 DECISION-MAKING PROCESSES 🔄
+🧠 DECISION-MAKING PROCESSES 🧠
 
-1️⃣ [Process 1 title]
-[A comprehensive explanation of the decision-making process. Must identify key stakeholders and actions. Use paragraph and/or bullet points.]
-
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help fit in or improve that process. Use paragraph and/or bullet points.]
-
-
-2️⃣ [Process 2 title]
-[A comprehensive explanation of the decision-making process. Must identify key stakeholders and actions. Use paragraph and/or bullet points.]
+1️⃣ [Decision-Making Process 1 title]
+[A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help fit in or improve that process. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
 
 
-3️⃣ [Process 3 title]
-[A comprehensive explanation of the decision-making process. Must identify key stakeholders and actions. Use paragraph and/or bullet points.]
-
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help fit in or improve that process. Use paragraph and/or bullet points.]
-
-
-4️⃣ [Process 4 title]
-[A comprehensive explanation of the decision-making process. Must identify key stakeholders and actions. Use paragraph and/or bullet points.]
+2️⃣ [Decision-Making Process 2 title]
+[A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help fit in or improve that process. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
 
 
-5️⃣ [Process 5 title]
-[A comprehensive explanation of the decision-making process. Must identify key stakeholders and actions. Use paragraph and/or bullet points.]
+3️⃣ [Decision-Making Process 3 title]
+[A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help fit in or improve that process. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
+
+
+4️⃣ [Decision-Making Process 4 title]
+[A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
+
+💡 How Advisory Services Can Help
+[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
+
+
+5️⃣ [Decision-Making Process 5 title]
+[A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
+
+💡 How Advisory Services Can Help
+[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
 
 ---------------------------------------------------------------------------------
 
-🔊 INFLUENCES 🔊
+🎬 INFLUENCES 🎬
 
 1️⃣ [Influence 1 title]
-[A comprehensive explanation of the influence. Must identify who/what shapes decisions and provide a specific marketing approach. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help leverage this influence. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
 
 
 2️⃣ [Influence 2 title]
-[A comprehensive explanation of the influence. Must identify who/what shapes decisions and provide a specific marketing approach. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help leverage this influence. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
 
 
 3️⃣ [Influence 3 title]
-[A comprehensive explanation of the influence. Must identify who/what shapes decisions and provide a specific marketing approach. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help leverage this influence. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
 
 
 4️⃣ [Influence 4 title]
-[A comprehensive explanation of the influence. Must identify who/what shapes decisions and provide a specific marketing approach. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help leverage this influence. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
 
 
 5️⃣ [Influence 5 title]
-[A comprehensive explanation of the influence. Must identify who/what shapes decisions and provide a specific marketing approach. Use paragraph and/or bullet points.]
+[A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help leverage this influence. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
 
 ---------------------------------------------------------------------------------
 
-📱 COMMUNICATION PREFERENCES 📱
+📞 COMMUNICATION PREFERENCES 📞
 
-1️⃣ [Preference 1 title]
-[A comprehensive explanation of the communication preference and best practices. Must include channel preferences and specific content recommendations. Use paragraph and/or bullet points.]
-
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help aid, improve or leverage this preference. Use paragraph and/or bullet points.]
-
-
-2️⃣ [Preference 2 title]
-[A comprehensive explanation of the communication preference and best practices. Must include channel preferences and specific content recommendations. Use paragraph and/or bullet points.]
+1️⃣ [Communication Preference 1 title]
+[A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help aid, improve or leverage this preference. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
 
 
-3️⃣ [Preference 3 title]
-[A comprehensive explanation of the communication preference and best practices. Must include channel preferences and specific content recommendations. Use paragraph and/or bullet points.]
-
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help aid, improve or leverage this preference. Use paragraph and/or bullet points.]
-
-
-4️⃣ [Preference 4 title]
-[A comprehensive explanation of the communication preference and best practices. Must include channel preferences and specific content recommendations. Use paragraph and/or bullet points.]
+2️⃣ [Communication Preference 2 title]
+[A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help aid, improve or leverage this preference. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
 
 
-5️⃣ [Preference 5 title]
-[A comprehensive explanation of the communication preference and best practices. Must include channel preferences and specific content recommendations. Use paragraph and/or bullet points.]
+3️⃣ [Communication Preference 3 title]
+[A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
 💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help aid, improve or leverage this preference. Use paragraph and/or bullet points.]
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
 
-## ICP:
-${segmentInfo}
 
-Important notes:
-- Follow the exact structure shown in the template with precise emoji placement
-- Explanations must include both the issue/need AND how high-ticket advisory services specifically address it
-- Ensure consistent sentence structure and formatting across all sections
-- DO NOT include introductions, disclaimers, or conclusions
-- Maintain exact spacing shown in the template
-- Use bold formatting for titles to make them stand out
-- Use bullet points where appropriate for better readability
-`;
+4️⃣ [Communication Preference 4 title]
+[A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
-    
-    console.log('Segment info:', segmentInfo);
-    console.log('Segment name:', segmentName);
-    
-    // Make the API request without streaming
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://deep-segment-researcher.vercel.app/',
-        'X-Title': 'Deep Segment Research',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-001',
-        messages: [{ role: 'user', content: prompt }],
-        stream: false, // Don't stream the response
-        max_tokens: 25000,
-        temperature: 1,
-      }),
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`OpenRouter API error: ${response.status}, ${errorText}`);
-    }
-    
-    // Parse the response as JSON
-    const data = await response.json();
-    let content = data.choices?.[0]?.message?.content || '';
-    
-    console.log('API response content (raw):', content.substring(0, 100) + '...');
-    
-    // Clean up the content if it contains markdown code blocks
-    if (content.includes('```json')) {
-      content = content.replace(/```json\n/g, '').replace(/\n```/g, '');
-    } else if (content.includes('```')) {
-      content = content.replace(/```\n/g, '').replace(/\n```/g, '');
-    }
-    
-    // Try to parse the content as JSON to see if it's a JSON structure
-    let finalContent = content;
+💡 How Advisory Services Can Help
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
+
+
+5️⃣ [Communication Preference 5 title]
+[A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
+
+💡 How Advisory Services Can Help
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
+
+---------------------------------------------------------------------------------
+
+## Segment Information to Analyze:
+${segmentInfo}`;
+
+  // Try with different models if the first one fails
+  const availableModels = [
+    'google/gemini-2.0-flash-001',
+    'qwen/qwq-32b',
+    'deepseek/deepseek-r1-zero:free'
+  ];
+  
+  let lastError = null;
+  let responseData = null;
+  
+  // Try each model until one works
+  for (const model of availableModels) {
     try {
-      if (content.trim().startsWith('[') || content.trim().startsWith('{')) {
-        const parsedContent = JSON.parse(content);
-        
-        // If it's an array of segments, format it nicely
-        if (Array.isArray(parsedContent)) {
-          let formattedContent = '';
-          
-          parsedContent.forEach((segment, index) => {
-            if (segment.name && segment.content) {
-              // Add segment name as a header with formatting
-              formattedContent += `${index + 1}. ${segment.name.toUpperCase()}\n`;
-              formattedContent += '='.repeat(segment.name.length + 4) + '\n\n';
-              
-              // Add the content
-              formattedContent += segment.content.trim() + '\n\n';
-              
-              // Add separator between segments
-              if (index < parsedContent.length - 1) {
-                formattedContent += '\n' + '*'.repeat(50) + '\n\n';
-              }
-            }
-          });
-          
-          if (formattedContent) {
-            finalContent = formattedContent;
-          }
-        }
-        // If it's a single object with a content property, use that
-        else if (parsedContent && typeof parsedContent === 'object' && parsedContent.content) {
-          finalContent = parsedContent.content;
-        }
+      console.log(`Trying model: ${model} for deep segment research`);
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
+          'X-Title': 'Market Segment Research',
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [{ role: 'user', content: prompt }],
+          stream: false,
+          max_tokens: 25000,
+          temperature: 0.7,
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Error with model ${model}:`, errorText);
+        lastError = `OpenRouter API error with model ${model}: ${response.status} - ${errorText}`;
+        continue; // Try the next model
       }
-    } catch (error) {
-      console.log('Not JSON or parsing failed:', error);
-      // Keep the original content if parsing fails
+      
+      responseData = await response.json();
+      console.log(`Success with model: ${model}`);
+      break; // We got a successful response, break out of the loop
+      
+    } catch (modelError: any) {
+      console.error(`Error with model ${model}:`, modelError);
+      lastError = `Error with model ${model}: ${modelError.message}`;
+      continue; // Try the next model
     }
-    
-    console.log('API response content (final):', finalContent.substring(0, 100) + '...');
-    
-    // Return the content as JSON
-    return NextResponse.json({
-      result: finalContent
-    });
-    
-  } catch (error) {
-    console.error('Error generating segments:', error);
-    return NextResponse.json({ 
-      error: 'Failed to generate strategy',
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
   }
+  
+  // If we've tried all models and still don't have a response, throw the last error
+  if (!responseData) {
+    throw new Error(lastError || 'All models failed');
+  }
+
+  return responseData.choices[0].message.content;
 }
