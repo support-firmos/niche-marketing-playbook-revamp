@@ -12,27 +12,57 @@ export async function POST(request: Request) {
     console.log('Generate-segments API called');
     
     const requestData = await request.json();
-    const { industry } = requestData;
+    const { 
+      nicheConsideration, 
+      profitability, 
+      experience, 
+      clientPercentage, 
+      successStories, 
+      teamSize 
+    } = requestData;
     
-    if (!industry) {
-      console.error('No industry provided in request');
-      return NextResponse.json({ error: 'Industry is required' }, { status: 400 });
+    if (!nicheConsideration) {
+      console.error('No niche consideration provided in request');
+      return NextResponse.json({ error: 'Niche consideration is required' }, { status: 400 });
     }
     
-    console.log('Industry from request:', industry);
+    console.log('Niche details received in request');
+    
+    // Extract the niche industry from the first input
+    const extractedNiche = nicheConsideration.split('\n')[0].trim();
     
     const prompt = `
-    ## Accounting Advisory Services - Market Fit & Segment Research for ${industry}
+    ## Accounting Advisory Services - Market Fit & Segment Research
+
+    ### Input Information
+    
+    1) Niche Consideration:
+    ${nicheConsideration}
+    
+    2) Client Profitability:
+    ${profitability}
+    
+    3) Experience in the Niche:
+    ${experience}
+    
+    4) Percentage of Current Clients in this Niche:
+    ${clientPercentage}
+    
+    5) Success Stories:
+    ${successStories}
+    
+    6) Team Size:
+    ${teamSize}
 
     ### Introduction & Context
 
-    Accountants often undervalue their services by treating them as mere "compliance" work (e.g., tax returns, basic bookkeeping). However, these same professionals can (and should) offer **high-ticket recurring services** such as advisory, consulting, or niche-specific guidance. This prompt helps identify the most profitable segments within the ${industry} industry where accounting professionals can provide high-value, consultative offerings that solve deeper client pain points and justify higher pricing.
+    Accountants often undervalue their services by treating them as mere "compliance" work (e.g., tax returns, basic bookkeeping). However, these same professionals can (and should) offer **high-ticket recurring services** such as advisory, consulting, or niche-specific guidance. This prompt helps identify the most profitable segments within the niche where accounting professionals can provide high-value, consultative offerings that solve deeper client pain points and justify higher pricing.
 
     ---
 
     ### Task
 
-    Determine 5-7 ${industry} industry segments that would be the best fit for high-ticket, recurring accounting advisory services. These must meet:
+    Based on the detailed input provided above, determine 5-7 specific segments within the described niche that would be the best fit for high-ticket, recurring accounting advisory services. These must meet:
 
     1. **Financial Viability**: $5M–$150M annual revenue (can afford $15K–$30K/month retainers)
     2. **Recurring Need Justification**: Requires ongoing financial strategy, not one-time services
@@ -43,7 +73,7 @@ export async function POST(request: Request) {
 
     ### Output Format
 
-    Present 5-7 well-researched market segments (niches) within the ${industry} industry, ranked from highest to lowest potential profitability. Use the following visual format:
+    Present 5-7 well-researched market segments (niches), ranked from highest to lowest potential profitability. Use the following visual format:
 
    
     ======================================
@@ -73,12 +103,14 @@ export async function POST(request: Request) {
 
     When identifying the best segments, prioritize:
     - Complex financial operations requiring ongoing expertise
-    - Regulatory or compliance challenges specific to ${industry} subsectors
+    - Regulatory or compliance challenges specific to the niche
     - Growth-stage companies needing financial strategy but not ready for full-time financial leadership
     - Businesses with potential for value-based pricing of advisory services
+    - Consider the current team size (${teamSize}) when evaluating if these segments can be effectively served
     
     Important Notes:
     - DO NOT USE ANY CONVERSATIONAL WORDS OR LIKE INTROS, GIVE THE OUTPUT DIRECTLY.
+    - USE THE INFORMATION FROM ALL 6 INPUTS TO INFORM YOUR RECOMMENDATIONS.
 
     Arrange segments from Highest to Lowest Profiting Segments for Accounting Advisory Services with clear visual separation between each segment.
     `;

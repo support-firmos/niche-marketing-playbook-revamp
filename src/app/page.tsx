@@ -6,7 +6,12 @@ import ResearchForm from '@/components/ResearchForm';
 import ResearchResult from '@/components/ResearchResult';
 
 interface FormData {
-  input: string;
+  nicheConsideration: string;
+  profitability: string;
+  experience: string;
+  clientPercentage: string;
+  successStories: string;
+  teamSize: number;
 }
 
 interface Segment {
@@ -23,7 +28,7 @@ export default function Home() {
   const [step5GeneratedPlaybook, setStep5GeneratedPlaybook] = useState<string | null>(null);
   
   const [isGeneratingNextStep, setIsGeneratingNextStep] = useState(false);
-  const [currentIndustry, setCurrentIndustry] = useState<string>("");
+  const [currentNiche, setCurrentNiche] = useState<string>("");
   //const [progressStatus, setProgressStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
@@ -35,16 +40,23 @@ export default function Home() {
     setStep3Segments(null);
     setStep4DeepSegmentResearch(null);
     setStep5GeneratedPlaybook(null);
-    setCurrentIndustry(formData.input);
+    setCurrentNiche(formData.nicheConsideration.split("\n")[0]); // Use first line of niche description
 
     try {
-      console.log('Starting segment generation for industry:', formData.input);
+      console.log('Starting segment generation with input data');
       
       // First prompt: Get initial target segments
       const initialResponse = await fetch('/api/generate-segments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ industry: formData.input }),
+        body: JSON.stringify({
+          nicheConsideration: formData.nicheConsideration,
+          profitability: formData.profitability,
+          experience: formData.experience,
+          clientPercentage: formData.clientPercentage,
+          successStories: formData.successStories,
+          teamSize: formData.teamSize
+        }),
       });
 
       if (!initialResponse.ok) {
@@ -77,7 +89,7 @@ export default function Home() {
     }
   };
 
-  const enhanceSegments = async (segments: string, industry: string) => {
+  const enhanceSegments = async (segments: string, niche: string) => {
     setError(null);
     setIsGeneratingNextStep(true);
     
@@ -86,7 +98,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          industry,
+          niche,
           segments
         }),
       });
@@ -124,13 +136,13 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          industry: currentIndustry,
+          niche: currentNiche,
           segments 
         }),
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to generate sales nav: ${response.status}`);
+        throw new Error(`Failed to generate sales navigator: ${response.status}`);
       }
 
       const data = await response.json();
@@ -365,7 +377,7 @@ ${segment.deepResearch || 'No deep research available'}
     setStep4DeepSegmentResearch(null);
     setStep5GeneratedPlaybook(null);
     setError(null);
-    setCurrentIndustry("");
+    setCurrentNiche("");
   };
 
   // Determine which content to show
@@ -387,7 +399,7 @@ ${segment.deepResearch || 'No deep research available'}
 const handleSteps = () => {
   if (!isStep2Done) {
     return {
-      action: (content: string) => enhanceSegments(content, currentIndustry),
+      action: (content: string) => enhanceSegments(content, currentNiche),
       buttonText: "Enhance Segments"
     };
   }
@@ -432,7 +444,7 @@ const handleSteps = () => {
           {displayContent ? (
             <ResearchResult 
               content={displayContent} 
-              industry={currentIndustry}
+              industry={currentNiche}
               onReset={resetGenerator}
               onNextSteps={handleSteps()?.action}
               nextStepButtonText={handleSteps()?.buttonText}

@@ -9,14 +9,14 @@ export const runtime = 'edge';
 
 export async function POST(request: Request) {
   try {
-    const { industry, segments } = await request.json();
+    const { niche, segments } = await request.json();
     
     if (!segments || typeof segments !== 'string') {
       return NextResponse.json({ error: 'Invalid segments data' }, { status: 400 });
     }
     
     const prompt = `
-      You are a market research expert specializing in high-ticket accounting advisory services. Below is a list of promising segments in the ${industry} industry:
+      You are a market research expert specializing in high-ticket accounting advisory services. Below is a list of promising segments in the ${niche} area:
 
       ${segments.substring(0, 20000)}
 
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       Create an enhanced analysis with clear visual formatting. Begin with this centered title:
 
       ***********************************************************************
-      #  DEEP DIVE: BEST ${industry} SEGMENTS FOR HIGH-TICKET ADVISORY/ACCOUNTING SERVICES
+      #  DEEP DIVE: BEST ${niche} SEGMENTS FOR HIGH-TICKET ADVISORY/ACCOUNTING SERVICES
       ***********************************************************************
 
       Do not include introductory sentences.
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       ------------------------------------------
 
       Keep each section concise and actionable. Maintain consistent formatting with clear visual separation between segments and sections.
-      `;
+    `;
 
     
     // Try with different models if the first one fails

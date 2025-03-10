@@ -10,20 +10,20 @@ export const runtime = 'edge';
 export async function POST(request: Request) {
   try {
     const requestData = await request.json();
-    const { industry, segments } = requestData;
+    const { niche, segments } = requestData;
     
     if (!segments || typeof segments !== 'string') {
       return NextResponse.json({ error: 'Invalid segment information' }, { status: 400 });
     }
     
-    // Add industry context if available
-    const industryContext = industry ? `Industry context: ${industry}` : '';
+    // Add niche context if available
+    const nicheContext = niche ? `Niche context: ${niche}` : '';
     
     // Modified section of the prompt in src/app/api/generate-segments/route.ts
     const prompt = `
     You are a specialized LinkedIn Sales Navigator outreach strategist with deep expertise in B2B targeting and account-based marketing. Your task is to transform the segment information below into a structured LinkedIn Sales Navigator targeting strategy for fractional CFO services.
 
-    ${industryContext}
+    ${nicheContext}
 
     FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a segment with two attributes, namely name and content:
     [
