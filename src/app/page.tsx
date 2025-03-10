@@ -141,18 +141,50 @@ export default function Home() {
         throw new Error('No result returned from sales navigator generation');
       }
       
-      setStep3GeneratedSalesNav(data.result.content);
+      // Format the Sales Navigator content for display
+      let formattedContent;
+      const rawContent = data.result.content;
+      
+      // Try to parse the content as JSON
+      try {
+        const jsonContent = JSON.parse(rawContent.replace(/```json|```/g, '').trim());
+        
+        if (Array.isArray(jsonContent)) {
+          // Format each segment
+          formattedContent = jsonContent.map((segment: any, index: number) => {
+            const segmentName = segment.name || `Segment ${index + 1}`;
+            const segmentContent = segment.content || '';
+            
+            return `
+==========================================
+SEGMENT ${index + 1}: ${segmentName.toUpperCase()}
+==========================================
+
+${segmentContent}
+`;
+          }).join('\n\n');
+        } else {
+          // If it's not an array, just stringify it with pretty formatting
+          formattedContent = JSON.stringify(jsonContent, null, 2);
+        }
+      } catch (e) {
+        // If JSON parsing fails, just use the raw content
+        console.warn('Failed to parse Sales Navigator content as JSON, using raw content:', e);
+        formattedContent = rawContent;
+      }
+      
+      // Store the formatted content for display
+      setStep3GeneratedSalesNav(formattedContent);
       
       // Set the segments for deep segment research
       if (data.result.segments && Array.isArray(data.result.segments) && data.result.segments.length > 0) {
         console.log(`Parsed ${data.result.segments.length} segments for deep research`);
         setStep3Segments(data.result.segments);
       } else {
-        console.warn('No valid segments found in sales navigator response');
         // Attempt to extract segments from the content if explicit segments aren't provided
         try {
           // Try to parse the sections from the sales nav content
-          const content = data.result.content;
+          const content = formattedContent;
           const segments = extractSegmentsFromSalesNav(content);
           
           if (segments.length > 0) {

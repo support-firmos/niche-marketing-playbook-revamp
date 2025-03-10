@@ -99,13 +99,7 @@ export default function ResearchResult({
       </div>
       
       <div className="bg-[#141414] p-5 rounded-xl border border-[#8a8f98]/20">
-        {/* Add a warning if there was an issue with JSON parsing */}
-        {resultType === 'salesNav' && content.includes('Failed to parse') && (
-          <div className="bg-yellow-900/30 border border-yellow-700/30 text-yellow-300 px-4 py-3 rounded-lg mb-4 text-sm">
-            Note: There was an issue with the JSON formatting. The content below may not be perfectly formatted.
-          </div>
-        )}
-        
+        {/* JSON parsing warning is no longer needed since we format the content in the page component */}
         <pre className="whitespace-pre-wrap text-[#f7f8f8] font-mono text-sm overflow-auto">
           {content}
         </pre>
