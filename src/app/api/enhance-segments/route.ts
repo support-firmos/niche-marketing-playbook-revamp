@@ -101,9 +101,9 @@ export async function POST(request: Request) {
         console.log(`Success with model: ${model}`);
         break; // We got a successful response, break out of the loop
         
-      } catch (modelError: any) {
+      } catch (modelError: Error | unknown) {
         console.error(`Error with model ${model}:`, modelError);
-        lastError = `Error with model ${model}: ${modelError.message}`;
+        lastError = `Error with model ${model}: ${modelError instanceof Error ? modelError.message : String(modelError)}`;
         continue; // Try the next model
       }
     }

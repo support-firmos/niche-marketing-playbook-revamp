@@ -28,11 +28,11 @@ export async function POST(request: Request) {
     
     console.log('Niche details received in request');
     
-    // Extract the niche industry from the first input
-    const extractedNiche = nicheConsideration.split('\n')[0].trim();
+    // Extract a brief niche summary for the header
+    const nicheShortSummary = nicheConsideration.split('\n')[0].trim();
     
     const prompt = `
-    ## Accounting Advisory Services - Market Fit & Segment Research
+    ## Accounting Advisory Services - Market Fit & Segment Research for ${nicheShortSummary}
 
     ### Input Information
     
@@ -163,9 +163,9 @@ export async function POST(request: Request) {
           console.log(`Success with model: ${model}`);
           break; // We got a successful response, break out of the loop
           
-        } catch (modelError: any) {
+        } catch (modelError: Error | unknown) {
           console.error(`Error with model ${model}:`, modelError);
-          lastError = `Error with model ${model}: ${modelError.message}`;
+          lastError = `Error with model ${model}: ${modelError instanceof Error ? modelError.message : String(modelError)}`;
           continue; // Try the next model
         }
       }

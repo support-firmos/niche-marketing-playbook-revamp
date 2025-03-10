@@ -19,12 +19,31 @@ interface Segment {
   content: string;
 }
 
+// Define more specific types for various result structures
+interface SegmentResearch {
+  displayContent: string | null;
+  originalContent: Record<string, unknown>;
+}
+
+// Define interfaces for structured segment data
+interface SalesNavSegment {
+  name?: string;
+  content?: string;
+  [key: string]: unknown;
+}
+
+interface DeepResearchSegment {
+  name?: string;
+  deepResearch?: string;
+  [key: string]: unknown;
+}
+
 export default function Home() {
   const [step1GeneratedResearch, setStep1GeneratedResearch] = useState<string | null>(null);
   const [step2EnhancedResearch, setStep2EnhancedResearch] = useState<string | null>(null);
   const [step3GeneratedSalesNav, setStep3GeneratedSalesNav] = useState<string | null>(null);
   const [step3Segments, setStep3Segments] = useState<Segment[] | null>(null);
-  const [step4DeepSegmentResearch, setStep4DeepSegmentResearch] = useState<{ displayContent: string | null; originalContent: any } | null>(null);
+  const [step4DeepSegmentResearch, setStep4DeepSegmentResearch] = useState<SegmentResearch | null>(null);
   const [step5GeneratedPlaybook, setStep5GeneratedPlaybook] = useState<string | null>(null);
   
   const [isGeneratingNextStep, setIsGeneratingNextStep] = useState(false);
@@ -163,14 +182,14 @@ export default function Home() {
         
         if (Array.isArray(jsonContent)) {
           // Format each segment
-          formattedContent = jsonContent.map((segment: any, index: number) => {
+          formattedContent = jsonContent.map((segment: SalesNavSegment, index: number) => {
             const segmentName = segment.name || `Segment ${index + 1}`;
             const segmentContent = segment.content || '';
             
             return `
-==========================================
-SEGMENT ${index + 1}: ${segmentName.toUpperCase()}
-==========================================
+======================================
+SEGMENT ${index + 1}: ${segmentName}
+======================================
 
 ${segmentContent}
 `;
@@ -286,14 +305,13 @@ ${segmentContent}
         displayContent = resultContent;
       } else if (resultContent.allSegments && Array.isArray(resultContent.allSegments)) {
         // Format the segments for display
-        displayContent = resultContent.allSegments.map((segment: any, index: number) => {
+        displayContent = resultContent.allSegments.map((segment: DeepResearchSegment, index: number) => {
           return `
 =================================
 DEEP RESEARCH FOR SEGMENT: ${segment.name || `Segment ${index + 1}`}
 =================================
 
-${segment.deepResearch || 'No deep research available'}
-
+${segment.deepResearch || ''}
 `;
         }).join('\n\n');
       } else {

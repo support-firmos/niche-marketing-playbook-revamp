@@ -7,6 +7,13 @@ export const maxDuration = 300;
 // Use Edge runtime for better performance with long-running requests
 export const runtime = 'edge';
 
+// Define an interface for segment research
+interface SegmentResearch {
+  name?: string;
+  deepResearch?: string;
+  [key: string]: unknown;
+}
+
 export async function POST(request: Request) {
   try {
     const requestData = await request.json();
@@ -23,7 +30,7 @@ export async function POST(request: Request) {
             // Extract and process all segments
             const segments = requestData.segmentInfo.originalContent.allSegments;
             console.log(`Processing ${segments.length} segments for playbook`);
-            segmentData = segments.map((segment: any, index: number) => {
+            segmentData = segments.map((segment: SegmentResearch, index: number) => {
               return `
 ===== SEGMENT ${index + 1}: ${segment.name || 'Unnamed Segment'} =====
 
@@ -190,9 +197,9 @@ Important notes:
         console.log(`Success with model: ${model}`);
         break; // We got a successful response, break out of the loop
         
-      } catch (modelError: any) {
+      } catch (modelError: Error | unknown) {
         console.error(`Error with model ${model}:`, modelError);
-        lastError = `Error with model ${model}: ${modelError.message}`;
+        lastError = `Error with model ${model}: ${modelError instanceof Error ? modelError.message : String(modelError)}`;
         continue; // Try the next model
       }
     }

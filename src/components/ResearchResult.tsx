@@ -25,11 +25,9 @@ export default function ResearchResult({
   onNextSteps,
   isGeneratingNextStep = false,
   nextStepButtonText,
-  resultType,
-  segments = []
+  resultType
 }: ResearchResultProps) {
   const [copySuccess, setCopySuccess] = useState('');
-  const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number | null>(null);
   
   const handleCopy = async () => {
     try {

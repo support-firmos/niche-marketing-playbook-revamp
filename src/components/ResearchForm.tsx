@@ -113,7 +113,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
 
       <div>
         <label htmlFor="successStories" className="block text-[#f7f8f8] font-medium mb-2">
-          5) Share success stories of clients you've helped in this niche
+          5) Share success stories of clients you&apos;ve helped in this niche
         </label>
         <textarea
           id="successStories"

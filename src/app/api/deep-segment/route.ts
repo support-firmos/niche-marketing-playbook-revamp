@@ -7,6 +7,13 @@ export const maxDuration = 60;
 // Use Node.js runtime to support longer execution times
 export const runtime = 'nodejs';
 
+// Fix first occurrence of any type - define a proper interface
+interface SegmentData {
+  name?: string;
+  content?: string;
+  [key: string]: unknown;
+}
+
 export async function POST(request: Request) {
   try {
     const requestData = await request.json();
@@ -27,10 +34,9 @@ export async function POST(request: Request) {
     console.log(`Processing ${segments.length} segments`);
     
     // Process all segments
-    const results = await Promise.all(segments.map(async (segment: any) => {
+    const results = await Promise.all(segments.map(async (segment: string | SegmentData) => {
       // Handle segment info as either string or object
       let segmentInfo;
-      let segmentName = "";
       
       if (typeof segment === 'string') {
         segmentInfo = segment;
@@ -40,19 +46,14 @@ export async function POST(request: Request) {
         } else {
           segmentInfo = JSON.stringify(segment);
         }
-        
-        if (segment.name) {
-          segmentName = segment.name;
-          // Remove emoji numbers if present in the segment name
-          segmentName = segmentName.replace(/^\d️⃣\s*/, '');
-          segmentName = segmentName.replace(/^\d️⃣\s*/, '');
-        }
+      } else {
+        segmentInfo = String(segment);
       }
       
       // Generate deep segment research for this segment
-      const result = await generateDeepSegmentResearch(segmentInfo, segmentName);
+      const result = await generateDeepSegmentResearch(segmentInfo);
       return {
-        name: segmentName,
+        name: typeof segment === 'object' && segment.name ? segment.name : "",
         deepResearch: result
       };
     }));
@@ -73,7 +74,7 @@ export async function POST(request: Request) {
 }
 
 // Helper function to generate deep segment research for a single segment
-async function generateDeepSegmentResearch(segmentInfo: string, segmentName: string) {
+async function generateDeepSegmentResearch(segmentInfo: string) {
   const prompt = `You are an empathetic B2B Researcher capable of deeply understanding and embodying the Ideal Customer Profile (ICP) for high-ticket advisory and consulting services.
 
 ## Your Task
@@ -493,9 +494,9 @@ ${segmentInfo}`;
       console.log(`Success with model: ${model}`);
       break; // We got a successful response, break out of the loop
       
-    } catch (modelError: any) {
+    } catch (modelError: Error | unknown) {
       console.error(`Error with model ${model}:`, modelError);
-      lastError = `Error with model ${model}: ${modelError.message}`;
+      lastError = `Error with model ${model}: ${(modelError instanceof Error) ? modelError.message : String(modelError)}`;
       continue; // Try the next model
     }
   }
