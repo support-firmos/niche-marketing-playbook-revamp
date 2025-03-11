@@ -2,8 +2,10 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import ResearchForm from '@/components/ResearchForm';
 import ResearchResult from '@/components/ResearchResult';
+import Button from '@/components/Button';
 
 interface FormData {
   nicheConsideration: string;
@@ -444,6 +446,15 @@ const handleSteps = () => {
 
   return (
     <div className="py-10 px-4 container mx-auto">
+      {/* Navigation button to One-Time Offer page */}
+      <div className="flex justify-end mb-6">
+        <Link href="/one-time-offer">
+          <Button>
+            One-Time Offer Generator
+          </Button>
+        </Link>
+      </div>
+      
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-[#f7f8f8]">Customer Niche Marketing Playbook</h1>
@@ -474,7 +485,6 @@ const handleSteps = () => {
             <ResearchForm onSubmit={generateResearch} />
           )}
         </div>
-        
       </div>
     </div>
   );
