@@ -1,5 +1,5 @@
 'use client';
-// pages/service-tiers.tsx
+// pages/calculator.tsx
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import React from 'react'
@@ -28,7 +28,18 @@ export default function ServiceTiers() {
   const searchParams = useSearchParams();
   const [revenue, setRevenue] = useState<string>('');
   const [services, setServices] = useState<ServiceItem[]>([]);
-  
+  const [basicPricing, setBasicPricing] = useState<number>(500);
+
+  const [convertedRevenue, setConvertedRevenue] = useState<number>(0);
+  const [standardPricing, setStandardPricing] = useState<number>(0);
+  const [premiumPricing, setPremiumPricing] = useState<number>(0);
+  const [arrBasic, setArrBasic] = useState<number>(0);
+  const [arrStandard, setArrStandard] = useState<number>(0);
+  const [arrPremium, setArrPremium] = useState<number>(0);
+  const [netRoiBasic, setNetRoiBasic] = useState<number>(0);
+  const [netRoiStandard, setNetRoiStandard] = useState<number>(0);
+  const [netRoiPremium, setNetRoiPremium] = useState<number>(0);
+
   // Updated tier data based on the provided image
   const tierData: TierData = {
     // Compliance
@@ -40,14 +51,14 @@ export default function ServiceTiers() {
     taxFormPreparation: { top: true, middle: true, free: true },
     
     // Bookkeeping & Financials
-    bookkeepingAndReconciliation: { top: "Monthly", middle: "Monthly", free: "Quarterly" },
+    monthlyBookkeeping: { top: "Monthly", middle: "Monthly", free: "Quarterly" },
     financialStatementPreparation: { top: "Monthly", middle: "Monthly", free: "Quarterly" },
     accountsPayable: { top: true, middle: true, free: false },
     accountsReceivable: { top: true, middle: true, free: false },
     payrollProcessing: { top: true, middle: true, free: false },
     
     // Audit & Assurance
-    auditReviews: { top: true, middle: true, free: true },
+    financialStatementReviews: { top: true, middle: true, free: true },
     internalControlAudits: { top: true, middle: false, free: false },
     aupEngagements: { top: true, middle: false, free: false },
     
@@ -58,7 +69,7 @@ export default function ServiceTiers() {
     
     // Specialized Compliance
     nonprofitCompliance: { top: true, middle: false, free: false },
-    trustAndEstateAccounting: { top: true, middle: false, free: false },
+    trustAccounting: { top: true, middle: false, free: false },
     forensicAccounting: { top: true, middle: false, free: false },
     businessValuations: { top: true, middle: false, free: false },
     
@@ -69,9 +80,12 @@ export default function ServiceTiers() {
     budgetsAndProjections: { top: true, middle: false, free: false },
     industrySpecificAdvisory1: { top: true, middle: true, free: false },
     industrySpecificAdvisory2: { top: true, middle: true, free: false },
+
+    // Communication - Add missing services
+    emailResponseTime: { top: "1 Day", middle: "2 Days", free: "3 Days" },
+    zoomCalls: { top: "Unlimited", middle: "Monthly", free: "Quarterly" },
   };
 
-  // Service categories mapping
   const serviceCategories: Record<string, string> = {
     businessTaxFiling: "Compliance",
     personalTaxFiling: "Compliance",
@@ -80,43 +94,52 @@ export default function ServiceTiers() {
     irsTaxNoticeHandling: "Compliance",
     taxFormPreparation: "Compliance",
     
-    monthlyBookkeeping: "Bookkeeping & Reconciliation",
-    financialStatementPreparation: "Bookkeeping & Reconciliation",
-    accountsPayable: "Bookkeeping & Reconciliation",
-    accountsReceivable: "Bookkeeping & Reconciliation",
-    payrollProcessing: "Bookkeeping & Reconciliation",
+    monthlyBookkeeping: "Compliance",
+    financialStatementPreparation: "Compliance",
+    accountsPayable: "Compliance",
+    accountsReceivable: "Compliance",
+    payrollProcessing: "Compliance",
     
-    financialStatementReviews: "Audit & Assurance",
-    internalControlAudits: "Audit & Assurance",
-    aupEngagements: "Audit & Assurance",
+    financialStatementReviews: "Compliance",
+    internalControlAudits: "Compliance",
+    aupEngagements: "Compliance",
     
-    annualCorporateFilings: "Regulatory & Entity Compliance",
-    sCorpElection: "Regulatory & Entity Compliance",
-    registeredAgentFilings: "Regulatory & Entity Compliance",
+    annualCorporateFilings: "Compliance",
+    sCorpElection: "Compliance",
+    registeredAgentFilings: "Compliance",
     
-    nonprofitCompliance: "Specialized Compliance",
-    trustAccounting: "Specialized Compliance",
-    forensicAccounting: "Specialized Compliance",
-    businessValuations: "Specialized Compliance",
+    nonprofitCompliance: "Compliance",
+    trustAccounting: "Compliance",
+    forensicAccounting: "Compliance",
+    businessValuations: "Compliance",
 
+    reviewOfFinancials: "Advisory",
+    goalAndKPISetting: "Advisory",
+    cashFlowForecasting: "Advisory",
+    budgetsAndProjections: "Advisory",
+    industrySpecificAdvisory1: "Advisory",
+    industrySpecificAdvisory2: "Advisory",
+
+    emailResponseTime: "Communication",
+    zoomCalls: "Communication",
   };
 
   // Service names mapping
   const serviceNames: Record<string, string> = {
     businessTaxFiling: "Business Tax Filing",
     personalTaxFiling: "Personal Tax Filing",
-    salesAndUseTaxCompliance: "Sales & Use Tax Compliance",
+    salesTaxCompliance: "Sales & Use Tax Compliance",
     payrollTaxFilings: "Payroll Tax Filings",
     irsTaxNoticeHandling: "IRS/State Tax Notice Handling",
     taxFormPreparation: "1099 & W-2 Preparation",
     
-    bookkeepingAndReconciliation: "Bookkeeping & Reconciliation",
+    monthlyBookkeeping: "Bookkeeping & Reconciliation",
     financialStatementPreparation: "Financial Statement Preparation",
     accountsPayable: "Accounts Payable Management",
     accountsReceivable: "Accounts Receivable Management",
     payrollProcessing: "Payroll Processing & Compliance",
     
-    auditReviews: "Audit Reviews & Compilations",
+    financialStatementReviews: "Financial Statement Reviews & Compilations",
     internalControlAudits: "Internal Control & Compliance Audits",
     aupEngagements: "Agreed-Upon Procedures Engagements",
     
@@ -125,7 +148,7 @@ export default function ServiceTiers() {
     registeredAgentFilings: "Registered Agent & State Filings",
     
     nonprofitCompliance: "Nonprofit Tax & Compliance",
-    trustAndEstateAccounting: "Trust & Estate Accounting",
+    trustAccounting: "Trust & Estate Accounting",
     forensicAccounting: "Forensic Accounting & Fraud Investigations",
     businessValuations: "Business Valuations for Compliance Purposes",
     
@@ -135,39 +158,99 @@ export default function ServiceTiers() {
     budgetsAndProjections: "Budgets & Projections",
     industrySpecificAdvisory1: "Industry-Specific Advisory",
     industrySpecificAdvisory2: "Industry-Specific Advisory",
+
+    emailResponseTime: "Email Response Time",
+    zoomCalls: "Zoom Calls (30 min)",
   };
+
+  // Function to format currency
+  const formatCurrency = (amount: number) => {
+    return `$${amount.toLocaleString()}`;
+  };
+
+  // Define which categories and services should always be shown
+  const alwaysShowCategories = ["Advisory", "Communication"];
+  const alwaysShowServices = [
+    // Advisory services
+    "reviewOfFinancials", 
+    "goalAndKPISetting", 
+    "cashFlowForecasting", 
+    "budgetsAndProjections", 
+    "industrySpecificAdvisory1", 
+    "industrySpecificAdvisory2",
+    // Communication services
+    "emailResponseTime", 
+    "zoomCalls"
+  ];
 
   useEffect(() => {
     // Get the query parameters using useSearchParams
     const queryRevenue = searchParams.get('revenue');
+    const parsedRevenue = parseInt(queryRevenue || '0', 10);
+    setConvertedRevenue(parsedRevenue);
+    
+    // Calculate pricing based on basicPricing
+    const calculatedStandardPricing = Math.round(basicPricing * 2.5 / 5) * 5;
+    setStandardPricing(calculatedStandardPricing);
+    
+    const calculatedPremiumPricing = Math.round(calculatedStandardPricing * 1.8 / 5) * 5;
+    setPremiumPricing(calculatedPremiumPricing);
+    
+    // Calculate ARR values
+    const calculatedArrBasic = basicPricing * 12;
+    const calculatedArrStandard = calculatedStandardPricing * 12;
+    const calculatedArrPremium = calculatedPremiumPricing * 12;
+    
+    setArrBasic(calculatedArrBasic);
+    setArrStandard(calculatedArrStandard);
+    setArrPremium(calculatedArrPremium);
+    
+    // Calculate Net ROI values
+    setNetRoiBasic(calculatedArrBasic - parsedRevenue);
+    setNetRoiStandard(calculatedArrStandard - parsedRevenue);
+    setNetRoiPremium(calculatedArrPremium - parsedRevenue);
+    
     const queryServices = searchParams.get('services');
+    
+    let selectedServices: ServiceItem[] = [];
     
     if (queryRevenue && queryServices) {
       setRevenue(queryRevenue);
       try {
         const parsedServices = JSON.parse(queryServices);
         // If the parsed services doesn't include categories, add them
-        const enhancedServices = parsedServices.map((service: ServiceItem) => ({
+        selectedServices = parsedServices.map((service: ServiceItem) => ({
           ...service,
           category: serviceCategories[service.id] || "Other",
           // If a service name is not provided, use the one from our mapping
           name: service.name || serviceNames[service.id] || service.id
         }));
-        setServices(enhancedServices);
       } catch (error) {
         console.error("Failed to parse services:", error);
       }
     } else {
-      // If we don't have data from query params, we'll use all services for demo
-      const allServices = Object.keys(tierData).map(id => ({
-        id,
-        name: serviceNames[id] || id,
-        category: serviceCategories[id] || "Other"
-      }));
-      setServices(allServices);
+      // If we don't have data from query params, we'll load all services from tierData
+      selectedServices = Object.keys(tierData)
+        .filter(id => !alwaysShowServices.includes(id)) // Exclude services that will be added separately
+        .map(id => ({
+          id,
+          name: serviceNames[id] || id,
+          category: serviceCategories[id] || "Other"
+        }));
       setRevenue("Not Specified");
     }
-  }, [searchParams]); // Only depend on searchParams now
+    
+    // Always add the services from alwaysShowCategories
+    const alwaysShownServices = alwaysShowServices.map(id => ({
+      id,
+      name: serviceNames[id] || id,
+      category: serviceCategories[id] || "Other"
+    }));
+    
+    // Combine selected services with always-shown services
+    setServices([...selectedServices, ...alwaysShownServices]);
+    
+  }, [searchParams, basicPricing]); // Only depend on searchParams and basicPricing
 
   // Helper function to render tier cell content
   const renderTierCell = (value: string | boolean) => {
@@ -190,7 +273,7 @@ export default function ServiceTiers() {
         );
       }
     } else {
-      return <span className="text-sm">{value}</span>;
+      return <span className="text-sm text-gray-400">{value}</span>;
     }
   };
 
@@ -207,12 +290,8 @@ export default function ServiceTiers() {
   // Categories in desired order
   const categoryOrder = [
     "Compliance", 
-    "Bookkeeping & Reconciliation", 
-    "Audit & Assurance", 
-    "Regulatory & Entity Compliance", 
-    "Specialized Compliance", 
     "Advisory",
-    "Other"
+    "Communication"
   ];
 
   if (!services.length) {
@@ -222,7 +301,7 @@ export default function ServiceTiers() {
   return (
     <div className="container mx-auto p-4 max-w-5xl">
       <Head>
-        <title>Service Tier Recommendations</title>
+        <title>Pricing Calculator</title>
       </Head>
       
       <div className="mb-6">
@@ -232,14 +311,14 @@ export default function ServiceTiers() {
       </div>
       
       <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-2">Service Tier Recommendations</h1>
-        <p className="text-gray-600">Based on Annual Revenue: ${revenue}</p>
+        <h1 className="text-2xl font-bold mb-2">Pricing Calculator</h1>
+        <p className="text-gray-400">Average Annual Revenue Per Client: ${revenue}</p>
       </div>
       
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
+        <table className="min-w-full">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-gray-800">
               <th className="py-3 px-4 text-left border-b border-r">Service Category</th>
               <th className="py-3 px-4 text-center border-b border-r">
                 <div className="font-bold">Top Tier</div>
@@ -258,17 +337,21 @@ export default function ServiceTiers() {
           <tbody>
             {categoryOrder.map(category => {
               const categoryServices = groupedServices[category] || [];
-              if (categoryServices.length === 0) return null;
+              
+              // Always render categories that should always be shown, even if they have no services
+              if (categoryServices.length === 0 && !alwaysShowCategories.includes(category)) {
+                return null;
+              }
               
               return (
                 <React.Fragment key={category}>
-                  <tr className="bg-gray-200">
+                  <tr className="bg-gray-600">
                     <td colSpan={4} className="py-2 px-4 font-semibold border-b">
                       {category}
                     </td>
                   </tr>
                   {categoryServices.map((service, index) => (
-                    <tr key={service.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <tr key={service.id} className={index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'}>
                       <td className="py-3 px-4 border-b border-r">{service.name}</td>
                       <td className="py-3 px-4 text-center border-b border-r">
                         {renderTierCell(tierData[service.id]?.top)}
@@ -284,6 +367,42 @@ export default function ServiceTiers() {
                 </React.Fragment>
               );
             })}
+            <tr className="bg-gray-600">
+              <td colSpan={4} className="py-2 px-4 font-semibold border-b">
+                Pricing
+              </td>
+            </tr>
+            <tr>
+              <td className="py-3 px-4 border-b border-r">Pricing</td>
+              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(premiumPricing)}</td>
+              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(standardPricing)}</td>
+              <td className="py-3 px-4 text-center border-b bg-orange-400">
+                <input
+                  type="number"
+                  value={basicPricing}
+                  onChange={(e) => setBasicPricing(Number(e.target.value))}
+                  className="w-24 text-center bg-transparent"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="py-3 px-4 border-b border-r">ARR</td>
+              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(arrPremium)}</td>
+              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(arrStandard)}</td>
+              <td className="py-3 px-4 text-center border-b">{formatCurrency(arrBasic)}</td>
+            </tr>
+            <tr>
+              <td className="py-3 px-4 border-b border-r">Average Annual Revenue Per Client</td>
+              <td className="py-3 px-4 text-center border-b border-r ">{formatCurrency(convertedRevenue)}</td>
+              <td className="py-3 px-4 text-center border-b border-r ">{formatCurrency(convertedRevenue)}</td>
+              <td className="py-3 px-4 text-center border-b ">{formatCurrency(convertedRevenue)}</td>
+            </tr>
+            <tr>
+              <td className="py-3 px-4 border-b border-r">Net ROI</td>
+              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(netRoiPremium)}</td>
+              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(netRoiStandard)}</td>
+              <td className="py-3 px-4 text-center border-b">{formatCurrency(netRoiBasic)}</td>
+            </tr>
           </tbody>
         </table>
       </div>
