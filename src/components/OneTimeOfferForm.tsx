@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Button from './Button';
 import { usePlaybookStore } from '../app/store/playbookStore';
