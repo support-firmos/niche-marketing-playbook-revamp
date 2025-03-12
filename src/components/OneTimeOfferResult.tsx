@@ -56,20 +56,51 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
   const parseContent = (content: string) => {
     // Clean up the content first
     const cleanedContent = preprocessMarkdown(content);
+
+    console.log("Cleaned content for parsing:", cleanedContent.slice(0, 500) + "...");
     
-    // Extract the introduction (everything from the start until the first H3 header)
-    const introRegex = /^#\s+Introduction[\s\S]*?(?=\n###|\n?$)/m;
-    const introMatch = cleanedContent.match(introRegex);
-    const introduction = introMatch ? introMatch[0].trim() : '';
+    // Use a pattern-based approach that recognizes the standard structure
     
-    // Extract the footer (content after "All offers are priced...")
-    const footerRegex = /All offers are priced[\s\S]*?$/m;
-    const footerMatch = cleanedContent.match(footerRegex);
-    const footer = footerMatch ? footerMatch[0].trim() : '';
+    // Normalize separators: convert various separator formats to consistent "-----"
+    let normalizedContent = cleanedContent.replace(/\n\s*[-]{3,}\s*\n/g, '\n-----\n');
+    normalizedContent = normalizedContent.replace(/\n\s*[•●*]\s*[-]{3,}\s*\n/g, '\n-----\n');
+    normalizedContent = normalizedContent.replace(/\n\s*[-]\s+[-]{3,}\s*\n/g, '\n-----\n');
     
-    // Extract offers - each starts with ### and a number, continues until the next ### or the end
-    const offerRegex = /###\s+(\d+\.)\s+([^\n]+)[\s\S]*?(?=(?:\n###|\n?$))/gm;
-    const offers: Array<{
+    // Split the content by "-----" separators
+    const sections = normalizedContent
+      .split("-----")
+      .map(section => section.trim())
+      .filter(section => section.length > 0);
+    
+    console.log(`Found ${sections.length} sections separated by dashes`);
+    
+    // Known patterns in One-Time Offers
+    const INTRODUCTION_PATTERN = /introduction to one-time offers|one-time offers provide/i;
+    const PRICING_PATTERN = /(?:priced between|money-back guarantee)/i;
+    const OFFER_NUMBER_PATTERN = /^(?:#{1,3}\s*)?(\d+\.)\s+(?:"([^"]+)"|([^\n]+))/m;
+    
+    // Standard section patterns within offers
+    const SECTION_PATTERNS = {
+      "What It Is": /What It Is:?/i,
+      "Why It Works": /Why It Works:?/i,
+      "What's Required": /What'?s Required:?/i,
+      "Deliverables": /Deliverables:?/i,
+      "Standardization Approach": /Standardization Approach:?/i
+    };
+    
+    // Expected sections in a complete offer
+    const EXPECTED_SECTIONS = [
+      "What It Is",
+      "Why It Works", 
+      "What's Required",
+      "Deliverables",
+      "Standardization Approach"
+    ];
+    
+    // Prepare variables to hold the parsed data
+    let introduction = "";
+    let footer = "";
+    let offers: Array<{
       number: string;
       title: string;
       fullTitle: string;
@@ -77,93 +108,102 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
       sections: Record<string, string>;
     }> = [];
     
-    let offerMatch;
-    while ((offerMatch = offerRegex.exec(cleanedContent)) !== null) {
-      const [fullOffer, number, title] = offerMatch;
-      const offerContent = fullOffer.replace(/^###\s+\d+\.\s+[^\n]+/m, '').trim();
-      
-      // Extract sections within this offer - looking for bold section titles like "**What It Is:**"
-      const sectionRegex = /\*\*([^*]+?):\*\*\s*([\s\S]*?)(?=\n\*\*[^*]+?:\*\*|\n?$)/g;
-      const sections: Record<string, string> = {};
-      
-      let sectionMatch;
-      let foundSections = false;
-      
-      while ((sectionMatch = sectionRegex.exec(offerContent)) !== null) {
-        const [, sectionTitle, sectionContent] = sectionMatch;
-        sections[sectionTitle.trim()] = sectionContent.trim();
-        foundSections = true;
+    // First, look for a pricing footer in any section
+    for (let i = 0; i < sections.length; i++) {
+      if (PRICING_PATTERN.test(sections[i].toLowerCase()) && 
+          sections[i].length < 200 && // Pricing info is typically short
+          !sections[i].match(OFFER_NUMBER_PATTERN)) { // And doesn't have an offer number
+        footer = sections[i];
+        console.log("Found pricing footer section");
+        sections.splice(i, 1); // Remove the footer from sections
+        break;
       }
-      
-      // If no sections were found with the standard format, try an alternative approach
-      if (!foundSections) {
-        // Try to identify different section formats
-        const altSectionRegex = /-\s*\*([^*]+?):\*\s*([\s\S]*?)(?=\n-\s*\*|\n?$)/g;
-        
-        while ((sectionMatch = altSectionRegex.exec(offerContent)) !== null) {
-          const [, sectionTitle, sectionContent] = sectionMatch;
-          sections[sectionTitle.trim()] = sectionContent.trim();
-          foundSections = true;
-        }
-        
-        // One more attempt with plain section headings
-        if (!foundSections) {
-          const plainSectionRegex = /([A-Za-z\s]+?):\s*([\s\S]*?)(?=\n[A-Za-z\s]+?:|\n?$)/g;
-          while ((sectionMatch = plainSectionRegex.exec(offerContent)) !== null) {
-            const [, sectionTitle, sectionContent] = sectionMatch;
-            sections[sectionTitle.trim()] = sectionContent.trim();
-            foundSections = true;
-          }
-        }
-        
-        // If still no sections, use the entire content as a "Description" section
-        if (!foundSections && offerContent.trim()) {
-          sections["Description"] = offerContent.trim();
-        }
-      }
-      
-      offers.push({
-        number,
-        title,
-        fullTitle: `${number} ${title}`.trim(),
-        content: offerContent,
-        sections
-      });
     }
     
-    // If offers array is empty, try an alternative approach
-    if (offers.length === 0) {
-      // Look for numbered offers without ### markdown
-      const altOfferRegex = /(\d+\.)\s+([^\n]+)[\s\S]*?(?=\n\d+\.|\n?$)/gm;
-      while ((offerMatch = altOfferRegex.exec(cleanedContent)) !== null) {
-        const [fullOffer, number, title] = offerMatch;
-        const offerContent = fullOffer.replace(/^\d+\.\s+[^\n]+/m, '').trim();
+    // Then identify the introduction (typically the first section)
+    if (sections.length > 0 && 
+        (INTRODUCTION_PATTERN.test(sections[0].toLowerCase()) || 
+         sections[0].toLowerCase().includes("introduction to one-time offers"))) {
+      introduction = sections[0];
+      console.log("Found introduction section");
+      sections.shift(); // Remove the introduction from sections
+    }
+    
+    // The remaining sections should be offers
+    sections.forEach((section) => {
+      // Check for offer title pattern - can be with or without markdown headers
+      const titleMatch = section.match(OFFER_NUMBER_PATTERN);
+      
+      if (titleMatch) {
+        const [fullMatch, number, quotedTitle, plainTitle] = titleMatch;
+        const title = quotedTitle || plainTitle;
+        console.log(`Found offer: ${number} ${title}`);
         
-        // Extract sections using the same approach as above
+        // Extract the content after the title - clean up any markdown headers
+        let offerContent = section.replace(fullMatch, '').trim();
+        // Also remove any markdown headers (###) that might be in the title line
+        offerContent = offerContent.replace(/^#{1,3}\s+.*$/m, '').trim();
+        
+        // Use a structured approach to find sections within this offer
         const sections: Record<string, string> = {};
-        const sectionRegex = /\*\*([^*]+?):\*\*\s*([\s\S]*?)(?=\n\*\*[^*]+?:\*\*|\n?$)/g;
-        let sectionMatch;
-        let foundSections = false;
         
-        while ((sectionMatch = sectionRegex.exec(offerContent)) !== null) {
-          const [, sectionTitle, sectionContent] = sectionMatch;
-          sections[sectionTitle.trim()] = sectionContent.trim();
-          foundSections = true;
-        }
+        // Check if this offer has standard sections (What It Is, Why It Works, etc.)
+        const hasStandardSections = EXPECTED_SECTIONS.some(sectionName => 
+          offerContent.includes(`${sectionName}:`) || 
+          offerContent.includes(`**${sectionName}:**`)
+        );
         
-        if (!foundSections && offerContent.trim()) {
-          sections["Description"] = offerContent.trim();
+        if (!hasStandardSections) {
+          // Minimal format - provide basic pricing info
+          sections["Price Range"] = footer || "All offers are priced between $299-$899 and include a money-back guarantee.";
+        } else {
+          // Complete format - try different approaches to extract sections
+          
+          // First try looking for bold section markers: **Section Title:**
+          let foundSections = false;
+          const boldSectionPattern = /\*\*([^*:]+?):\*\*\s*([\s\S]*?)(?=\n\*\*[^*:]+?:\*\*|\n?$)/g;
+          let sectionMatch;
+          
+          while ((sectionMatch = boldSectionPattern.exec(offerContent)) !== null) {
+            const [, sectionTitle, sectionContent] = sectionMatch;
+            const cleanSectionTitle = sectionTitle.trim();
+            sections[cleanSectionTitle] = sectionContent.trim();
+            foundSections = true;
+          }
+          
+          // If no bold sections found, try plain text sections
+          if (!foundSections) {
+            // Look for sections like "What It Is: content"
+            for (const [sectionName, pattern] of Object.entries(SECTION_PATTERNS)) {
+              const sectionRegex = new RegExp(`${pattern.source}\\s*([\\s\\S]*?)(?=(?:\\n(?:${Object.values(SECTION_PATTERNS).map(p => p.source).join('|')}))|\\n?$)`, 'i');
+              const match = offerContent.match(sectionRegex);
+              
+              if (match && match[1]) {
+                sections[sectionName] = match[1].trim();
+                foundSections = true;
+              }
+            }
+          }
+          
+          // If still no sections found, but we have content, use it as a description
+          if (!foundSections && offerContent.trim()) {
+            sections["Description"] = offerContent.trim();
+          }
         }
         
         offers.push({
           number,
-          title,
-          fullTitle: `${number} ${title}`.trim(),
+          title: title.trim(),
+          fullTitle: `${number} ${title.trim()}`,
           content: offerContent,
           sections
         });
+      } else if (section.trim() && !footer && PRICING_PATTERN.test(section)) {
+        // If we couldn't identify a section as an offer but it contains pricing info, it's likely the footer
+        footer = section;
+        console.log("Found pricing footer section (fallback)");
       }
-    }
+    });
     
     // Add debug info to the console for troubleshooting
     console.log("Parsed Data:", {
@@ -189,11 +229,20 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
     // Ensure we have a clean string to work with
     let processed = markdown.trim();
     
+    // Log sample of the incoming content for debugging
+    console.log("Raw content sample:", processed.slice(0, 300) + "...");
+    
     // Normalize line endings
     processed = processed.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     
     // Ensure section dividers are properly formatted
-    processed = processed.replace(/\n\s*---\s*\n/g, '\n---\n');
+    // Handle any kind of horizontal divider variation (dashes of any length)
+    processed = processed.replace(/\n\s*[-]{3,}\s*\n/g, '\n-----\n');
+    processed = processed.replace(/\n\s*[•●*]\s+[-]{3,}\s*\n/g, '\n-----\n');
+    processed = processed.replace(/\n\s*[-]\s+[-]{3,}\s*\n/g, '\n-----\n');
+    
+    // Handle single-line separators
+    processed = processed.replace(/^[-]{3,}$/gm, '-----');
     
     // Ensure headers have proper spacing
     processed = processed.replace(/\n(#{1,6})\s*([^\n]+)/g, '\n$1 $2');
@@ -204,10 +253,19 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
     // Fix any potential issues with section formatting
     processed = processed.replace(/\*\*([^:*]+):\s*\*\*/g, '**$1:**');
     
+    // Ensure consistent list formatting (- items should have a space after the dash)
+    processed = processed.replace(/\n-([^\s-])/g, '\n- $1');
+    
+    // Ensure proper spacing between section titles and content
+    processed = processed.replace(/\*\*([^*:]+?):\*\*([^\n])/g, '**$1:** $2');
+    
+    // Ensure section titles without markdown have proper spacing
+    processed = processed.replace(/\n([A-Za-z]['A-Za-z\s]+):\s*/g, '\n$1: ');
+    
     return processed;
   };
   
-  // Format text with bullet points for display
+  // Improved markdown formatting function with better handling of all elements
   const formatTextWithBullets = (text: string) => {
     if (!text || typeof text !== 'string') return null;
     
@@ -224,200 +282,109 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
       // Handle links
       formatted = formatted.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-titleColor underline hover:text-titleColor/80 transition-colors" target="_blank" rel="noopener noreferrer">$1</a>');
       
+      // Handle backtick code blocks
+      formatted = formatted.replace(/`(.*?)`/g, '<code class="bg-black/60 px-1.5 py-0.5 rounded text-sm font-mono text-titleColor">$1</code>');
+      
       return formatted;
     };
     
     // Start with the text
     let processedText = text;
     
-    // Remove any H3 headers (### Header) as they should be handled separately
-    processedText = processedText.replace(/^###\s+.*$/gm, '');
+    // Normalize line breaks to make processing more consistent
+    processedText = processedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     
-    // Process headers (h2, h3, h4)
-    processedText = processedText
-      .replace(/^##\s+(.*?)$/gm, '<div class="text-2xl font-bold text-titleColor mt-6 mb-3">$1</div>')
-      .replace(/^###\s+(.*?)$/gm, '<div class="text-xl font-bold text-titleColor mt-4 mb-2">$1</div>')
-      .replace(/^####\s+(.*?)$/gm, '<div class="text-lg font-bold text-titleColor mt-4 mb-2">$1</div>');
+    // Handle horizontal rules/separators before anything else (match lines with any number of dashes)
+    processedText = processedText.replace(/^-{3,}$/gm, '<hr class="border-t border-gray-700 my-4" />');
     
-    // Check if the text has bullet points or special bullet formats
-    const hasBullets = /^[-•●*]|\n[-•●*]|\n-\s*\*|-\s+|\n\s*-\s+/m.test(processedText);
+    // Handle markdown headers
+    processedText = processedText.replace(/^#\s+(.*?)$/gm, '<h1 class="text-2xl font-bold text-titleColor mb-4">$1</h1>');
+    processedText = processedText.replace(/^##\s+(.*?)$/gm, '<h2 class="text-xl font-bold text-titleColor mb-3">$1</h2>');
+    processedText = processedText.replace(/^###\s+(.*?)$/gm, '<h3 class="text-lg font-bold text-titleColor mb-2">$1</h3>');
+    
+    // Check if the text has bullet points - specifically look for dash/bullet followed by space
+    // We're using a more specific regex to avoid matching separator lines (multiple dashes)
+    const hasBullets = /^[-•●*]\s+|\n[-•●*]\s+/.test(processedText);
     
     if (hasBullets) {
-      // Split by lines to process bullet points
+      // Process bullet point lists
+      const processedLines: string[] = [];
       const lines = processedText.split('\n');
       let inList = false;
-      let inNestedList = false; 
-      let listItems: string[] = [];
-      let nestedItems: string[] = [];
-      let result: string[] = [];
+      let currentList: string[] = [];
       
       lines.forEach(line => {
         const trimmedLine = line.trim();
         
-        // Check for various bullet point patterns
-        const bulletMatch = trimmedLine.match(/^([-•●*])\s+(.*)/);
-        const indentedBulletMatch = trimmedLine.match(/^\s+([-•●*])\s+(.*)/);
-        const specialBulletMatch = trimmedLine.match(/^-\s*\*([^:*]+):\*\s*(.*)/);
-        
-        if (specialBulletMatch) {
-          // This is a special format with a section title
+        // Check if this line is just a horizontal separator (3+ dashes)
+        if (/^-{3,}$/.test(trimmedLine)) {
+          // If we were in a list, end it
           if (inList) {
-            // End previous list if we were in one
-            result.push(`<ul class="list-disc pl-5 space-y-1">${listItems.join('')}</ul>`);
-            listItems = [];
+            processedLines.push(`<ul class="list-disc pl-5 space-y-1">${currentList.join('')}</ul>`);
             inList = false;
+            currentList = [];
           }
           
-          const [, sectionTitle, content] = specialBulletMatch;
-          result.push(`
-            <div class="mt-4">
-              <div class="font-semibold text-titleColor">${sectionTitle.trim()}:</div>
-              <div class="pl-4">${formatInlineText(content.trim())}</div>
-            </div>
-          `);
-        } else if (indentedBulletMatch) {
-          // Indented/nested bullet point
-          const [, bullet, content] = indentedBulletMatch;
-          
-          if (!inNestedList) {
-            inNestedList = true;
-            // If we're starting a nested list within a list item, add it to the last list item
-            if (listItems.length > 0) {
-              const lastItem = listItems.pop() || '';
-              listItems.push(`${lastItem}<ul class="list-circle pl-4 mt-1 space-y-1">`);
-            } else {
-              // If there's no parent list item, just start a new list
-              result.push(`<ul class="list-circle pl-8 space-y-1">`);
-            }
-          }
-          
-          // Add the nested item
-          if (listItems.length > 0) {
-            nestedItems.push(`<li class="my-1">${formatInlineText(content.trim())}</li>`);
-          } else {
-            result.push(`<li class="my-1">${formatInlineText(content.trim())}</li>`);
-          }
-        } else if (bulletMatch) {
-          // Standard bullet point
-          if (inNestedList) {
-            // End previous nested list
-            if (listItems.length > 0) {
-              listItems.push(`${nestedItems.join('')}</ul>`);
-              nestedItems = [];
-            } else {
-              result.push(`${nestedItems.join('')}</ul>`);
-              nestedItems = [];
-            }
-            inNestedList = false;
-          }
-          
+          // Add horizontal separator
+          processedLines.push('<hr class="border-t border-gray-700 my-4" />');
+          return;
+        }
+        
+        // Check if this line is a bullet point (dash/bullet followed by space)
+        if (trimmedLine.match(/^[-•●*]\s+/)) {
           if (!inList) {
             inList = true;
+            currentList = [];
           }
           
-          const [, bullet, content] = bulletMatch;
-          listItems.push(`<li class="my-1">${formatInlineText(content.trim())}</li>`);
-        } else if (trimmedLine === '') {
-          // Empty line
-          if (inNestedList) {
-            // End nested list
-            if (listItems.length > 0) {
-              listItems.push(`${nestedItems.join('')}</ul>`);
-              nestedItems = [];
-            } else {
-              result.push(`${nestedItems.join('')}</ul>`);
-              nestedItems = [];
-            }
-            inNestedList = false;
-          }
-          
-          if (inList) {
-            // End the list
-            result.push(`<ul class="list-disc pl-5 space-y-1">${listItems.join('')}</ul>`);
-            listItems = [];
-            inList = false;
-          }
-          
-          result.push('<div class="my-2"></div>');
+          // Format the bullet point content
+          const content = trimmedLine.replace(/^[-•●*]\s+/, '');
+          currentList.push(`<li class="py-1">${formatInlineText(content)}</li>`);
         } else {
-          // Regular paragraph
-          if (inNestedList) {
-            // End nested list
-            if (listItems.length > 0) {
-              listItems.push(`${nestedItems.join('')}</ul>`);
-              nestedItems = [];
-            } else {
-              result.push(`${nestedItems.join('')}</ul>`);
-              nestedItems = [];
-            }
-            inNestedList = false;
-          }
-          
+          // If not a bullet point and we were in a list, end the list
           if (inList) {
-            // End the list
-            result.push(`<ul class="list-disc pl-5 space-y-1">${listItems.join('')}</ul>`);
-            listItems = [];
+            processedLines.push(`<ul class="list-disc pl-5 space-y-1">${currentList.join('')}</ul>`);
             inList = false;
+            currentList = [];
           }
           
-          // Check if this is a section divider
-          if (trimmedLine === '---') {
-            result.push('<hr class="my-4 border-subtitleColor/20" />');
+          // Regular text
+          if (trimmedLine) {
+            processedLines.push(`<p class="pb-2">${formatInlineText(trimmedLine)}</p>`);
           } else {
-            result.push(`<div class="mb-3 text-subtitleColor">${formatInlineText(trimmedLine)}</div>`);
+            // Empty line - add spacing
+            processedLines.push('<div class="h-2"></div>');
           }
         }
       });
       
-      // Handle any remaining nested items
-      if (inNestedList && nestedItems.length > 0) {
-        if (listItems.length > 0) {
-          listItems.push(`${nestedItems.join('')}</ul>`);
-        } else {
-          result.push(`${nestedItems.join('')}</ul>`);
-        }
+      // If we ended with an open list, close it
+      if (inList) {
+        processedLines.push(`<ul class="list-disc pl-5 space-y-1">${currentList.join('')}</ul>`);
       }
       
-      // Handle any remaining list items
-      if (inList && listItems.length > 0) {
-        result.push(`<ul class="list-disc pl-5 space-y-1">${listItems.join('')}</ul>`);
-      }
-      
-      return <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: result.join('') }} />;
+      return <div dangerouslySetInnerHTML={{ __html: processedLines.join('') }} className="text-subtitleColor/90" />;
     } else {
-      // No bullet points, just format the text with paragraphs
-      const paragraphs = processedText.split('\n\n');
+      // No bullet points, format as regular paragraphs
+      const paragraphs = processedText.split('\n\n').filter(p => p.trim().length > 0);
+      
+      if (paragraphs.length === 0) {
+        // If no paragraphs, try splitting by single newlines
+        const lines = processedText.split('\n').filter(line => line.trim().length > 0);
+        return (
+          <div className="text-subtitleColor/90 space-y-2">
+            {lines.map((line, index) => (
+              <div key={index} dangerouslySetInnerHTML={{ __html: formatInlineText(line) }} />
+            ))}
+          </div>
+        );
+      }
       
       return (
-        <div className="prose prose-invert max-w-none">
-          {paragraphs.map((paragraph, index) => {
-            // Skip empty paragraphs
-            if (!paragraph.trim()) return null;
-            
-            // Check if this is a section divider
-            if (paragraph.trim() === '---') {
-              return <hr key={index} className="my-4 border-subtitleColor/20" />;
-            }
-            
-            // Split by newlines and process each line
-            const lines = paragraph.split('\n');
-            return (
-              <div key={index} className="mb-4">
-                {lines.map((line, lineIndex) => {
-                  // Skip empty lines
-                  if (!line.trim()) return null;
-                  
-                  return (
-                    <div 
-                      key={lineIndex} 
-                      className={`${lineIndex > 0 ? 'mt-2' : ''} text-subtitleColor`}
-                      dangerouslySetInnerHTML={{ __html: formatInlineText(line) }} 
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
+        <div className="text-subtitleColor/90 space-y-3">
+          {paragraphs.map((paragraph, index) => (
+            <div key={index} dangerouslySetInnerHTML={{ __html: formatInlineText(paragraph) }} />
+          ))}
         </div>
       );
     }
@@ -752,16 +719,42 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
       );
     }
     
+    // Check if we're dealing with minimal format
+    const isMinimalFormat = parsedData.offers.length > 0 && 
+                          parsedData.offers.every(offer => 
+                            !offer.content || // No content beyond title
+                            Object.keys(offer.sections).length <= 1 || // Only price info
+                            offer.sections["Price Range"]?.includes("$299-$899")); // Has generic price info
+    
+    // Get the cleaned introduction content (remove markdown headers)
+    const cleanIntroduction = parsedData.introduction ? 
+                             parsedData.introduction.replace(/^#\s+Introduction.*?(\n|$)/i, '') : '';
+    
     return (
       <div className="space-y-8">
         {/* Introduction section */}
         {parsedData.introduction ? (
           <div className="bg-black/50 rounded-lg p-6 border border-subtitleColor/20 shadow-md">
+            <h2 className="text-2xl font-bold text-titleColor mb-4">Introduction to One-Time Offers</h2>
             <div className="text-subtitleColor prose prose-invert max-w-none">
-              {formatTextWithBullets(parsedData.introduction)}
+              {formatTextWithBullets(cleanIntroduction)}
             </div>
           </div>
         ) : null}
+        
+        {/* Minimal format notice */}
+        {isMinimalFormat && (
+          <div className="bg-black/70 rounded-lg p-4 border border-yellow-600/30 shadow-md">
+            <div className="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-subtitleColor/90">
+                This is a minimal format offer list with titles only. Detailed sections for each offer are not available.
+              </p>
+            </div>
+          </div>
+        )}
         
         {/* Offers section */}
         {parsedData.offers && parsedData.offers.length > 0 && (
@@ -792,23 +785,43 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
                   
                   {expandedOffers[index] && (
                     <div className="p-5 space-y-6 bg-black/50 animate-fadeIn">
-                      {Object.entries(offer.sections).map(([sectionTitle, sectionContent], sectionIndex) => {
-                        // Make sure section title is displayed properly (without asterisks)
-                        const cleanSectionTitle = sectionTitle.replace(/\*/g, '').trim();
-                        
-                        return (
-                          <div key={sectionIndex} className="space-y-4">
-                            <div className="flex items-center">
-                              <h5 className="text-subtitleColor font-semibold bg-gradient-to-r from-titleColor/10 to-black/60 px-4 py-2.5 rounded-md border-l-4 border-titleColor w-full shadow-sm">
-                                {cleanSectionTitle}
-                              </h5>
+                      {isMinimalFormat ? (
+                        <div className="text-subtitleColor/80 italic border-l-4 border-subtitleColor/20 pl-4 py-2">
+                          This is a minimal offer listing. Detailed information about this offer is not available in this format.
+                        </div>
+                      ) : null}
+                      
+                      {/* Display sections in the expected order if this is a complete format */}
+                      {!isMinimalFormat && Object.keys(offer.sections).length > 1 ? (
+                        // Complete format - display all sections in standard order
+                        ["What It Is", "Why It Works", "What's Required", "Deliverables", "Standardization Approach"]
+                          .filter(sectionName => offer.sections[sectionName])
+                          .map((sectionName, sectionIndex) => (
+                            <div key={sectionIndex} className="space-y-4">
+                              <div className="flex items-center">
+                                <h5 className="text-subtitleColor font-semibold bg-gradient-to-r from-titleColor/10 to-black/60 px-4 py-2.5 rounded-md border-l-4 border-titleColor w-full shadow-sm">
+                                  {sectionName}
+                                </h5>
+                              </div>
+                              <div className="ml-2 pl-4 border-l border-subtitleColor/30 space-y-2">
+                                {formatTextWithBullets(offer.sections[sectionName])}
+                              </div>
                             </div>
-                            <div className="ml-2 pl-4 border-l border-subtitleColor/30 space-y-2">
-                              {formatTextWithBullets(sectionContent)}
-                            </div>
+                          ))
+                      ) : (
+                        // Minimal format - just show price range
+                        <div className="mt-4">
+                          <h5 className="text-subtitleColor font-semibold bg-gradient-to-r from-titleColor/10 to-black/60 px-4 py-2.5 rounded-md border-l-4 border-titleColor w-full shadow-sm">
+                            Price Range
+                          </h5>
+                          <div className="ml-2 pl-4 border-l border-subtitleColor/30 mt-3">
+                            <p className="text-subtitleColor/90">$299-$899</p>
+                            <p className="text-subtitleColor/80 text-sm mt-1">
+                              All offers include a money-back guarantee if you don't save or earn more than what you paid.
+                            </p>
                           </div>
-                        );
-                      })}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -818,7 +831,7 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
         )}
         
         {/* Footer section */}
-        {parsedData.footer && (
+        {parsedData.footer && !isMinimalFormat && (
           <div className="bg-black/50 rounded-lg p-6 border border-subtitleColor/20 shadow-md">
             <h3 className="text-xl font-bold text-titleColor mb-4">
               Pricing Information
