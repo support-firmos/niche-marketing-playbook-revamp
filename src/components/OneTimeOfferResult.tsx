@@ -79,7 +79,7 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
     // Known patterns in One-Time Offers
     const INTRODUCTION_PATTERN = /introduction to one-time offers|one-time offers provide/i;
     const PRICING_PATTERN = /(?:priced between|money-back guarantee)/i;
-    const OFFER_NUMBER_PATTERN = /^(?:#{1,3}\s*)?(\d+\.)\s+(?:"([^"]+)"|([^\n]+))/m;
+    const OFFER_NUMBER_PATTERN = /^(?:#{1,3}\s*)?(\d+\.)\s+(.*?)(?=\n\s*\*\*What It Is|\n\s*\n|\n?$)/m;
     
     // Standard section patterns within offers
     const SECTION_PATTERNS = {
@@ -137,8 +137,8 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
       const titleMatch = section.match(OFFER_NUMBER_PATTERN);
       
       if (titleMatch) {
-        const [fullMatch, number, quotedTitle, plainTitle] = titleMatch;
-        const title = quotedTitle || plainTitle;
+        const [fullMatch, number, fullTitle] = titleMatch;
+        const title = fullTitle.trim();
         console.log(`Found offer: ${number} ${title}`);
         
         // Extract the content after the title - clean up any markdown headers
