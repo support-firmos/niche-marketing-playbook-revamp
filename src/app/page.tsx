@@ -1,11 +1,13 @@
 // src/app/page.tsx
 'use client';
-
+import { useRouter } from 'next/navigation'
 import { useState } from 'react';
 import Link from 'next/link';
 import ResearchForm from '@/components/ResearchForm';
 import ResearchResult from '@/components/ResearchResult';
 import Button from '@/components/Button';
+import { usePlaybookStore } from './store/playbookStore';
+
 
 interface FormData {
   nicheConsideration: string;
@@ -43,13 +45,17 @@ interface DeepResearchSegment {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [step1GeneratedResearch, setStep1GeneratedResearch] = useState<string | null>(null);
   const [step2EnhancedResearch, setStep2EnhancedResearch] = useState<string | null>(null);
   const [step3GeneratedSalesNav, setStep3GeneratedSalesNav] = useState<string | null>(null);
   const [step3Segments, setStep3Segments] = useState<Segment[] | null>(null);
   const [step4DeepSegmentResearch, setStep4DeepSegmentResearch] = useState<SegmentResearch | null>(null);
-  const [step5GeneratedPlaybook, setStep5GeneratedPlaybook] = useState<string | null>(null);
-  
+
+  //using Zustand (global state library) to access this data accross different pages (step5GeneratedPlaybook is needed for Calculator page)
+  const setStep5GeneratedPlaybook = usePlaybookStore(state => state.setStep5GeneratedPlaybook);
+  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
+
   const [isGeneratingNextStep, setIsGeneratingNextStep] = useState(false);
   const [currentNiche, setCurrentNiche] = useState<string>("");
   //const [progressStatus, setProgressStatus] = useState<string>('');
@@ -292,6 +298,9 @@ export default function Home() {
     }
   };
 
+  const goToServiceSelection = async() => {
+    await router.push('/service-selection');
+  }
 
   const resetGenerator = () => {
     setStep1GeneratedResearch(null);
@@ -343,6 +352,12 @@ const handleSteps = () => {
     return {
       action: () => generateMarketingPlaybook(),
       buttonText: "Generate Marketing Playbook"
+    };
+  }
+  if (isStep5Done) {
+    return {
+      action: () => goToServiceSelection(),
+      buttonText: "Go To Calculator"
     };
   }
   return undefined;
