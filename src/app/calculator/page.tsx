@@ -33,7 +33,7 @@ export default function ServiceTiers() {
     // If playbook data doesn't exist or is empty, redirect to homepage
     if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '') {
       // Redirect to homepage
-      router.push('/');
+      router.push('/service-selection');
     }
   }, [step5GeneratedPlaybook, router]);
 

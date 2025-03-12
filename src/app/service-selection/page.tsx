@@ -23,14 +23,28 @@ interface SelectedServices {
 export default function ServiceSelection() {
   const router = useRouter();
   const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
+  const setStep5GeneratedPlaybook = usePlaybookStore(state => state.setStep5GeneratedPlaybook);
+  const [playbookContent, setPlaybookContent] = useState<string>(step5GeneratedPlaybook || '');
 
-  useEffect(() => {
-      // If playbook data doesn't exist or is empty, redirect to homepage
-      if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '') {
-        // Redirect to homepage
-        router.push('/');
-      }
-    }, [step5GeneratedPlaybook, router]);
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const content = event.target?.result as string;
+        setPlaybookContent(content);
+        setStep5GeneratedPlaybook(content);
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handlePlaybookChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setPlaybookContent(e.target.value);
+    setStep5GeneratedPlaybook(e.target.value);
+
+  };
+
   
   const [revenue, setRevenue] = useState<string>('');
   const [selectedServices, setSelectedServices] = useState<SelectedServices>({
@@ -143,11 +157,36 @@ export default function ServiceSelection() {
     router.push(`/calculator?${searchParams.toString()}`);
   };
 
-  const isFormValid = Number(revenue) > 0 && Object.values(selectedServices).some(value => value);
+  const isFormValid = Number(revenue) > 0 && Object.values(selectedServices).some(value => value) && playbookContent.trim() !== '';
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <form onSubmit={handleSubmit} className="space-y-8">
+        
+      <div className="mb-6">
+        <label htmlFor="marketingPlaybook" className="block text-lg font-medium mb-2">
+          Marketing Playbook
+        </label>
+        <div className="space-y-4">
+          <textarea
+            id="marketingPlaybook"
+            value={playbookContent}
+            onChange={handlePlaybookChange}
+            className="w-full p-3 border border-gray-300 rounded bg-gray-200 text-black h-36"
+            placeholder="Paste your marketing playbook content here..."
+            required
+          />
+          <div className="flex items-center justify-between">
+            <input
+              type="file"
+              id="playbookFile"
+              onChange={handleFileUpload}
+              accept=".txt,.md,.text"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-slate-600 file:text-white hover:file:bg-blue-100"
+            />
+          </div>
+        </div>
+        </div>
         <div className="mb-4">
           <label htmlFor="revenue" className="block text-lg font-medium mb-2">
             Average Annual Revenue Per Client ($)
