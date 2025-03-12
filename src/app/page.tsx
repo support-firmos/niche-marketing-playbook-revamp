@@ -174,62 +174,15 @@ export default function Home() {
         throw new Error('No result returned from sales navigator generation');
       }
       
-      // Format the Sales Navigator content for display
-      let formattedContent;
-      const rawContent = data.result.content;
-      
-      // Try to parse the content as JSON
-      try {
-        const jsonContent = JSON.parse(rawContent.replace(/```json|```/g, '').trim());
-        
-        if (Array.isArray(jsonContent)) {
-          // Format each segment
-          formattedContent = jsonContent.map((segment: SalesNavSegment, index: number) => {
-            const segmentName = segment.name || `Segment ${index + 1}`;
-            const segmentContent = segment.content || '';
-            
-            return `
-======================================
-SEGMENT ${index + 1}: ${segmentName}
-======================================
-
-${segmentContent}
-`;
-          }).join('\n\n');
-        } else {
-          // If it's not an array, just stringify it with pretty formatting
-          formattedContent = JSON.stringify(jsonContent, null, 2);
-        }
-      } catch (e) {
-        // If JSON parsing fails, just use the raw content
-        console.warn('Failed to parse Sales Navigator content as JSON, using raw content:', e);
-        formattedContent = rawContent;
-      }
-      
-      // Store the formatted content for display
-      setStep3GeneratedSalesNav(formattedContent);
+      // Store the formatted content directly from the backend
+      setStep3GeneratedSalesNav(data.result.formattedContent || data.result.content);
       
       // Set the segments for deep segment research
       if (data.result.segments && Array.isArray(data.result.segments) && data.result.segments.length > 0) {
-        console.log(`Parsed ${data.result.segments.length} segments for deep research`);
+        console.log(`Received ${data.result.segments.length} segments for deep research`);
         setStep3Segments(data.result.segments);
       } else {
-        // Attempt to extract segments from the content if explicit segments aren't provided
-        try {
-          // Try to parse the sections from the sales nav content
-          const content = formattedContent;
-          const segments = extractSegmentsFromSalesNav(content);
-          
-          if (segments.length > 0) {
-            console.log(`Extracted ${segments.length} segments from sales nav content`);
-            setStep3Segments(segments);
-          } else {
-            setError('Could not extract segments from the Sales Navigator response. Please try again.');
-          }
-        } catch (parseError) {
-          console.error('Error parsing segments from sales nav content:', parseError);
-          setError('Could not parse segments from the Sales Navigator response. Please try again.');
-        }
+        setError('No segments were found in the Sales Navigator response. Please try again.');
       }
       
     } catch (error) {
@@ -238,29 +191,6 @@ ${segmentContent}
     } finally {
       setIsGeneratingNextStep(false);
     }
-  };
-  
-  // Helper function to extract segments from Sales Navigator content
-  const extractSegmentsFromSalesNav = (content: string): Segment[] => {
-    const segments: Segment[] = [];
-    
-    // Look for patterns like "Segment 1: Name" or "1. Name" followed by content
-    const segmentRegex = /(?:Segment\s+(\d+):|(\d+)\.)\s+([^\n]+)([\s\S]*?)(?=(?:Segment\s+\d+:|(?:\d+)\.)|$)/g;
-    
-    let match;
-    while ((match = segmentRegex.exec(content)) !== null) {
-      const name = match[3]?.trim();
-      const segmentContent = match[4]?.trim();
-      
-      if (name && segmentContent) {
-        segments.push({
-          name,
-          content: segmentContent
-        });
-      }
-    }
-    
-    return segments;
   };
 
   const generateDeepSegmentResearch = async () => {
@@ -275,6 +205,7 @@ ${segmentContent}
     setIsGeneratingNextStep(true);
     
     try {
+      // Send the structured segment data to the API
       const response = await fetch('/api/deep-segment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -293,47 +224,18 @@ ${segmentContent}
         throw new Error('No result returned from deep segment research');
       }
       
-      // The API now returns a structured format with all segments
+      // The API returns properly formatted content and structured data
       const resultContent = data.result;
-      console.log('Deep segment research content preview:',
-        typeof resultContent === 'string'
-          ? resultContent.substring(0, 100) + '...'
-          : JSON.stringify(resultContent).substring(0, 100) + '...'
-      );
       
-      // Format the deep segment research for display
-      let displayContent;
-      if (typeof resultContent === 'string') {
-        displayContent = resultContent;
-      } else if (resultContent.allSegments && Array.isArray(resultContent.allSegments)) {
-        // Format the segments for display
-        displayContent = resultContent.allSegments.map((segment: DeepResearchSegment, index: number) => {
-          return `
-=================================
-DEEP RESEARCH FOR SEGMENT: ${segment.name || `Segment ${index + 1}`}
-=================================
-
-${segment.deepResearch || ''}
-`;
-        }).join('\n\n');
-      } else {
-        // Fallback to JSON string
-        displayContent = JSON.stringify(resultContent, null, 2);
-      }
+      // Use the formatted content from the backend if available
+      const displayContent = resultContent.formattedContent || 
+                           (typeof resultContent === 'string' ? resultContent : JSON.stringify(resultContent, null, 2));
       
-      // Store both the formatted content for display and the original result for playbook generation
+      // Store both the display content and the original result for playbook generation
       setStep4DeepSegmentResearch({
         displayContent,
         originalContent: resultContent
       });
-      
-      // Remove automatic playbook generation to allow reviewing segments first
-      // if (resultContent.combinedResearch) {
-      //   await generateMarketingPlaybook(resultContent.combinedResearch);
-      // } else {
-      //   // If there's no combined research available, pass the display content
-      //   await generateMarketingPlaybook(displayContent);
-      // }
       
     } catch (error) {
       console.error('Error generating deep segment research:', error);
@@ -445,45 +347,57 @@ const handleSteps = () => {
 };
 
   return (
-    <div className="py-10 px-4 container mx-auto">
-      {/* Navigation button to One-Time Offer page */}
-      <div className="flex justify-end mb-6">
-        <Link href="/one-time-offer">
-          <Button>
-            One-Time Offer Generator
-          </Button>
-        </Link>
-      </div>
-      
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-[#f7f8f8]">Customer Niche Marketing Playbook</h1>
-          {/*<p className="text-[#8a8f98]">
-            Find ideal Market Segments for Fractional CFO services
-          </p>*/}
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-surface-1 to-black py-10 px-4">
+      <div className="container mx-auto">
+        {/* Header with navigation */}
+        <header className="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-titleColor">
+            Customer Niche Marketing Playbook
+          </h1>
+          
+          {/* Make the One-Time Offer button more prominent */}
+          <Link href="/one-time-offer">
+            <Button 
+              className="!bg-gradient-to-r from-titleColor/90 to-titleColor/70 text-black font-medium shadow-md shadow-titleColor/20 hover:shadow-titleColor/30 hover:from-titleColor hover:to-titleColor/80 border border-titleColor/50 !py-3 !px-5"
+            >
+              <span className="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
+                </svg>
+                One-Time Offer Generator
+              </span>
+            </Button>
+          </Link>
+        </header>
         
         {error && (
-          <div className="bg-red-900/30 border border-red-700/30 text-red-300 px-4 py-3 rounded-xl mb-6">
-            {error}
+          <div className="bg-black/40 border-l-4 border-red-500 text-subtitleColor p-4 rounded mb-8 shadow-md">
+            <div className="flex items-center">
+              <svg className="h-6 w-6 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <p>{error}</p>
+            </div>
           </div>
         )}
         
-        <div className="card">
-          {displayContent ? (
-            <ResearchResult 
-              content={displayContent} 
-              industry={currentNiche}
-              onReset={resetGenerator}
-              onNextSteps={handleSteps()?.action}
-              nextStepButtonText={handleSteps()?.buttonText}
-              isGeneratingNextStep={isGeneratingNextStep}
-              resultType={step5GeneratedPlaybook ? 'playbook' : step4DeepSegmentResearch ? 'deepSegment' : step3GeneratedSalesNav ? 'salesNav' : step2EnhancedResearch ? 'enhanced' : 'segments'}
-              segments={step3Segments || []}
-            />
-          ) : (
-            <ResearchForm onSubmit={generateResearch} />
-          )}
+        <div className="max-w-3xl mx-auto">
+          <div className="card bg-surface-1/30 border border-subtitleColor/10 rounded-xl p-6 shadow-lg">
+            {displayContent ? (
+              <ResearchResult 
+                content={displayContent} 
+                industry={currentNiche}
+                onReset={resetGenerator}
+                onNextSteps={handleSteps()?.action}
+                nextStepButtonText={handleSteps()?.buttonText}
+                isGeneratingNextStep={isGeneratingNextStep}
+                resultType={step5GeneratedPlaybook ? 'playbook' : step4DeepSegmentResearch ? 'deepSegment' : step3GeneratedSalesNav ? 'salesNav' : step2EnhancedResearch ? 'enhanced' : 'segments'}
+                segments={step3Segments || []}
+              />
+            ) : (
+              <ResearchForm onSubmit={generateResearch} />
+            )}
+          </div>
         </div>
       </div>
     </div>

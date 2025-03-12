@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: 'Niche Marketing Playbook Generator',
+  title: 'Niche Marketing Playbook Generator | One-Time Offer Generator',
   description: 'Create comprehensive marketing playbook for any niche industry in seconds',
 };
 
