@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       Your task is to read and analyze the marketing playbook attached below.
       And based on that playbook, generate a total of 2 industry-specific advisories.
       Your output is to be included among the 4 default advisories stated above. The only difference is that the 2 advisories you generated is
-      much more tailored to the playbook and more industry-specific. 
+      much more tailored to the playbook and more industry-specific. Note that it must be an advisory.
 
       This is the marketing playbook: 
       ${generatedPlaybook}
