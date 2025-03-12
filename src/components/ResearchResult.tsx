@@ -109,7 +109,7 @@ export default function ResearchResult({
             variant="primary"
             size="md"
             onClick={handleNextStep}
-            className="bg-[#3B82F6] text-white hover:bg-[#2563EB] border-none"
+            className="shadow-md shadow-titleColor/20 hover:shadow-titleColor/30 !py-3 !px-5"
           >
             {nextStepButtonText || "Continue"}
           </Button>

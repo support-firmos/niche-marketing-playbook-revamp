@@ -22,9 +22,9 @@ export default function Button({
       className={classNames(
         'font-inter font-medium rounded-lg transition-all duration-300 shadow-sm hover:shadow-md',
         {
-          'bg-gradient-card text-titleColor hover:bg-gradient-hover': variant === 'primary',
-          'bg-surface-1 text-titleColor border border-subtitleColor/20 hover:bg-surface-2': variant === 'secondary',
-          'bg-transparent text-titleColor border border-subtitleColor/40 hover:bg-surface-1': variant === 'outline',
+          'bg-gradient-to-r from-titleColor/90 to-titleColor/70 text-black hover:from-titleColor hover:to-titleColor/80 border border-titleColor/50': variant === 'primary',
+          'bg-black text-titleColor border border-subtitleColor/20 hover:bg-surface-1/20': variant === 'secondary',
+          'bg-transparent text-titleColor border border-titleColor/40 hover:bg-titleColor/10': variant === 'outline',
           'py-2 px-3 text-sm': size === 'sm',
           'py-3 px-4 text-base': size === 'md',
           'py-4 px-6 text-lg': size === 'lg',

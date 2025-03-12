@@ -177,9 +177,13 @@ export async function POST(request: Request) {
       console.log('Raw content:', content.substring(0, 500) + '...');
     }
     
+    // Format the segments into readable text format
+    const formattedContent = formatSegmentsForDisplay(parsedSegments);
+    
     return NextResponse.json({ 
       result: {
         content,
+        formattedContent, // Add the formatted content for frontend display
         segments: parsedSegments
       }
     });
@@ -187,4 +191,24 @@ export async function POST(request: Request) {
     console.error('Error generating segments:', error);
     return NextResponse.json({ error: 'Failed to generate segments' }, { status: 500 });
   }
+}
+
+// Function to format segments into human-readable text
+function formatSegmentsForDisplay(segments: Array<{ name: string; content: string }>): string {
+  if (!segments || segments.length === 0) {
+    return "No segments available";
+  }
+  
+  return segments.map((segment, index) => {
+    const segmentName = segment.name || `Segment ${index + 1}`;
+    const segmentContent = segment.content || '';
+    
+    return `
+======================================
+SEGMENT ${index + 1}: ${segmentName}
+======================================
+
+${segmentContent}
+`;
+  }).join('\n\n');
 }

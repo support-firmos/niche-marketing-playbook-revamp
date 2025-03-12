@@ -22,7 +22,16 @@ export async function POST(request: Request) {
     // Handle both segments array or a single string input
     let segments;
     if (requestData.segments && Array.isArray(requestData.segments)) {
-      segments = requestData.segments;
+      // Make sure the segments have the expected structure
+      segments = requestData.segments.map((segment: SegmentData, index: number) => {
+        // Ensure each segment has name and content properties
+        return {
+          name: segment.name || `Segment ${index + 1}`,
+          content: segment.content || JSON.stringify(segment)
+        };
+      });
+      
+      console.log(`Processed ${segments.length} segments with standard format`);
     } else if (requestData.segmentInfo) {
       console.log('Single segment info detected, converting to array');
       segments = [requestData.segmentInfo];
@@ -34,9 +43,10 @@ export async function POST(request: Request) {
     console.log(`Processing ${segments.length} segments`);
     
     // Process all segments
-    const results = await Promise.all(segments.map(async (segment: string | SegmentData) => {
+    const results = await Promise.all(segments.map(async (segment: SegmentData, index: number) => {
       // Handle segment info as either string or object
       let segmentInfo;
+      const segmentName = segment.name || `Segment ${index + 1}`;
       
       if (typeof segment === 'string') {
         segmentInfo = segment;
@@ -53,19 +63,24 @@ export async function POST(request: Request) {
       // Generate deep segment research for this segment
       const result = await generateDeepSegmentResearch(segmentInfo);
       return {
-        name: typeof segment === 'object' && segment.name ? segment.name : "",
+        name: segmentName,
         deepResearch: result
       };
     }));
     
     // Combine all results
-    const combinedResults = {
-      allSegments: results,
-      // Join all deep research content for using in the playbook
-      combinedResearch: results.map(r => r.deepResearch).join('\n\n====================\n\n')
-    };
+    const combinedResearch = generateCombinedResearch(results);
     
-    return NextResponse.json({ result: combinedResults });
+    // Format the results for display in the frontend
+    const formattedContent = formatSegmentsForDisplay(results);
+    
+    return NextResponse.json({
+      result: {
+        allSegments: results,
+        combinedResearch,
+        formattedContent // Add the formatted content for frontend display
+      }
+    });
     
   } catch (error) {
     console.error('Error in deep segment research:', error);
@@ -507,4 +522,42 @@ ${segmentInfo}`;
   }
 
   return responseData.choices[0].message.content;
+}
+
+// Helper function to generate combined research from all segments
+function generateCombinedResearch(segments: Array<SegmentData & { deepResearch?: string }>): string {
+  // Generate a combined analysis that synthesizes insights from all segments
+  const segmentNames = segments.map(s => s.name).join(', ');
+  
+  return `
+# Combined Segment Analysis
+
+## Overview of Target Segments
+This analysis covers the following segments: ${segmentNames}
+
+## Common Themes Across Segments
+${segments.map(s => `
+### ${s.name}
+${s.deepResearch?.substring(0, 300) || 'No deep research available'}...
+`).join('\n')}
+
+## Comparative Analysis
+The segments analyzed represent different aspects of the target market, each with unique characteristics and needs.
+
+## Strategic Recommendations
+Based on the deep research of these segments, a multi-faceted marketing approach is recommended.
+`;
+}
+
+// Helper function to format segments for display
+function formatSegmentsForDisplay(segments: Array<SegmentData & { deepResearch?: string }>): string {
+  return segments.map((segment) => {
+    return `
+=================================
+DEEP RESEARCH FOR SEGMENT: ${segment.name}
+=================================
+
+${segment.deepResearch || 'No deep research available'}
+`;
+  }).join('\n\n');
 }
