@@ -376,7 +376,7 @@ export default function ServiceTiers() {
               <td className="py-3 px-4 border-b border-r">Pricing</td>
               <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(premiumPricing)}</td>
               <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(standardPricing)}</td>
-              <td className="py-3 px-4 text-center border-b bg-orange-400">
+              <td className="py-3 px-4 text-center border-b bg-slate-900">
                 <input
                   type="number"
                   value={basicPricing}

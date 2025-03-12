@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import ResearchForm from '@/components/ResearchForm';
 import ResearchResult from '@/components/ResearchResult';
+import { usePlaybookStore } from './store/playbookStore';
 
 interface FormData {
   nicheConsideration: string;
@@ -44,8 +45,11 @@ export default function Home() {
   const [step3GeneratedSalesNav, setStep3GeneratedSalesNav] = useState<string | null>(null);
   const [step3Segments, setStep3Segments] = useState<Segment[] | null>(null);
   const [step4DeepSegmentResearch, setStep4DeepSegmentResearch] = useState<SegmentResearch | null>(null);
-  const [step5GeneratedPlaybook, setStep5GeneratedPlaybook] = useState<string | null>(null);
-  
+
+  //using Zustand (global state library) to access this data accross different pages
+  const setStep5GeneratedPlaybook = usePlaybookStore(state => state.setStep5GeneratedPlaybook);
+  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
+
   const [isGeneratingNextStep, setIsGeneratingNextStep] = useState(false);
   const [currentNiche, setCurrentNiche] = useState<string>("");
   //const [progressStatus, setProgressStatus] = useState<string>('');
