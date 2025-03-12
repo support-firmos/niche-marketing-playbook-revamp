@@ -194,7 +194,7 @@ export async function POST(request: Request) {
 }
 
 // Function to format segments into human-readable text
-function formatSegmentsForDisplay(segments: Array<any>): string {
+function formatSegmentsForDisplay(segments: Array<{ name: string; content: string }>): string {
   if (!segments || segments.length === 0) {
     return "No segments available";
   }

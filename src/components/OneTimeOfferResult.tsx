@@ -9,6 +9,8 @@ interface OneTimeOfferResultProps {
   onReset: () => void;
 }
 
+// Used for documentation purposes
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ParsedContent {
   title: string;
   introduction: string;
@@ -100,7 +102,7 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
     // Prepare variables to hold the parsed data
     let introduction = "";
     let footer = "";
-    let offers: Array<{
+    const offers: Array<{
       number: string;
       title: string;
       fullTitle: string;
@@ -577,6 +579,7 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
   };
   
   // Helper for formatting print content
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const formatPrintContent = (content: string, isPdf: boolean): string => {
     const parsedContent = parseContent(content);
     
@@ -714,7 +717,7 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
       return (
         <div className="text-center p-8 bg-black/30 rounded-lg border border-subtitleColor/10">
           <p className="text-subtitleColor text-lg">Unable to parse the content properly.</p>
-          <p className="text-subtitleColor/70 mt-2">You can view the raw content by clicking the "Raw Text" button above.</p>
+          <p className="text-subtitleColor/70 mt-2">You can view the raw content by clicking the &quot;Raw Text&quot; button above.</p>
         </div>
       );
     }
@@ -817,7 +820,7 @@ const OneTimeOfferResult: React.FC<OneTimeOfferResultProps> = ({
                           <div className="ml-2 pl-4 border-l border-subtitleColor/30 mt-3">
                             <p className="text-subtitleColor/90">$299-$899</p>
                             <p className="text-subtitleColor/80 text-sm mt-1">
-                              All offers include a money-back guarantee if you don't save or earn more than what you paid.
+                              All offers include a money-back guarantee if you don&apos;t save or earn more than what you paid.
                             </p>
                           </div>
                         </div>

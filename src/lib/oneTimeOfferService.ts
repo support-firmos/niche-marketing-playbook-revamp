@@ -209,6 +209,7 @@ function extractIndustry(text: string): string | null {
 }
 
 // Fallback function for simulated response
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function simulateGptResponse(text: string): string {
   return `# Introduction to One-Time Offers
 

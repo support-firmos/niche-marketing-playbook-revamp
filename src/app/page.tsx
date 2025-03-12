@@ -28,12 +28,14 @@ interface SegmentResearch {
 }
 
 // Define interfaces for structured segment data
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SalesNavSegment {
   name?: string;
   content?: string;
   [key: string]: unknown;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface DeepResearchSegment {
   name?: string;
   deepResearch?: string;

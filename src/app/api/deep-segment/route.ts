@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     let segments;
     if (requestData.segments && Array.isArray(requestData.segments)) {
       // Make sure the segments have the expected structure
-      segments = requestData.segments.map((segment: any, index: number) => {
+      segments = requestData.segments.map((segment: SegmentData, index: number) => {
         // Ensure each segment has name and content properties
         return {
           name: segment.name || `Segment ${index + 1}`,
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     const results = await Promise.all(segments.map(async (segment: SegmentData, index: number) => {
       // Handle segment info as either string or object
       let segmentInfo;
-      let segmentName = segment.name || `Segment ${index + 1}`;
+      const segmentName = segment.name || `Segment ${index + 1}`;
       
       if (typeof segment === 'string') {
         segmentInfo = segment;
@@ -525,7 +525,7 @@ ${segmentInfo}`;
 }
 
 // Helper function to generate combined research from all segments
-function generateCombinedResearch(segments: Array<any>): string {
+function generateCombinedResearch(segments: Array<SegmentData & { deepResearch?: string }>): string {
   // Generate a combined analysis that synthesizes insights from all segments
   const segmentNames = segments.map(s => s.name).join(', ');
   
@@ -538,7 +538,7 @@ This analysis covers the following segments: ${segmentNames}
 ## Common Themes Across Segments
 ${segments.map(s => `
 ### ${s.name}
-${s.deepResearch.substring(0, 300)}...
+${s.deepResearch?.substring(0, 300) || 'No deep research available'}...
 `).join('\n')}
 
 ## Comparative Analysis
@@ -550,14 +550,14 @@ Based on the deep research of these segments, a multi-faceted marketing approach
 }
 
 // Helper function to format segments for display
-function formatSegmentsForDisplay(segments: Array<any>): string {
-  return segments.map((segment, index) => {
+function formatSegmentsForDisplay(segments: Array<SegmentData & { deepResearch?: string }>): string {
+  return segments.map((segment) => {
     return `
 =================================
 DEEP RESEARCH FOR SEGMENT: ${segment.name}
 =================================
 
-${segment.deepResearch}
+${segment.deepResearch || 'No deep research available'}
 `;
   }).join('\n\n');
 }
