@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Button from './Button';
+import { usePlaybookStore } from '../app/store/playbookStore';
 
 interface OneTimeOfferFormProps {
   onSubmit: (content: string) => void;
@@ -10,8 +11,12 @@ interface OneTimeOfferFormProps {
 }
 
 export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOfferFormProps) {
+  // Directly access the store state
+  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
+  const setStep5GeneratedPlaybook = usePlaybookStore(state => state.setStep5GeneratedPlaybook);
+  
   const [file, setFile] = useState<File | null>(null);
-  const [fileContent, setFileContent] = useState('');
+  const [fileContent, setFileContent] = useState<string>(step5GeneratedPlaybook || '');
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -33,13 +38,14 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
     reader.onload = () => {
       const content = reader.result as string;
       setFileContent(content);
+      setStep5GeneratedPlaybook(content); // Update the store when file is uploaded
       setFile(selectedFile);
     };
     reader.onerror = () => {
       setError('Error reading the file');
     };
     reader.readAsText(selectedFile);
-  }, []);
+  }, [setStep5GeneratedPlaybook]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -48,7 +54,10 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
   });
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFileContent(e.target.value);
+    const newContent = e.target.value;
+    setFileContent(newContent);
+    setStep5GeneratedPlaybook(newContent); // Update the store when text is changed
+    
     // Clear file association if the user manually edits the text
     if (file) setFile(null);
   };
@@ -166,4 +175,4 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
       </div>
     </form>
   );
-} 
+}

@@ -55,7 +55,6 @@ export default function ServiceTiers() {
   const [netRoiStandard, setNetRoiStandard] = useState<number>(0);
   const [netRoiPremium, setNetRoiPremium] = useState<number>(0);
 
-  const [error, setError] = useState<string>('');
   // Updated tier data based on the provided image
   const tierData: TierData = {
     // Compliance
@@ -202,7 +201,7 @@ export default function ServiceTiers() {
    const generateAdvisories = useCallback(
     async (generatedPlaybook: string) => {
       if (!generatedPlaybook || generatedPlaybook === "") {
-        setError("Data from previous step is not successfully read!");
+       // setError("Data from previous step is not successfully read!");
         return;
       }
       console.log("generated playbook: ", generatedPlaybook);
@@ -215,7 +214,6 @@ export default function ServiceTiers() {
         });
   
         if (!response.ok) {
-          setError(`Failed to generate advisories: ${response.status}`);
           throw new Error(`Failed to generate advisories: ${response.status}`);
         }
   
@@ -236,7 +234,7 @@ export default function ServiceTiers() {
             setIndustryAdvisory2(advisoriesExtracted[1]);
           }
         } else {
-          setError("Could not generate advisories. Please try again.");
+          
         }
       } catch (e) {
         console.error("Error:", e);
@@ -509,17 +507,11 @@ export default function ServiceTiers() {
       
       <div className="mt-8 text-center">
         <button 
-          onClick={() => window.print()}
+          onClick={() => router.push('/one-time-offer')}
           className="bg-blue-600 text-white px-6 py-2 rounded font-medium hover:bg-blue-700 mr-4"
         >
-          Print Results
+          One Time Offer
         </button>
-        <Link 
-          href="/service-selection"
-          className="bg-gray-200 text-gray-800 px-6 py-2 rounded font-medium hover:bg-gray-300"
-        >
-          Start Over
-        </Link>
       </div>
     </div>
   );

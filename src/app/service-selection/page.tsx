@@ -138,8 +138,8 @@ export default function ServiceSelection() {
     
     // Create an array of selected services
     const servicesArray = Object.entries(selectedServices)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([id, _]) => {
+      .filter(([, isSelected]) => isSelected)
+      .map(([id]) => {
         // Find the service label by id
         const service = serviceCategories.flatMap(cat => cat.services).find(svc => svc.id === id);
         return {
