@@ -9,119 +9,37 @@ export const runtime = 'edge';
 
 export async function POST(request: Request) {
   try {
-    console.log('Generate-segments API called');
+    console.log('Calling industry-advisory LLM call');
     
     const requestData = await request.json();
-    const { 
-      nicheConsideration, 
-      profitability, 
-      experience, 
-      clientPercentage, 
-      successStories, 
-      teamSize 
-    } = requestData;
+    const { generatedPlaybook} = requestData;
     
-    if (!nicheConsideration) {
-      console.error('No niche consideration provided in request');
-      return NextResponse.json({ error: 'Niche consideration is required' }, { status: 400 });
+    if (!generatedPlaybook) {
+      console.error('No playbook is provided in request');
+      return NextResponse.json({ error: 'Playbook is required' }, { status: 400 });
     }
     
-    console.log('Niche details received in request');
-    
-    // Extract a brief niche summary for the header
-    const nicheShortSummary = nicheConsideration.split('\n')[0].trim();
-    
     const prompt = `
-    ## Accounting Advisory Services - Market Fit & Segment Research for ${nicheShortSummary}
+      You are skilled in analyzing Customer Marketing Playbooks, and based on that playbook, you recommend advisories as service for accounting firms.
+      I have here 4 default advisories: Review of Financials, Goal & KPI setting, Cash Flow Forecasting, and Budgets & Projections.
+      These are all advisory services available for subscription to the accounting firm clients.
 
-    ### Input Information
-    
-    1) Niche Consideration:
-    ${nicheConsideration}
-    
-    2) Client Profitability:
-    ${profitability}
-    
-    3) Experience in the Niche:
-    ${experience}
-    
-    4) Percentage of Current Clients in this Niche:
-    ${clientPercentage}
-    
-    5) Success Stories:
-    ${successStories}
-    
-    6) Team Size:
-    ${teamSize}
+      Your task is to read and analyze the marketing playbook attached below.
+      And based on that playbook, generate a total of 2 industry-specific advisories.
+      Your output is to be included among the 4 default advisories stated above. The only difference is that the 2 advisories you generated is
+      much more tailored to the playbook and more industry-specific. 
 
-    ### Introduction & Context
+      This is the marketing playbook: 
+      ${generatedPlaybook}
 
-    Accountants often undervalue their services by treating them as mere "compliance" work (e.g., tax returns, basic bookkeeping). However, these same professionals can (and should) offer **high-ticket recurring services** such as advisory, consulting, or niche-specific guidance. This prompt helps identify the most profitable segments within the niche where accounting professionals can provide high-value, consultative offerings that solve deeper client pain points and justify higher pricing.
-
-    ---
-
-    ### Task
-
-    Based on the detailed input provided above, determine 5-7 specific segments within the described niche that would be the best fit for high-ticket, recurring accounting advisory services. These must meet:
-
-    1. **Financial Viability**: $5M–$150M annual revenue (can afford $15K–$30K/month retainers)
-    2. **Recurring Need Justification**: Requires ongoing financial strategy, not one-time services
-    3. **Accessibility**: Decision-makers reachable via LinkedIn/email/phone
-    4. **Service Fit**: Needs budgeting, cash flow management, KPI tracking, or financial advisory
-
-    ---
-
-    ### Output Format
-
-    Present 5-7 well-researched market segments (niches), ranked from highest to lowest potential profitability. Use the following visual format:
-
-   
-    ======================================
-    SEGMENT 1: [SEGMENT NAME]
-    ======================================
-
-    - **Justification for Advisory Services**: [Specific need for recurring financial leadership]
-    - **Estimated Market US Potential**: [X companies, $Y–$Z revenue range]
-    - **Ease of Outreach**: [Low/Medium/High based on decision-maker visibility]
-    - **Pain Points**: [Key financial challenges this segment faces]
-
-    ======================================
-    SEGMENT 2: [SEGMENT NAME]
-    ======================================
-
-    - **Justification for Advisory Services**: [Specific need for recurring financial leadership]
-    - **Estimated Market US Potential**: [X companies, $Y–$Z revenue range]
-    - **Ease of Outreach**: [Low/Medium/High based on decision-maker visibility]
-    - **Pain Points**: [Key financial challenges this segment faces]
-    
-
-    *(continue same format for all 5-7 segments)*
-
-    ---
-
-    ### Key Targeting Criteria
-
-    When identifying the best segments, prioritize:
-    - Complex financial operations requiring ongoing expertise
-    - Regulatory or compliance challenges specific to the niche
-    - Growth-stage companies needing financial strategy but not ready for full-time financial leadership
-    - Businesses with potential for value-based pricing of advisory services
-    - Consider the current team size (${teamSize}) when evaluating if these segments can be effectively served
-    
-    Important Notes:
-    - DO NOT USE ANY CONVERSATIONAL WORDS OR LIKE INTROS, GIVE THE OUTPUT DIRECTLY.
-    - USE THE INFORMATION FROM ALL 6 INPUTS TO INFORM YOUR RECOMMENDATIONS.
-
-    Arrange segments from Highest to Lowest Profiting Segments for Accounting Advisory Services with clear visual separation between each segment.
+      Please format your final response containing only two texts that are separated by a comma: advisory1, advisory2
+      No introductions, conclusions, or any text in your final response. 
+      Your final and only response must only constitute the two words separated with a comma.
     `;
     
-    console.log('OpenRouter API key exists:', !!process.env.OPENROUTER_API_KEY);
-    
     try {
-      // Use non-streaming approach for this first prompt
       console.log('Sending request to OpenRouter API...');
       
-      // Try with different models if the first one fails
       const availableModels = [
         'google/gemini-2.0-flash-001',
         'qwen/qwq-32b',
@@ -194,9 +112,9 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
   } catch (error) {
-    console.error('Error in generate-segments API:', error);
+    console.error('Error in API:', error);
     return NextResponse.json({ 
-      error: 'Failed to generate segments',
+      error: 'Failed to generate',
       details: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }

@@ -1,7 +1,9 @@
+//app/service-selection/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { usePlaybookStore } from '../store/playbookStore';
 
 
 interface ServiceItem {
@@ -20,6 +22,16 @@ interface SelectedServices {
 
 export default function ServiceSelection() {
   const router = useRouter();
+  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
+
+  useEffect(() => {
+      // If playbook data doesn't exist or is empty, redirect to homepage
+      if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '') {
+        // Redirect to homepage
+        router.push('/');
+      }
+    }, [step5GeneratedPlaybook, router]);
+  
   const [revenue, setRevenue] = useState<string>('');
   const [selectedServices, setSelectedServices] = useState<SelectedServices>({
     // Tax Services

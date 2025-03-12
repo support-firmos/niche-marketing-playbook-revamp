@@ -1,11 +1,13 @@
 'use client';
-// pages/calculator.tsx
+//app/calculator/page.tsx
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { usePlaybookStore } from '../store/playbookStore';
+import { useCallback, useMemo } from "react";
 
 interface ServiceItem {
   id: string;
@@ -25,10 +27,23 @@ interface TierData {
 
 export default function ServiceTiers() {
   const router = useRouter();
+  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook) ?? '';
+
+  useEffect(() => {
+    // If playbook data doesn't exist or is empty, redirect to homepage
+    if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '') {
+      // Redirect to homepage
+      router.push('/');
+    }
+  }, [step5GeneratedPlaybook, router]);
+
   const searchParams = useSearchParams();
   const [revenue, setRevenue] = useState<string>('');
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [basicPricing, setBasicPricing] = useState<number>(500);
+
+  const [industryAdvisory1, setIndustryAdvisory1] = useState<string>('');
+  const [industryAdvisory2, setIndustryAdvisory2] = useState<string>('');
 
   const [convertedRevenue, setConvertedRevenue] = useState<number>(0);
   const [standardPricing, setStandardPricing] = useState<number>(0);
@@ -40,6 +55,7 @@ export default function ServiceTiers() {
   const [netRoiStandard, setNetRoiStandard] = useState<number>(0);
   const [netRoiPremium, setNetRoiPremium] = useState<number>(0);
 
+  const [error, setError] = useState<string>('');
   // Updated tier data based on the provided image
   const tierData: TierData = {
     // Compliance
@@ -124,8 +140,7 @@ export default function ServiceTiers() {
     zoomCalls: "Communication",
   };
 
-  // Service names mapping
-  const serviceNames: Record<string, string> = {
+  const serviceNames: Record<string, string> = useMemo(() => ({
     businessTaxFiling: "Business Tax Filing",
     personalTaxFiling: "Personal Tax Filing",
     salesTaxCompliance: "Sales & Use Tax Compliance",
@@ -156,12 +171,12 @@ export default function ServiceTiers() {
     goalAndKPISetting: "Goal & KPI Setting",
     cashFlowForecasting: "Cash Flow Forecasting",
     budgetsAndProjections: "Budgets & Projections",
-    industrySpecificAdvisory1: "Industry-Specific Advisory",
-    industrySpecificAdvisory2: "Industry-Specific Advisory",
-
+    industrySpecificAdvisory1: industryAdvisory1,
+    industrySpecificAdvisory2: industryAdvisory2,
+  
     emailResponseTime: "Email Response Time",
     zoomCalls: "Zoom Calls (30 min)",
-  };
+  }), [industryAdvisory1, industryAdvisory2]);
 
   // Function to format currency
   const formatCurrency = (amount: number) => {
@@ -183,7 +198,63 @@ export default function ServiceTiers() {
     "zoomCalls"
   ];
 
+   //LLM to generate 2 advisories
+   const generateAdvisories = useCallback(
+    async (generatedPlaybook: string) => {
+      if (!generatedPlaybook || generatedPlaybook === "") {
+        setError("Data from previous step is not successfully read!");
+        return;
+      }
+      console.log("generated playbook: ", generatedPlaybook);
+  
+      try {
+        const response = await fetch("/api/industry-advisory", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ generatedPlaybook }),
+        });
+  
+        if (!response.ok) {
+          setError(`Failed to generate advisories: ${response.status}`);
+          throw new Error(`Failed to generate advisories: ${response.status}`);
+        }
+  
+        const advisories = await response.json();
+        console.log("advisories: ", advisories);
+        console.log("advisories.result: ", advisories.result);
+  
+        if (advisories.result) {
+          const advisoriesPreExtract: string = advisories.result;
+          const advisoriesExtracted: string[] = advisoriesPreExtract
+            .split(", ")
+            .map((word) => word.trim());
+  
+          if (advisoriesExtracted.length >= 1) {
+            setIndustryAdvisory1(advisoriesExtracted[0]);
+          }
+          if (advisoriesExtracted.length >= 2) {
+            setIndustryAdvisory2(advisoriesExtracted[1]);
+          }
+        } else {
+          setError("Could not generate advisories. Please try again.");
+        }
+      } catch (e) {
+        console.error("Error:", e);
+      }
+    },
+    [] // Dependencies go here
+  );
+
+  // Add this before your main useEffect
   useEffect(() => {
+    // Only call when component first mounts
+    if (step5GeneratedPlaybook) {
+      generateAdvisories(step5GeneratedPlaybook);
+    }
+  }, [generateAdvisories, step5GeneratedPlaybook]);
+
+  useEffect(() => {
+    
     // Get the query parameters using useSearchParams
     const queryRevenue = searchParams.get('revenue');
     const parsedRevenue = parseInt(queryRevenue || '0', 10);
@@ -250,7 +321,28 @@ export default function ServiceTiers() {
     // Combine selected services with always-shown services
     setServices([...selectedServices, ...alwaysShownServices]);
     
-  }, [searchParams, basicPricing]); // Only depend on searchParams and basicPricing
+  }, [searchParams, basicPricing ]); // Only depend on searchParams and basicPricing
+
+  useEffect(() => {
+    // Only run this effect if industry advisories have been set and services exist
+    if ((industryAdvisory1 || industryAdvisory2) && services.length > 0) {
+      // Create a new services array with updated names for the industry advisory services
+      const updatedServices = services.map(service => {
+        if (service.id === 'industrySpecificAdvisory1') {
+          return { ...service, name: industryAdvisory1 };
+        } else if (service.id === 'industrySpecificAdvisory2') {
+          return { ...service, name: industryAdvisory2 };
+        }
+        return service;
+      });
+      
+      // Update the services state with the new array
+      if (JSON.stringify(updatedServices) !== JSON.stringify(services)) {
+        setServices(updatedServices);
+      }
+    }
+  }, [industryAdvisory1, industryAdvisory2]);
+
 
   // Helper function to render tier cell content
   const renderTierCell = (value: string | boolean) => {
@@ -305,9 +397,13 @@ export default function ServiceTiers() {
       </Head>
       
       <div className="mb-6">
-        <Link href="/service-selection" className="text-blue-600 hover:underline">
+        <button 
+          onClick={() => router.push('/service-selection')}
+          className="text-blue-600 hover:underline"
+        >
           ← Back to Selection
-        </Link>
+        </button>
+
       </div>
       
       <div className="mb-8">
@@ -351,7 +447,11 @@ export default function ServiceTiers() {
                     </td>
                   </tr>
                   {categoryServices.map((service, index) => (
-                    <tr key={service.id} className={index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'}>
+                    <tr key={service.id}     className={
+                      service.id === 'industrySpecificAdvisory1' || service.id === 'industrySpecificAdvisory2'
+                        ? 'bg-slate-900' // Special background for advisory rows
+                        : index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'
+                    }>
                       <td className="py-3 px-4 border-b border-r">{service.name}</td>
                       <td className="py-3 px-4 text-center border-b border-r">
                         {renderTierCell(tierData[service.id]?.top)}
@@ -376,7 +476,7 @@ export default function ServiceTiers() {
               <td className="py-3 px-4 border-b border-r">Pricing</td>
               <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(premiumPricing)}</td>
               <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(standardPricing)}</td>
-              <td className="py-3 px-4 text-center border-b bg-slate-900">
+              <td className="py-3 px-4 text-center border-b bg-slate-800">
                 <input
                   type="number"
                   value={basicPricing}
