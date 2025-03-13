@@ -6,6 +6,8 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { usePlaybookStore } from '../store/playbookStore';
+import { useServicesStore } from '../store/servicesStore';
+import { useRevenueStore } from '../store/revenueStore';
 import { useCallback, useMemo } from "react";
 
 interface ServiceItem {
@@ -27,16 +29,17 @@ interface TierData {
 export default function ServiceTiersClient() {
   const router = useRouter();
   const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook) ?? '';
+  const revenueParams = useRevenueStore(state => state.revenue);
+  const selectedServicesParams = useServicesStore(state => state.selectedServices);
 
   useEffect(() => {
     // If playbook data doesn't exist or is empty, redirect to homepage
-    if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '') {
+    if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '' || selectedServicesParams.length === 0) {
       // Redirect to homepage
-      router.push('/service-selection');
+      router.push('/marketing-playbook');
     }
   }, [step5GeneratedPlaybook, router]);
 
-  const searchParams = useSearchParams();
   const [revenue, setRevenue] = useState<string>('');
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [basicPricing, setBasicPricing] = useState<number>(500);
@@ -252,9 +255,7 @@ export default function ServiceTiersClient() {
 
   useEffect(() => {
     
-    // Get the query parameters using useSearchParams
-    const queryRevenue = searchParams.get('revenue');
-    const parsedRevenue = parseInt(queryRevenue || '0', 10);
+    const parsedRevenue = parseInt(revenueParams || '0', 10);
     setConvertedRevenue(parsedRevenue);
     
     // Calculate pricing based on basicPricing
@@ -278,27 +279,18 @@ export default function ServiceTiersClient() {
     setNetRoiStandard(calculatedArrStandard - parsedRevenue);
     setNetRoiPremium(calculatedArrPremium - parsedRevenue);
     
-    const queryServices = searchParams.get('services');
+    let servicesToUse: ServiceItem[] = [];
     
-    let selectedServices: ServiceItem[] = [];
-    
-    if (queryRevenue && queryServices) {
-      setRevenue(queryRevenue);
-      try {
-        const parsedServices = JSON.parse(queryServices);
-        // If the parsed services doesn't include categories, add them
-        selectedServices = parsedServices.map((service: ServiceItem) => ({
-          ...service,
-          category: serviceCategories[service.id] || "Other",
-          // If a service name is not provided, use the one from our mapping
-          name: service.name || serviceNames[service.id] || service.id
-        }));
-      } catch (error) {
-        console.error("Failed to parse services:", error);
-      }
+    if (revenueParams && selectedServicesParams.length > 0) {
+      setRevenue(revenueParams);
+      servicesToUse = selectedServicesParams.map(service => ({
+        id: service.id,
+        name: service.label || serviceNames[service.id] || service.id,
+        category: serviceCategories[service.id] || "Other"
+      }));
     } else {
       // If we don't have data from query params, we'll load all services from tierData
-      selectedServices = Object.keys(tierData)
+      servicesToUse = Object.keys(tierData)
         .filter(id => !alwaysShowServices.includes(id)) // Exclude services that will be added separately
         .map(id => ({
           id,
@@ -316,9 +308,9 @@ export default function ServiceTiersClient() {
     }));
     
     // Combine selected services with always-shown services
-    setServices([...selectedServices, ...alwaysShownServices]);
+    setServices([...servicesToUse, ...alwaysShownServices]);
     
-  }, [searchParams, basicPricing, serviceNames]); // Added serviceNames to the dependency array
+  },[revenueParams, selectedServicesParams, basicPricing, serviceNames, tierData]); // Added dependencies
 
   useEffect(() => {
     // Only run this effect if industry advisories have been set and services exist
@@ -392,16 +384,7 @@ export default function ServiceTiersClient() {
       <Head>
         <title>Pricing Calculator</title>
       </Head>
-      
-      <div className="mb-6">
-        <button 
-          onClick={() => router.push('/service-selection')}
-          className="text-blue-600 hover:underline"
-        >
-          ← Back to Selection
-        </button>
-
-      </div>
+    
       
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">Pricing Calculator</h1>

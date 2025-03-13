@@ -18,7 +18,9 @@ export async function POST(request: Request) {
       experience, 
       clientPercentage, 
       successStories, 
-      teamSize 
+      teamSize,
+      revenue,
+      services 
     } = requestData;
     
     if (!nicheConsideration) {
@@ -32,6 +34,9 @@ export async function POST(request: Request) {
     const nicheShortSummary = nicheConsideration.split('\n')[0].trim();
     
     const prompt = `
+    revenue here: ${revenue}
+    services here: ${services}
+    
     ## Accounting Advisory Services - Market Fit & Segment Research for ${nicheShortSummary}
 
     ### Input Information
