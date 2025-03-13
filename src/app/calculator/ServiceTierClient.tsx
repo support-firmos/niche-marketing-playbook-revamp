@@ -310,7 +310,7 @@ export default function ServiceTiersClient() {
     // Combine selected services with always-shown services
     setServices([...servicesToUse, ...alwaysShownServices]);
     
-  },[revenueParams, selectedServicesParams, basicPricing, serviceNames, tierData]); // Added dependencies
+  },[basicPricing, serviceNames, tierData]); // Added dependencies
 
   useEffect(() => {
     // Only run this effect if industry advisories have been set and services exist
