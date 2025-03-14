@@ -102,17 +102,17 @@ export default function ResearchResult({
         <ReactMarkdown 
             components={{
               // This ensures paragraphs have proper spacing
-              p: ({node, ...props}) => <p className="mb-4" {...props} />,
+              p: ({...props}) => <p className="mb-4" {...props} />,
               // Preserve newlines within paragraphs
               br: () => <br />,
               // Custom styling for headings
-              h1: ({node, ...props}) => <h1 className="text-xl font-bold mb-4" {...props} />,
-              h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-3" {...props} />,
-              h3: ({node, ...props}) => <h3 className="text-md font-bold mb-2" {...props} />,
+              h1: ({...props}) => <h1 className="text-xl font-bold mb-4" {...props} />,
+              h2: ({...props}) => <h2 className="text-lg font-bold mb-3" {...props} />,
+              h3: ({...props}) => <h3 className="text-md font-bold mb-2" {...props} />,
               // Custom styling for lists
-              ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
-              ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
-              li: ({node, ...props}) => <li className="mb-1" {...props} />
+              ul: ({...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
+              ol: ({...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
+              li: ({...props}) => <li className="mb-1" {...props} />
             }}
           >
             {/* Convert single newlines to break tags for proper rendering */}
