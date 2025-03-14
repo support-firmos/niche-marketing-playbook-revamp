@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { usePlaybookStore } from '../store/playbookStore';
 
 export default function PlaybookInput() {
-  const router = useRouter();
   const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
   const setStep5GeneratedPlaybook = usePlaybookStore(state => state.setStep5GeneratedPlaybook);
   

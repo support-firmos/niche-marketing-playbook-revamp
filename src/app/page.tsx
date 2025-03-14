@@ -21,7 +21,7 @@ interface ServiceCategory {
 export default function ServiceSelection() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
-  const { selectedServices, setSelectedServices } = useServicesStore();
+  const { setSelectedServices } = useServicesStore();
   const { revenue, setRevenue } = useRevenueStore();
   const [localSelectedServices, setLocalSelectedServices] = useState<Record<string, boolean>>({});
 
