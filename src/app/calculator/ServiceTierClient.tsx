@@ -9,6 +9,7 @@ import { usePlaybookStore } from '../store/playbookStore';
 import { useCallback, useMemo } from "react";
 import { useServicesStore } from '../store/servicesStore';
 import { useRevenueStore } from '../store/revenueStore';
+import { useAdvisoriesState } from '../store/twoAdvisoriesStore';
 
 interface ServiceItem {
   id: string;
@@ -45,8 +46,7 @@ export default function ServiceTiersClient() {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [basicPricing, setBasicPricing] = useState<number>(500);
 
-  const [industryAdvisory1, setIndustryAdvisory1] = useState<string>('');
-  const [industryAdvisory2, setIndustryAdvisory2] = useState<string>('');
+  const {industryAdvisory1, industryAdvisory2, setIndustryAdvisory1, setIndustryAdvisory2 } = useAdvisoriesState();
 
   const [convertedRevenue, setConvertedRevenue] = useState<number>(0);
   const [standardPricing, setStandardPricing] = useState<number>(0);
@@ -249,7 +249,7 @@ export default function ServiceTiersClient() {
   // Add this before your main useEffect
   useEffect(() => {
     // Only call when component first mounts
-    if (step5GeneratedPlaybook) {
+    if (step5GeneratedPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '' ) {
       generateAdvisories(step5GeneratedPlaybook);
     }
   }, [generateAdvisories, step5GeneratedPlaybook]);
@@ -491,7 +491,7 @@ export default function ServiceTiersClient() {
       <div className="mt-8 text-center">
         <button 
           onClick={() => router.push('/one-time-offer')}
-          className="bg-blue-600 text-white px-6 py-2 rounded font-medium hover:bg-blue-700 mr-4"
+          className=" text-black px-6 py-2 rounded font-medium hover:bg-blue-700 mr-4"
         >
           One Time Offer
         </button>

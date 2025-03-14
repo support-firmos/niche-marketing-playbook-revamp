@@ -67,7 +67,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
       setError('Please enter or upload some content');
       return;
     }
-    setStep5GeneratedPlaybook(fileContent); // Update the store when text is changed
+    setStep5GeneratedPlaybook(fileContent); // Update the store
     onSubmit(fileContent);
   };
 

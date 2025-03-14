@@ -156,11 +156,9 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 
 ## Response Format
 
-🔎🔎🔎 MARKET RESEARCH - \${segmentName} 🔎🔎🔎
+🔎🔎🔎 ##MARKET RESEARCH - \${segmentName} 🔎🔎🔎
 
----------------------------------------------------------------------------------
-
-⚠️ FEARS ⚠️
+⚠️ ###FEARS ⚠️
 
 1️⃣ [Fear 1 title]
 [A comprehensive explanation of the fear. Must include real-world business impact. Use paragraph and/or bullet points.]
@@ -196,9 +194,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💡 How Advisory Services Can Help
 [Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
 
----------------------------------------------------------------------------------
-
-⚙️ PAINS ⚙️
+⚙️ ###PAINS ⚙️
 
 1️⃣ [Pain 1 title]
 [A comprehensive explanation of the pain. Must include real-world negative consequences or financial impact. Use paragraph and/or bullet points.]
@@ -234,9 +230,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💡 How Advisory Services Can Help
 [Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
 
----------------------------------------------------------------------------------
-
-⛔ OBJECTIONS ⛔
+⛔ ###OBJECTIONS ⛔
 
 1️⃣ [Objection 1 title]
 [A comprehensive explanation of the objection. Must include real-world client concerns. Use paragraph and/or bullet points.]
@@ -272,9 +266,8 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💡 How Advisory Services Can Help
 [Comprehensively discuss and counter by providing benefits of high-ticket advisory services. Use paragraph and/or bullet points.]
 
----------------------------------------------------------------------------------
 
-🎯 GOALS 🎯
+🎯 ###GOALS 🎯
 
 1️⃣ [Goal 1 title]
 [A comprehensive explanation of the goal. Must include desired real-world outcomes. Use paragraph and/or bullet points.]
@@ -310,9 +303,8 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💡 How Advisory Services Can Help
 [Comprehensively discuss how high-ticket advisory services help attain the goal. Use paragraph and/or bullet points.]
 
----------------------------------------------------------------------------------
 
-💎 VALUES 💎
+💎 ###VALUES 💎
 
 1️⃣ [Value 1 title]
 [A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
@@ -348,9 +340,8 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💡 How Advisory Services Can Help
 [Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
 
----------------------------------------------------------------------------------
 
-🧠 DECISION-MAKING PROCESSES 🧠
+🧠 ###DECISION-MAKING PROCESSES 🧠
 
 1️⃣ [Decision-Making Process 1 title]
 [A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
@@ -386,9 +377,8 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💡 How Advisory Services Can Help
 [Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
 
----------------------------------------------------------------------------------
 
-🎬 INFLUENCES 🎬
+🎬 ###INFLUENCES 🎬
 
 1️⃣ [Influence 1 title]
 [A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
@@ -424,9 +414,8 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💡 How Advisory Services Can Help
 [Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
 
----------------------------------------------------------------------------------
 
-📞 COMMUNICATION PREFERENCES 📞
+📞 ###COMMUNICATION PREFERENCES 📞
 
 1️⃣ [Communication Preference 1 title]
 [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
@@ -462,7 +451,6 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 💡 How Advisory Services Can Help
 [Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
 
----------------------------------------------------------------------------------
 
 ## Segment Information to Analyze:
 ${segmentInfo}`;
@@ -553,9 +541,7 @@ Based on the deep research of these segments, a multi-faceted marketing approach
 function formatSegmentsForDisplay(segments: Array<SegmentData & { deepResearch?: string }>): string {
   return segments.map((segment) => {
     return `
-=================================
-DEEP RESEARCH FOR SEGMENT: ${segment.name}
-=================================
+#DEEP SEGMENT RESEARCH: ${segment.name}
 
 ${segment.deepResearch || 'No deep research available'}
 `;

@@ -1,15 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import OneTimeOfferForm from '@/components/OneTimeOfferForm';
 import OneTimeOfferResult from '@/components/OneTimeOfferResult';
 import Button from '@/components/Button';
+import { usePlaybookStore } from '@/app/store/playbookStore';
 
 export default function OneTimeOfferPage() {
+  const { step5GeneratedPlaybook } = usePlaybookStore();
   const [isProcessing, setIsProcessing] = useState(false);
   const [generatedResult, setGeneratedResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (step5GeneratedPlaybook && !generatedResult && !isProcessing) {
+      handleSubmit(step5GeneratedPlaybook);
+    }
+  }, [step5GeneratedPlaybook, generatedResult, isProcessing]);
 
   const handleSubmit = async (fileContent: string) => {
     setError(null);

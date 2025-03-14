@@ -82,14 +82,14 @@ export async function POST(request: Request) {
 
    
 
-    SEGMENT 1: [SEGMENT NAME]
+    ##SEGMENT 1: [SEGMENT NAME]
 
     - **Justification for Advisory Services**: [Specific need for recurring financial leadership]
     - **Estimated Market US Potential**: [X companies, $Y–$Z revenue range]
     - **Ease of Outreach**: [Low/Medium/High based on decision-maker visibility]
     - **Pain Points**: [Key financial challenges this segment faces]
 
-    SEGMENT 2: [SEGMENT NAME]
+    ##SEGMENT 2: [SEGMENT NAME]
 
     - **Justification for Advisory Services**: [Specific need for recurring financial leadership]
     - **Estimated Market US Potential**: [X companies, $Y–$Z revenue range]

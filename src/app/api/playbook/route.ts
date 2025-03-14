@@ -74,11 +74,11 @@ Create a comprehensive, integrated marketing playbook that synthesizes insights 
 ## Marketing Playbook Structure
 Your playbook MUST follow this EXACT structure and format:
 
-[COMPELLING TITLE THAT REFERENCES SPECIFIC INDUSTRY SEGMENTS]
+#[COMPELLING TITLE THAT REFERENCES SPECIFIC INDUSTRY SEGMENTS]
 
 ✧═══════════════✧
 
-🔹 1️⃣ UNIFIED AUDIENCE APPROACH 🔹
+1️⃣##UNIFIED AUDIENCE APPROACH
 
 1️⃣ [First detailed point as a single paragraph with 4-6 sentences]
 2️⃣ [Second detailed point as a single paragraph with 4-6 sentences]
@@ -88,7 +88,7 @@ Your playbook MUST follow this EXACT structure and format:
 
 ✧═══════════════✧
 
-🔹 2️⃣ UNIVERSAL PAIN POINTS 🔹
+ 2️⃣ ##UNIVERSAL PAIN POINTS
 
 1️⃣ [First detailed point as a single paragraph with 4-6 sentences]
 2️⃣ [Second detailed point as a single paragraph with 4-6 sentences]

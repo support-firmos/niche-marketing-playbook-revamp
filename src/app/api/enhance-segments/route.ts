@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
       For each segment, use this exact visual formatting:
 
-      SEGMENT #: [SEGMENT NAME]
+      #SEGMENT #: *[SEGMENT NAME]*
 
       A. **WHY THIS SEGMENT?**
         Explain in 3 sentences why this segment needs premium accounting advisory services.
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         • [Compelling marketing message #1]
         • [Compelling marketing message #2]
         • [Compelling marketing message #3]
-        
+
 
       Keep each section concise and actionable. Maintain consistent formatting with clear visual separation between segments and sections.
     `;

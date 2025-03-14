@@ -31,16 +31,16 @@ export async function POST(request: Request) {
         "name": "segment name here",
         "content":
           "
-            Why This Segment?
+            **Why This Segment?**
             [3-5 sentences explaining why this segment needs fractional CFO services. Provide specific business context, industry challenges, and financial pain points. Detail how their size, growth stage, and business model create a need for sophisticated financial leadership without the cost of a full-time CFO. Explain their complexity and why they're particularly suited for fractional services.]
         
-            Key Challenges:
+            **Key Challenges:**
             👉 [Challenge 1]—[Detailed explanation of the challenge with specific examples and business implications]
             👉 [Challenge 2]—[Detailed explanation of the challenge with specific examples and business implications]
             👉 [Challenge 3]—[Detailed explanation of the challenge with specific examples and business implications]
             👉 [Challenge 4]—[Detailed explanation of the challenge with specific examples and business implications]
         
-            🎯 Sales Navigator Filters:
+            🎯 **Sales Navigator Filters:**
             ✅ Job Titles (Business Decision-Makers & Leaders):
             [List 20-30 non-finance job titles, one per line, focusing on business owners, executives, and operational leadership who would make decisions about hiring financial services. Include multiple variants of similar roles (Owner, Co-Owner, Founder, Co-Founder, etc.)]
             Examples:
@@ -75,11 +75,11 @@ export async function POST(request: Request) {
             ✅ Boolean Search Query:
             [Provide a sample boolean search string using OR operators]
                 
-            Best Intent Data Signals
-            🔹 [Signal 1] (Detailed explanation with specific business implications)
-            🔹 [Signal 2] (Detailed explanation with specific business implications)
-            🔹 [Signal 3] (Detailed explanation with specific business implications)
-            🔹 [Signal 4] (Detailed explanation with specific business implications)
+            **Best Intent Data Signals**
+             - [Signal 1] (Detailed explanation with specific business implications)
+             - [Signal 2] (Detailed explanation with specific business implications)
+             - [Signal 3] (Detailed explanation with specific business implications)
+             - [Signal 4] (Detailed explanation with specific business implications)
           "
       },
       {...same format above for the next segments}
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
     - Maintain the exact structure shown above
     - Use the exact emoji formatting shown above (1️⃣, 👉, 🎯, ✅, 🔹)
     - Do NOT include any introductory text, disclaimers, or conclusions
-    - Start immediately with "1️⃣" and the first segment name
+    - Start immediately with the first segment name
     - Extract and transform information from the provided segment analysis
     - Focus on creating practical Sales Navigator targeting parameters
     - For Job Titles: Do NOT include finance roles (CFO, Finance Director, Controller, etc.) since these positions would NOT hire fractional CFO services. Instead, focus on business leaders/owners who would make these decisions.
@@ -204,9 +204,7 @@ function formatSegmentsForDisplay(segments: Array<{ name: string; content: strin
     const segmentContent = segment.content || '';
     
     return `
-======================================
-SEGMENT ${index + 1}: ${segmentName}
-======================================
+##SEGMENT ${index + 1}: ${segmentName}
 
 ${segmentContent}
 `;

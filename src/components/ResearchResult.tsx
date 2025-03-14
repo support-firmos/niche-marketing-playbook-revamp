@@ -138,7 +138,7 @@ export default function ResearchResult({
         <div className="flex items-center justify-center space-x-2 mt-4">
         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#8a8f98]"></div>
         <p className="text-[#8a8f98]">
-          {resultType === 'salesNav'  ?  'Deep Segment Research & Playbook in progress...' 
+          {resultType === 'salesNav'  ?  'Deep Segment Research in progress...' 
             : resultType === 'segments' ? 'Enhancing segments...' 
             : resultType === 'enhanced' ? 'Creating LinkedIn Sales Navigator Strategy...' 
             : resultType === 'deepSegment' ? 'Creating Marketing Playbook...' : 'Processing' }
