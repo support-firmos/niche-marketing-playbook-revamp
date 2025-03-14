@@ -33,11 +33,11 @@ export default function ServiceTiersClient() {
 
   useEffect(() => {
     // If playbook data doesn't exist or is empty, redirect to homepage
-    if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '' || selectedServicesParams.length === 0) {
+    if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '' || selectedServicesParams.length === 0  || !revenueParams) {
       // Redirect to homepage
-      router.push('/marketing-playbook');
+      router.push('/');
     }
-  }, [step5GeneratedPlaybook, router]);
+  }, [step5GeneratedPlaybook,selectedServicesParams,revenueParams, router]);
 
   const [revenue, setRevenue] = useState<string>('');
   const [services, setServices] = useState<ServiceItem[]>([]);
@@ -252,64 +252,67 @@ export default function ServiceTiersClient() {
     }
   }, [generateAdvisories, step5GeneratedPlaybook]);
 
-  useEffect(() => {
-    
-    const parsedRevenue = parseInt(revenueParams || '0', 10);
-    setConvertedRevenue(parsedRevenue);
-    
-    // Calculate pricing based on basicPricing
-    const calculatedStandardPricing = Math.round(basicPricing * 2.5 / 5) * 5;
-    setStandardPricing(calculatedStandardPricing);
-    
-    const calculatedPremiumPricing = Math.round(calculatedStandardPricing * 1.8 / 5) * 5;
-    setPremiumPricing(calculatedPremiumPricing);
-    
-    // Calculate ARR values
-    const calculatedArrBasic = basicPricing * 12;
-    const calculatedArrStandard = calculatedStandardPricing * 12;
-    const calculatedArrPremium = calculatedPremiumPricing * 12;
-    
-    setArrBasic(calculatedArrBasic);
-    setArrStandard(calculatedArrStandard);
-    setArrPremium(calculatedArrPremium);
-    
-    // Calculate Net ROI values
-    setNetRoiBasic(calculatedArrBasic - parsedRevenue);
-    setNetRoiStandard(calculatedArrStandard - parsedRevenue);
-    setNetRoiPremium(calculatedArrPremium - parsedRevenue);
-    
-    let servicesToUse: ServiceItem[] = [];
-    
-    if (revenueParams && selectedServicesParams.length > 0) {
-      setRevenue(revenueParams);
-      servicesToUse = selectedServicesParams.map(service => ({
-        id: service.id,
-        name: service.label || serviceNames[service.id] || service.id,
-        category: serviceCategories[service.id] || "Other"
-      }));
-    } else {
-      // If we don't have data from query params, we'll load all services from tierData
-      servicesToUse = Object.keys(tierData)
-        .filter(id => !alwaysShowServices.includes(id)) // Exclude services that will be added separately
-        .map(id => ({
-          id,
-          name: serviceNames[id] || id,
-          category: serviceCategories[id] || "Other"
-        }));
-      setRevenue("Not Specified");
-    }
-    
-    // Always add the services from alwaysShowCategories
-    const alwaysShownServices = alwaysShowServices.map(id => ({
-      id,
-      name: serviceNames[id] || id,
-      category: serviceCategories[id] || "Other"
+// Fix for the infinite loop issue
+useEffect(() => {
+  // Only run this effect when basicPricing changes
+  const parsedRevenue = parseInt(revenueParams || '0', 10);
+  setConvertedRevenue(parsedRevenue);
+  
+  // Calculate pricing based on basicPricing
+  const calculatedStandardPricing = Math.round(basicPricing * 2.5 / 5) * 5;
+  setStandardPricing(calculatedStandardPricing);
+  
+  const calculatedPremiumPricing = Math.round(calculatedStandardPricing * 1.8 / 5) * 5;
+  setPremiumPricing(calculatedPremiumPricing);
+  
+  // Calculate ARR values
+  const calculatedArrBasic = basicPricing * 12;
+  const calculatedArrStandard = calculatedStandardPricing * 12;
+  const calculatedArrPremium = calculatedPremiumPricing * 12;
+  
+  setArrBasic(calculatedArrBasic);
+  setArrStandard(calculatedArrStandard);
+  setArrPremium(calculatedArrPremium);
+  
+  // Calculate Net ROI values
+  setNetRoiBasic(calculatedArrBasic - parsedRevenue);
+  setNetRoiStandard(calculatedArrStandard - parsedRevenue);
+  setNetRoiPremium(calculatedArrPremium - parsedRevenue);
+}, [basicPricing, revenueParams]); // Only depend on basicPricing and revenueParams
+
+// Separate effect for handling services
+useEffect(() => {
+  let servicesToUse: ServiceItem[] = [];
+  
+  if (revenueParams && selectedServicesParams.length > 0) {
+    setRevenue(revenueParams);
+    servicesToUse = selectedServicesParams.map(service => ({
+      id: service.id,
+      name: service.label || serviceNames[service.id] || service.id,
+      category: serviceCategories[service.id] || "Other"
     }));
-    
-    // Combine selected services with always-shown services
-    setServices([...servicesToUse, ...alwaysShownServices]);
-    
-  },[basicPricing, serviceNames, tierData]); // Added dependencies
+  } else {
+    // If we don't have data from query params, we'll load all services from tierData
+    servicesToUse = Object.keys(tierData)
+      .filter(id => !alwaysShowServices.includes(id)) // Exclude services that will be added separately
+      .map(id => ({
+        id,
+        name: serviceNames[id] || id,
+        category: serviceCategories[id] || "Other"
+      }));
+    setRevenue("Not Specified");
+  }
+  
+  // Always add the services from alwaysShowCategories
+  const alwaysShownServices = alwaysShowServices.map(id => ({
+    id,
+    name: serviceNames[id] || id,
+    category: serviceCategories[id] || "Other"
+  }));
+  
+  // Combine selected services with always-shown services
+  setServices([...servicesToUse, ...alwaysShownServices]);
+}, [revenueParams, selectedServicesParams, serviceNames, tierData, alwaysShowServices]); // Include all dependencies
 
   useEffect(() => {
     // Only run this effect if industry advisories have been set and services exist

@@ -7,6 +7,11 @@ import ResearchResult from '@/components/ResearchResult';
 import { usePlaybookStore } from '../store/playbookStore';
 import { useRevenueStore } from '../store/revenueStore';
 import { useServicesStore } from '../store/servicesStore';
+import { useSegmentsStore } from '../store/segmentsStore';
+import { useEnhancedStore } from '../store/enhancedStore';
+import { useSalesNavStore } from '../store/salesNavStore';
+import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
+import { useDeepSegmentResearchStore } from '../store/deepResearchStore';
 
 interface FormData {
   nicheConsideration: string;
@@ -17,43 +22,31 @@ interface FormData {
   teamSize: number;
 }
 
-interface Segment {
-  name: string;
-  content: string;
-}
-
-interface SegmentResearch {
-  displayContent: string | null;
-  originalContent: Record<string, unknown>;
-}
-
 export default function Home() {
   const router = useRouter();
-  const [step1GeneratedResearch, setStep1GeneratedResearch] = useState<string | null>(null);
-  const [step2EnhancedResearch, setStep2EnhancedResearch] = useState<string | null>(null);
-  const [step3GeneratedSalesNav, setStep3GeneratedSalesNav] = useState<string | null>(null);
-  const [step3Segments, setStep3Segments] = useState<Segment[] | null>(null);
-  const [step4DeepSegmentResearch, setStep4DeepSegmentResearch] = useState<SegmentResearch | null>(null);
+
+  //new update: service selection prior to the marketing playbook generation:
+  const { revenue, setRevenue } = useRevenueStore();
+  const { selectedServices, setSelectedServices } = useServicesStore();
+  const services = selectedServices
+  .map(service => service.label)
+  .join(', ');
+  if(!revenue || revenue === '' || !services || services=== ''){
+    router.push('/');
+  }
 
   //using Zustand (global state library) to access this data accross different pages (step5GeneratedPlaybook is needed for Calculator page)
-  const setStep5GeneratedPlaybook = usePlaybookStore(state => state.setStep5GeneratedPlaybook);
-  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
+  const { step1GeneratedResearch, setStep1GeneratedResearch } = useSegmentsStore();
+  const { step2EnhancedResearch, setStep2EnhancedResearch } = useEnhancedStore();
+  const { step3GeneratedSalesNav, setStep3GeneratedSalesNav } = useSalesNavStore();
+  const { step3Segments, setStep3Segments } = useSalesNavSegmentsStore();
+  const { step4DeepSegmentResearch, setStep4DeepSegmentResearch } = useDeepSegmentResearchStore();
+  const { step5GeneratedPlaybook, setStep5GeneratedPlaybook } = usePlaybookStore();
   
-  //new update: service selection prior to the marketing playbook generation:
-  const { revenue } = useRevenueStore();
-  const { selectedServices } = useServicesStore();
-  const services = selectedServices
-    .map(service => service.label)
-    .join(', ');
-
   const [isGeneratingNextStep, setIsGeneratingNextStep] = useState(false);
   const [currentNiche, setCurrentNiche] = useState<string>("");
   //const [progressStatus, setProgressStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-
-  if(!revenue || revenue === '' || !services || services=== ''){
-    router.push('/');
-  }
 
   const generateResearch = async (formData: FormData) => {
     setError(null);
@@ -299,6 +292,9 @@ export default function Home() {
   }
 
   const resetGenerator = () => {
+
+    setRevenue(null);
+    setSelectedServices([]);
     setStep1GeneratedResearch(null);
     setStep2EnhancedResearch(null);
     setStep3GeneratedSalesNav(null);

@@ -1,7 +1,6 @@
-//app/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRevenueStore } from './store/revenueStore';
 import { useServicesStore } from './store/servicesStore'
@@ -21,7 +20,7 @@ interface ServiceCategory {
 export default function ServiceSelection() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
-  const { setSelectedServices } = useServicesStore();
+  const { selectedServices, setSelectedServices } = useServicesStore();
   const { revenue, setRevenue } = useRevenueStore();
   const [localSelectedServices, setLocalSelectedServices] = useState<Record<string, boolean>>({});
 
@@ -75,6 +74,16 @@ export default function ServiceSelection() {
     }
   ];
 
+  // Initialize local state from store when component mounts
+  useEffect(() => {
+    // Convert selectedServices array to a Record<string, boolean> for the local state
+    const servicesMap: Record<string, boolean> = {};
+    selectedServices.forEach(service => {
+      servicesMap[service.id] = true;
+    });
+    setLocalSelectedServices(servicesMap);
+  }, [selectedServices]);
+
   const handleServiceToggle = (serviceId: string): void => {
     setLocalSelectedServices({
       ...localSelectedServices,
@@ -102,6 +111,11 @@ export default function ServiceSelection() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-surface-1 to-black py-10 px-4">
+              <header className="flex justify-center items-center mb-12 mt-10 md:mt-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-titleColor">
+            Customer Niche Marketing Playbook
+          </h1>
+        </header>
       <div className="container mx-auto flex flex-col md:flex-row gap-6 relative">
         {/* Sidebar toggle button (always visible) */}
         <button 
