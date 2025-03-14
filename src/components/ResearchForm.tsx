@@ -52,7 +52,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
         </label>
         <textarea
           id="nicheConsideration"
-          className="input-field text-lg min-h-[120px] w-full"
+          className="input-field text-sm min-h-[120px] w-full"
           placeholder="Describe your niche (or potential niche) in detail. Who are they? What industry do they belong to? What unique challenges do they face?"
           {...register('nicheConsideration')}
         />
@@ -67,7 +67,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
         </label>
         <textarea
           id="profitability"
-          className="input-field text-lg min-h-[120px] w-full"
+          className="input-field text-sm min-h-[120px] w-full"
           placeholder="Describe the financial and strategic benefits of working with this niche. How do they compare to other clients?"
           {...register('profitability')}
         />
@@ -82,7 +82,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
         </label>
         <textarea
           id="experience"
-          className="input-field text-lg min-h-[120px] w-full"
+          className="input-field text-sm min-h-[120px] w-full"
           placeholder="Explain your industry experience and why it positions you as an expert."
           {...register('experience')}
         />
@@ -97,7 +97,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
         </label>
         <select
           id="clientPercentage"
-          className="input-field text-lg w-full"
+          className="input-field text-sm w-full"
           {...register('clientPercentage')}
         >
           <option value="">Select a percentage range</option>
@@ -117,7 +117,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
         </label>
         <textarea
           id="successStories"
-          className="input-field text-lg min-h-[120px] w-full"
+          className="input-field text-sm min-h-[120px] w-full"
           placeholder="Describe your most impactful client results in detail. The more specific, the better!"
           {...register('successStories')}
         />
@@ -133,7 +133,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
         <input
           id="teamSize"
           type="number"
-          className="input-field text-lg w-full"
+          className="input-field text-sm w-full"
           placeholder="Enter number of team members"
           {...register('teamSize')}
           min="1"
@@ -143,12 +143,12 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
         )}
       </div>
       
-      <div className="pt-4">
+      <div className="flex justify-center mt-4">
         <Button 
           type="submit" 
           isLoading={isSubmitting} 
-          size="lg" 
-          className="w-full"
+          size="md" 
+          className="shadow-md shadow-titleColor/20 hover:shadow-titleColor/30 !py-3 !px-5"
         >
           Find Target Segments
         </Button>

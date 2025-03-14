@@ -308,7 +308,6 @@ export default function Home() {
   };
 
   // Determine which content to show
-  
   const displayContent = step5GeneratedPlaybook || 
     (step4DeepSegmentResearch ? 
       (typeof step4DeepSegmentResearch === 'string' ? 

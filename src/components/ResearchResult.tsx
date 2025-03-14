@@ -1,6 +1,7 @@
 // components/ResearchResult.tsx
 import { useState } from 'react';
 import Button from './Button';
+import ReactMarkdown from 'react-markdown';
 
 interface Segment {
   name: string;
@@ -96,11 +97,28 @@ export default function ResearchResult({
         </div>
       </div>
       
-      <div className="bg-[#141414] p-5 rounded-xl border border-[#8a8f98]/20">
-        {/* JSON parsing warning is no longer needed since we format the content in the page component */}
-        <pre className="whitespace-pre-wrap text-[#f7f8f8] font-mono text-sm overflow-auto">
-          {content}
-        </pre>
+      <div className="bg-[#141414] p-5 rounded-xl border border-[#8a8f98]/20 max-h-80 overflow-auto">
+        <div className="text-[#f7f8f8] font-inter text-sm markdown-content">
+        <ReactMarkdown 
+            components={{
+              // This ensures paragraphs have proper spacing
+              p: ({node, ...props}) => <p className="mb-4" {...props} />,
+              // Preserve newlines within paragraphs
+              br: () => <br />,
+              // Custom styling for headings
+              h1: ({node, ...props}) => <h1 className="text-xl font-bold mb-4" {...props} />,
+              h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-3" {...props} />,
+              h3: ({node, ...props}) => <h3 className="text-md font-bold mb-2" {...props} />,
+              // Custom styling for lists
+              ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
+              ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
+              li: ({node, ...props}) => <li className="mb-1" {...props} />
+            }}
+          >
+            {/* Convert single newlines to break tags for proper rendering */}
+            {content.replace(/\n(?!\n)/g, '  \n')}
+          </ReactMarkdown>
+        </div>
       </div>
 
       {!isGeneratingNextStep && onNextSteps && (
@@ -117,14 +135,15 @@ export default function ResearchResult({
       )}
 
       {isGeneratingNextStep && (
-        <div className="text-center mt-4">
-          <p className="text-[#8a8f98]">
-            {resultType === 'salesNav'  ?  'Deep Segment Research & Playbook in progress...' 
-              : resultType === 'segments' ? 'Enhancing segments...' 
-              : resultType === 'enhanced' ? 'Creating LinkedIn Sales Navigator Strategy...' 
-              : resultType === 'deepSegment' ? 'Creating Marketing Playbook...' : 'Processing' }
-          </p>
-        </div>
+        <div className="flex items-center justify-center space-x-2 mt-4">
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#8a8f98]"></div>
+        <p className="text-[#8a8f98]">
+          {resultType === 'salesNav'  ?  'Deep Segment Research & Playbook in progress...' 
+            : resultType === 'segments' ? 'Enhancing segments...' 
+            : resultType === 'enhanced' ? 'Creating LinkedIn Sales Navigator Strategy...' 
+            : resultType === 'deepSegment' ? 'Creating Marketing Playbook...' : 'Processing' }
+        </p>
+      </div>
       )}
     </div>
   );
