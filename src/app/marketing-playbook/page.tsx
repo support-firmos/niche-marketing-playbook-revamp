@@ -12,6 +12,7 @@ import { useEnhancedStore } from '../store/enhancedStore';
 import { useSalesNavStore } from '../store/salesNavStore';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 import { useDeepSegmentResearchStore } from '../store/deepResearchStore';
+import Sidebar from "@/components/Sidebar";
 
 interface FormData {
   nicheConsideration: string;
@@ -23,6 +24,7 @@ interface FormData {
 }
 
 export default function Home() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   //new update: service selection prior to the marketing playbook generation:
@@ -373,7 +375,8 @@ return (
             </div>
           </div>
         )}
-        
+        <div className="relative flex">
+          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <div className="max-w-3xl mx-auto">
           <div className="card bg-surface-1/30 border border-subtitleColor/10 rounded-xl p-6 shadow-lg">
             {displayContent ? (
@@ -392,6 +395,7 @@ return (
             )}
           </div>
         </div>
+      </div>
       </div>
 );
 }

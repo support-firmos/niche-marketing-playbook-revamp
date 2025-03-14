@@ -38,14 +38,13 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
     reader.onload = () => {
       const content = reader.result as string;
       setFileContent(content);
-      setStep5GeneratedPlaybook(content); // Update the store when file is uploaded
       setFile(selectedFile);
     };
     reader.onerror = () => {
       setError('Error reading the file');
     };
     reader.readAsText(selectedFile);
-  }, [setStep5GeneratedPlaybook]);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -56,7 +55,6 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setFileContent(newContent);
-    setStep5GeneratedPlaybook(newContent); // Update the store when text is changed
     
     // Clear file association if the user manually edits the text
     if (file) setFile(null);
@@ -69,7 +67,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
       setError('Please enter or upload some content');
       return;
     }
-    
+    setStep5GeneratedPlaybook(fileContent); // Update the store when text is changed
     onSubmit(fileContent);
   };
 
