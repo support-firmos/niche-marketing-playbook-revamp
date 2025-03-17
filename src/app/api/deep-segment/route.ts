@@ -159,10 +159,10 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 
 ## Response Format
 
-# DEEP INDUSTRY RESEARCH: [niche/industry name]
 
-## *segment name* *segment number*
-### FEARS
+# DEEP SEGMENT RESEARCH: *segment name*
+
+## FEARS
 
 1. [Fear 1 title]
 [A comprehensive explanation of the fear. Must include real-world business impact. Use paragraph and/or bullet points.]
@@ -198,7 +198,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 **How Advisory Services Can Help**
 [Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
-### PAINS
+## PAINS
 
 1. [Pain 1 title]
 [A comprehensive explanation of the pain. Must include real-world negative consequences or financial impact. Use paragraph and/or bullet points.]
@@ -234,7 +234,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 **How Advisory Services Can Help**
 [Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
-### OBJECTIONS
+## OBJECTIONS
 
 1. [Objection 1 title]
 [A comprehensive explanation of the objection. Must include real-world client concerns. Use paragraph and/or bullet points.]
@@ -271,7 +271,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 [Comprehensively discuss and counter by providing benefits of high-ticket advisory services, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-### GOALS
+## GOALS
 
 1. [Goal 1 title]
 [A comprehensive explanation of the goal. Must include desired real-world outcomes. Use paragraph and/or bullet points.]
@@ -308,7 +308,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 [Comprehensively discuss how high-ticket advisory services help attain the goal, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-### VALUES
+## VALUES
 
 1. [Value 1 title]
 [A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
@@ -345,7 +345,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 [Comprehensively discuss how high-ticket advisory services align with this value, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-### DECISION-MAKING PROCESSES
+## DECISION-MAKING PROCESSES
 
 1. [Decision-Making Process 1 title]
 [A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
@@ -382,7 +382,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 [Comprehensively discuss how high-ticket advisory services fit into this process, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-### INFLUENCES
+## INFLUENCES
 
 1. [Influence 1 title]
 [A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
@@ -419,7 +419,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 [Comprehensively discuss how high-ticket advisory services can leverage this influence, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-### COMMUNICATION PREFERENCES
+## COMMUNICATION PREFERENCES
 
 1. [Communication Preference 1 title]
 [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
@@ -441,7 +441,6 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 **How Advisory Services Can Help**
 [Comprehensively discuss how high-ticket advisory services can adapt to this preference, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
-
 4. [Communication Preference 4 title]
 [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
@@ -454,7 +453,8 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 **How Advisory Services Can Help**
 [Comprehensively discuss how high-ticket advisory services can adapt to this preference, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
----
+---\n\n
+[end of output format]
 
 IMPORTANT NOTE: Always refer to the services the client wants to avail (mentioned above) and contextualize your responses with it, as you may see fit and appropriate.
 

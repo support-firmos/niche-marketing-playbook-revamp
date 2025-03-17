@@ -83,7 +83,7 @@ export async function POST(request: Request) {
                 - [Signal 2] (Detailed explanation with specific business implications)
                 - [Signal 3] (Detailed explanation with specific business implications)
                 - [Signal 4] (Detailed explanation with specific business implications)
-            ---
+            ---\n\n
             
           "
       },

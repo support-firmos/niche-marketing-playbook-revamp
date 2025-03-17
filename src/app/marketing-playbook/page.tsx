@@ -258,7 +258,8 @@ export default function Home() {
     try {
       // If no input is provided, use the deep segment research data
       const playbackData = {
-        segmentInfo: input || step4DeepSegmentResearch
+        segmentInfo: input || step4DeepSegmentResearch,
+        services
       };
       
       console.log('Sending data to playbook API:', 
@@ -270,7 +271,7 @@ export default function Home() {
       const response = await fetch('/api/playbook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({playbackData,services})
+        body: JSON.stringify(playbackData)
       });
 
       if (!response.ok) {
@@ -331,7 +332,7 @@ const handleSteps = () => {
   if (!isStep2Done) {
     return {
       action: (content: string) => enhanceSegments(content, currentNiche),
-      buttonText: "Enhance Segments"
+      buttonText: "Enhance Industry Research"
     };
   }
   if (!isStep3Done) {
@@ -343,7 +344,7 @@ const handleSteps = () => {
   if (!isStep4Done) {
     return {
       action: () => generateDeepSegmentResearch(),
-      buttonText: "Run Deep Segment Research"
+      buttonText: "Run Deep Industry Research"
     };
   }
   if (!isStep5Done) {

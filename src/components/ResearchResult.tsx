@@ -64,9 +64,9 @@ export default function ResearchResult({
         {resultType === 'salesNav' 
           ? 'Sales Navigator Strategy' 
           : resultType === 'enhanced' 
-            ? 'Enhanced Market Research' 
-            : resultType === 'segments' ? 'Market Research' :
-            resultType === 'deepSegment' ? 'Deep Segment Research' : 
+            ? 'Enhanced Industry Research' 
+            : resultType === 'segments' ? 'Industry Research' :
+            resultType === 'deepSegment' ? 'Deep Industry Research' : 
             resultType === 'playbook' ? 'Inbound Marketing Blueprint' : undefined}
       </h2>
         <div className="flex space-x-2">
@@ -138,9 +138,9 @@ export default function ResearchResult({
         <div className="flex items-center justify-center space-x-2 mt-4">
         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#8a8f98]"></div>
         <p className="text-[#8a8f98]">
-          {resultType === 'salesNav'  ?  'Deep Segment Research in progress...' 
+          {resultType === 'salesNav'  ?  'Deep Industry Research in progress...' 
             : resultType === 'segments' ? 'Enhancing segments...' 
-            : resultType === 'enhanced' ? 'Creating LinkedIn Sales Navigator Strategy...' 
+            : resultType === 'enhanced' ? 'Creating Sales Navigator Strategy...' 
             : resultType === 'deepSegment' ? 'Creating Inbound Marketing Blueprint...' : 'Processing' }
         </p>
       </div>

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
       Create an enhanced analysis with clear visual formatting. Consider markdown formatting. Begin with this centered title:
 
-      # DEEP DIVE: Best *${niche}* segments for high-ticket advisory/accounting services
+      # ENHANCED INDUSTRY RESEARCH FOR ${niche}
 
       Do not include introductory sentences.
 
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         Explain why this segment needs premium accounting advisory services.
         Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
 
-      B. **High-ticket justification** (Align/reflect to any of the client's desired services)
+      B. **High-ticket justification** [Align/reflect your answers to any of the client's desired services mentioned above]
         • [Specific financial challenge/task]
         • [Specific financial challenge/task]
         • [Specific financial challenge/task]
@@ -52,6 +52,7 @@ export async function POST(request: Request) {
         • [Compelling marketing message #2]
         • [Compelling marketing message #3]
 
+      ---\n\n
       Keep each section concise and actionable. Maintain consistent formatting with clear visual separation between segments and sections.
     `;
 

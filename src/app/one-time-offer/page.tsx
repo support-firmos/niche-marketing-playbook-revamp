@@ -6,11 +6,12 @@ import OneTimeOfferForm from '@/components/OneTimeOfferForm';
 import OneTimeOfferResult from '@/components/OneTimeOfferResult';
 import Button from '@/components/Button';
 import { usePlaybookStore } from '@/app/store/playbookStore';
+import { useOneTimeOfferStore } from '../store/oneTimeOfferStore';
 
 export default function OneTimeOfferPage() {
   const { step5GeneratedPlaybook } = usePlaybookStore();
+  const { generatedResult, setGeneratedResult } = useOneTimeOfferStore();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [generatedResult, setGeneratedResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

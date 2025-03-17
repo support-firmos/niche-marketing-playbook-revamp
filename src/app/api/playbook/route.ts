@@ -62,7 +62,7 @@ Create a comprehensive, integrated marketing playbook that synthesizes insights 
 Please, highly contextualize (if applicable) your responses based on the services that the client wants to avail: ${services}
 
 ## Format Requirements - FOLLOW THESE EXACTLY
-- Begin with a compelling title that references specific industry segments covered in your playbook (e.g., "Financial Strategy Mastery: Unified Marketing Playbook for Property Management, Development & Brokerage Services")
+- Begin with a compelling title that references specific industry segments covered in your playbook (e.g., "Unified Inbound Marketing Blueprint for Property Management, Development & Brokerage Services")
 - Use exactly 5 points for each section
 - Each point must be a SINGLE PARAGRAPH (not multiple paragraphs)
 - Each point must be substantive and detailed (4-6 sentences minimum)
@@ -82,7 +82,7 @@ Your playbook MUST follow this EXACT structure and format:
 4. [Fourth detailed point as a single paragraph with 4-6 sentences]
 5. [Fifth detailed point as a single paragraph with 4-6 sentences]
 
----
+---\n\n
 
 ## UNIVERSAL PAIN POINTS
 
@@ -92,7 +92,7 @@ Your playbook MUST follow this EXACT structure and format:
 4. [Fourth detailed point as a single paragraph with 4-6 sentences]
 5. [Fifth detailed point as a single paragraph with 4-6 sentences]
 
----
+---\n\n
 
 [CONTINUE THIS EXACT FORMAT FOR ALL REMAINING SECTIONS]
 

@@ -491,7 +491,7 @@ export default function ServiceTiersClient() {
       <div className="mt-8 text-center">
         <button 
           onClick={() => router.push('/one-time-offer')}
-          className=" text-black px-6 py-2 rounded font-medium hover:bg-blue-700 mr-4"
+          className=" text-black px-6 py-2 rounded font-medium hover:bg-blue-700 mr-4 bg-slate-50"
         >
           One Time Offer
         </button>

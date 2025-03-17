@@ -165,7 +165,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                 </svg>
-                Generate One-Time Offers
+                Generate One-Time Offer
               </div>
             )}
           </Button>
