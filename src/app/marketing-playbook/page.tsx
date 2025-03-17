@@ -13,7 +13,7 @@ import { useSalesNavStore } from '../store/salesNavStore';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 import { useDeepSegmentResearchStore } from '../store/deepResearchStore';
 import Sidebar from "@/components/Sidebar";
-import { serialize } from 'v8';
+
 
 interface FormData {
   nicheConsideration: string;
