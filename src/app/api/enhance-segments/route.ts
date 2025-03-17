@@ -24,11 +24,7 @@ export async function POST(request: Request) {
 
       ## FORMAT INSTRUCTIONS
 
-      Create an enhanced analysis with clear visual formatting. Consider markdown formatting. Begin with this centered title:
-
-      # ENHANCED INDUSTRY RESEARCH FOR ${niche}
-
-      Do not include introductory sentences.
+      Create an enhanced analysis with clear visual formatting. Consider markdown formatting. Do not include introductory sentences.
 
       For each segment, use this exact visual formatting:
 
@@ -52,7 +48,8 @@ export async function POST(request: Request) {
         • [Compelling marketing message #2]
         • [Compelling marketing message #3]
 
-      ---\n\n
+      ---
+      \n\n
       Keep each section concise and actionable. Maintain consistent formatting with clear visual separation between segments and sections.
     `;
 

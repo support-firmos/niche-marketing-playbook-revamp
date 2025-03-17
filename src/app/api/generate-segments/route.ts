@@ -98,7 +98,8 @@ export async function POST(request: Request) {
     **C. Ease of Outreach**: [Low/Medium/High based on decision-maker visibility]
     **D. Pain Points**: [Key financial challenges this segment faces]
 
-    ---\n\n
+    ---
+    \n\n
     ## SEGMENT 2: [SEGMENT NAME]
 
     **A. Justification for Advisory Services**
@@ -112,7 +113,8 @@ export async function POST(request: Request) {
     
     *continue same format for all 5-7 segments*
 
-    ---\n\n
+    ---
+    \n\n
     
     Important Notes:
     - DO NOT USE ANY CONVERSATIONAL WORDS, INTROS, CONCLUSIONS, ETC. RESPONSE WITH THE OUTPUT DIRECTLY.

@@ -31,11 +31,48 @@ export async function POST(request: Request) {
     [
       {
         "name": "segment name here",
-        "content":
+        "justification":
           "
             **A. Why This Segment?**
             [3-5 sentences explaining why this segment needs fractional CFO services. Provide specific business context, industry challenges, and financial pain points. Detail how their size, growth stage, and business model create a need for sophisticated financial leadership without the cost of a full-time CFO. Explain their complexity and why they're particularly suited for fractional services.]
             [Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above)]
+          ",
+        "challenges" :
+          "
+
+          ",
+        "jobtitles" :
+          "
+
+          ",
+        "industries" :
+          "
+
+          ",
+        "headcout" :
+          "
+
+          ",
+        "companytype" :
+          "
+
+          ",
+        "keywords" :
+          "
+
+          ",
+        "intentdata" :
+          "
+
+          ",
+
+
+
+
+
+        "content":
+          "
+
             
             **B. Key Challenges:**
             - [Challenge 1] — [Detailed explanation of the challenge with specific examples and business implications]
@@ -83,7 +120,8 @@ export async function POST(request: Request) {
                 - [Signal 2] (Detailed explanation with specific business implications)
                 - [Signal 3] (Detailed explanation with specific business implications)
                 - [Signal 4] (Detailed explanation with specific business implications)
-            ---\n\n
+            ---
+            \n\n
             
           "
       },
@@ -209,7 +247,7 @@ function formatSegmentsForDisplay(segments: Array<{ name: string; content: strin
     
     return `
 ## SEGMENT ${index + 1}: ${segmentName}
-
+**A. Why This Segment?**
 ${segmentContent}
 `;
   }).join('\n\n');
