@@ -38,27 +38,7 @@ export async function POST(request: Request) {
     services here: ${services}
     
     ## Accounting Advisory Services - Market Fit & Segment Research for ${nicheShortSummary}
-
-    ### Input Information
     
-    1) Niche Consideration:
-    ${nicheConsideration}
-    
-    2) Client Profitability:
-    ${profitability}
-    
-    3) Experience in the Niche:
-    ${experience}
-    
-    4) Percentage of Current Clients in this Niche:
-    ${clientPercentage}
-    
-    5) Success Stories:
-    ${successStories}
-    
-    6) Team Size:
-    ${teamSize}
-
     ### Introduction & Context
 
     Accountants often undervalue their services by treating them as mere "compliance" work (e.g., tax returns, basic bookkeeping). However, these same professionals can (and should) offer **high-ticket recurring services** such as advisory, consulting, or niche-specific guidance. This prompt helps identify the most profitable segments within the niche where accounting professionals can provide high-value, consultative offerings that solve deeper client pain points and justify higher pricing.
@@ -67,24 +47,43 @@ export async function POST(request: Request) {
 
     ### Task
 
-    Based on the detailed input provided above, determine 5-7 specific segments within the described niche that would be the best fit for high-ticket, recurring accounting advisory services. These must meet:
+    This is the target niche/industry: ${nicheConsideration}
+    
+    Determine 5-7 specific segments within that niche that would be the best fit for high-ticket, recurring accounting advisory services.
+    
+    These segments must meet the following criteria:
+    **Financial Viability**: $5M–$150M annual revenue (can afford $15K–$30K/month retainers)
+    **Recurring Need Justification**: Requires ongoing financial strategy, not one-time services
+    **Accessibility**: Decision-makers reachable via LinkedIn/email/phone
+    **Service Fit**: Needs budgeting, cash flow management, KPI tracking, or financial advisory
 
-    1. **Financial Viability**: $5M–$150M annual revenue (can afford $15K–$30K/month retainers)
-    2. **Recurring Need Justification**: Requires ongoing financial strategy, not one-time services
-    3. **Accessibility**: Decision-makers reachable via LinkedIn/email/phone
-    4. **Service Fit**: Needs budgeting, cash flow management, KPI tracking, or financial advisory
+    Another important criteria to consider when generating the segments:
+    - The size of the offerer's team is ${teamSize}. The advisories/services for each segment you are about to generate is something
+       we will consider to offer as a paid service to our clients. Make sure that these segments is feasible and attainable
+       for that number of members in this team.
+    - Here are the 4 credibilities of the offerer:
+      -> Success stories: ${successStories}
+      -> Percent of current clients I have under this niche: ${clientPercentage}
+      -> My background of this niche: ${experience}
+      -> Profitability of my clients under this niche: ${profitability}
+
+     When identifying the best segments, prioritize:
+    - Complex financial operations requiring ongoing expertise
+    - Regulatory or compliance challenges specific to the niche
+    - Growth-stage companies needing financial strategy but not ready for full-time financial leadership
+    - Businesses with potential for value-based pricing of advisory services
 
     ---
 
-    ### Output Format
-
     Present 5-7 well-researched market segments (niches), ranked from highest to lowest potential profitability. Use the following visual format:
-
-   
+    
+    ### Output Format
 
     ##SEGMENT 1: [SEGMENT NAME]
 
     - **Justification for Advisory Services**: [Specific need for recurring financial leadership]
+        - [Briefly discuss why and how a team with ${teamSize} members can achieve this service]
+        - [If available, briefly discuss this service' achievability by reflecting it to the offerer's credibilities above (success stories, current clients, background,  profitability).]
     - **Estimated Market US Potential**: [X companies, $Y–$Z revenue range]
     - **Ease of Outreach**: [Low/Medium/High based on decision-maker visibility]
     - **Pain Points**: [Key financial challenges this segment faces]
@@ -92,27 +91,19 @@ export async function POST(request: Request) {
     ##SEGMENT 2: [SEGMENT NAME]
 
     - **Justification for Advisory Services**: [Specific need for recurring financial leadership]
+        - [Briefly discuss why and how a team with ${teamSize} members can achieve in offering this service]
+        - [If available, briefly discuss this service' achievability by reflecting it to the offerer's credibilities above (success stories, current clients, background, profitability).]
     - **Estimated Market US Potential**: [X companies, $Y–$Z revenue range]
     - **Ease of Outreach**: [Low/Medium/High based on decision-maker visibility]
     - **Pain Points**: [Key financial challenges this segment faces]
     
-
-    *(continue same format for all 5-7 segments)*
+    *continue same format for all 5-7 segments*
 
     ---
 
-    ### Key Targeting Criteria
-
-    When identifying the best segments, prioritize:
-    - Complex financial operations requiring ongoing expertise
-    - Regulatory or compliance challenges specific to the niche
-    - Growth-stage companies needing financial strategy but not ready for full-time financial leadership
-    - Businesses with potential for value-based pricing of advisory services
-    - Consider the current team size (${teamSize}) when evaluating if these segments can be effectively served
-    
     Important Notes:
     - DO NOT USE ANY CONVERSATIONAL WORDS OR LIKE INTROS, GIVE THE OUTPUT DIRECTLY.
-    - USE THE INFORMATION FROM ALL 6 INPUTS TO INFORM YOUR RECOMMENDATIONS.
+    - STRICTLY FOLLOW THE CRITERIA BEFORE GENERATING THE SEGMENTS AND SERVICES.
 
     Arrange segments from Highest to Lowest Profiting Segments for Accounting Advisory Services with clear visual separation between each segment.
     `;
