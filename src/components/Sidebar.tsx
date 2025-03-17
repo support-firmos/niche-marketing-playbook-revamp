@@ -43,6 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               </span>
             </Button>
           </Link>
+          {/*}
           <Link href="/calculator">
             <Button 
               className="!bg-gradient-to-r from-titleColor/90 to-titleColor/70 text-black font-medium shadow-md shadow-titleColor/20 hover:shadow-titleColor/30 hover:from-titleColor hover:to-titleColor/80 border border-titleColor/50 !py-3 !px-5 w-full"
@@ -55,6 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               </span>
             </Button>
           </Link>
+          */}
         </div>
       </div>
     </>
