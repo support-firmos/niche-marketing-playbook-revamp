@@ -10,7 +10,7 @@ export const runtime = 'edge';
 export async function POST(request: Request) {
   try {
     const requestData = await request.json();
-    const { niche, segments } = requestData;
+    const { niche, segments, services } = requestData;
     
     if (!segments || typeof segments !== 'string') {
       return NextResponse.json({ error: 'Invalid segment information' }, { status: 400 });
@@ -25,61 +25,66 @@ export async function POST(request: Request) {
 
     ${nicheContext}
 
+    Here are the services the client wants to avail: ${services}
+
     FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a segment with two attributes, namely name and content:
     [
       {
         "name": "segment name here",
         "content":
           "
-            **Why This Segment?**
+            **A. Why This Segment?**
             [3-5 sentences explaining why this segment needs fractional CFO services. Provide specific business context, industry challenges, and financial pain points. Detail how their size, growth stage, and business model create a need for sophisticated financial leadership without the cost of a full-time CFO. Explain their complexity and why they're particularly suited for fractional services.]
+            [Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above)]
+            
+            **B. Key Challenges:**
+            - [Challenge 1] — [Detailed explanation of the challenge with specific examples and business implications]
+            - [Challenge 2] — [Detailed explanation of the challenge with specific examples and business implications]
+            - [Challenge 3] — [Detailed explanation of the challenge with specific examples and business implications]
+            - [Challenge 4] — [Detailed explanation of the challenge with specific examples and business implications]
         
-            **Key Challenges:**
-            👉 [Challenge 1]—[Detailed explanation of the challenge with specific examples and business implications]
-            👉 [Challenge 2]—[Detailed explanation of the challenge with specific examples and business implications]
-            👉 [Challenge 3]—[Detailed explanation of the challenge with specific examples and business implications]
-            👉 [Challenge 4]—[Detailed explanation of the challenge with specific examples and business implications]
-        
-            🎯 **Sales Navigator Filters:**
-            ✅ Job Titles (Business Decision-Makers & Leaders):
-            [List 20-30 non-finance job titles, one per line, focusing on business owners, executives, and operational leadership who would make decisions about hiring financial services. Include multiple variants of similar roles (Owner, Co-Owner, Founder, Co-Founder, etc.)]
-            Examples:
-            Owner
-            Co-Owner
-            Founder
-            Co-Founder
-            CEO
-            President
-            Managing Director
-            Managing Partner
-            Partner
-            Director
-            Executive Director
-            Chief Operating Officer
-            COO
-            VP of Operations
-            General Manager
+            **C. Sales Navigator Filters:**
+                Job Titles (Business Decision-Makers & Leaders):
+                  [List in bullet points 20-30 non-finance *job titles* (italicized), one per line, focusing on business owners, executives, and operational leadership who would make decisions about hiring financial services. Include multiple variants of similar roles (Owner, Co-Owner, Founder, Co-Founder, etc.)]
+                  Examples:
+                  Owner
+                  Co-Owner
+                  Founder
+                  Co-Founder
+                  CEO
+                  President
+                  Managing Director
+                  Managing Partner
+                  Partner
+                  Director
+                  Executive Director
+                  Chief Operating Officer
+                  COO
+                  VP of Operations
+                  General Manager
                 
-            ✅ Industry:
-            [List 3-5 industry categories, one per line]
+                Industry
+                  [List in bullet points 3-5 industry categories]
                 
-            ✅ Company Headcount:
-            [Specify employee range using LinkedIn's standard brackets: 11-50, 51-200, 201-500, etc.]
+                Company Headcount
+                  [(In bullet points) Specify employee range using LinkedIn's standard brackets: 11-50, 51-200, 201-500, etc.]
                 
-            ✅ Company Type:
-            [List company types, one per line]
+                Company Type
+                  [List in bullet points company types]
                 
-            ✅ Keywords in Company Name:
-            [List relevant keywords in quotation marks]
+                Keywords in Company Name
+                  [List in bullet points relevant keywords in quotation marks]
                 
-            ✅ Boolean Search Query:
-            [Provide a sample boolean search string using OR operators]
+                Boolean Search Query
+                  [Provide a sample boolean search string using OR operators]
                 
-            **Best Intent Data Signals**
-             - [Signal 1] (Detailed explanation with specific business implications)
-             - [Signal 2] (Detailed explanation with specific business implications)
-             - [Signal 3] (Detailed explanation with specific business implications)
-             - [Signal 4] (Detailed explanation with specific business implications)
+            **D. Best Intent Data Signals**
+                - [Signal 1] (Detailed explanation with specific business implications)
+                - [Signal 2] (Detailed explanation with specific business implications)
+                - [Signal 3] (Detailed explanation with specific business implications)
+                - [Signal 4] (Detailed explanation with specific business implications)
+            ---
+            
           "
       },
       {...same format above for the next segments}
@@ -90,7 +95,6 @@ export async function POST(request: Request) {
     - Do NOT include any text before or after the JSON
     - Please provide a valid JSON response without markdown formatting or additional text.
     - Maintain the exact structure shown above
-    - Use the exact emoji formatting shown above (1️⃣, 👉, 🎯, ✅, 🔹)
     - Do NOT include any introductory text, disclaimers, or conclusions
     - Start immediately with the first segment name
     - Extract and transform information from the provided segment analysis
@@ -204,7 +208,7 @@ function formatSegmentsForDisplay(segments: Array<{ name: string; content: strin
     const segmentContent = segment.content || '';
     
     return `
-##SEGMENT ${index + 1}: ${segmentName}
+## SEGMENT ${index + 1}: ${segmentName}
 
 ${segmentContent}
 `;

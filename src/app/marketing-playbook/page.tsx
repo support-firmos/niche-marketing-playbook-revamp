@@ -1,7 +1,7 @@
 // src/app/page.tsx
 'use client';
 import { useRouter } from 'next/navigation'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ResearchForm from '@/components/ResearchForm';
 import ResearchResult from '@/components/ResearchResult';
 import { usePlaybookStore } from '../store/playbookStore';
@@ -13,6 +13,7 @@ import { useSalesNavStore } from '../store/salesNavStore';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 import { useDeepSegmentResearchStore } from '../store/deepResearchStore';
 import Sidebar from "@/components/Sidebar";
+import { serialize } from 'v8';
 
 interface FormData {
   nicheConsideration: string;
@@ -33,9 +34,12 @@ export default function Home() {
   const services = selectedServices
   .map(service => service.label)
   .join(', ');
-  if(!revenue || revenue === '' || !services || services=== ''){
-    router.push('/');
-  }
+
+  useEffect(() => {
+    if (!revenue || revenue === '' || !services || services === '') {
+      router.push('/');
+    }
+  }, [revenue, services, router]);
 
   //using Zustand (global state library) to access this data accross different pages (step5GeneratedPlaybook is needed for Calculator page)
   const { step1GeneratedResearch, setStep1GeneratedResearch } = useSegmentsStore();
@@ -74,7 +78,6 @@ export default function Home() {
           clientPercentage: formData.clientPercentage,
           successStories: formData.successStories,
           teamSize: formData.teamSize,
-          revenue,
           services
         }),
       });
@@ -119,7 +122,8 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           niche,
-          segments
+          segments,
+          services
         }),
       });
 
@@ -157,7 +161,8 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           niche: currentNiche,
-          segments 
+          segments,
+          services
         }),
       });
       
@@ -208,7 +213,7 @@ export default function Home() {
       const response = await fetch('/api/deep-segment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ segments: step3Segments })
+        body: JSON.stringify({ segments: step3Segments, services })
       });
 
       if (!response.ok) {
@@ -265,7 +270,7 @@ export default function Home() {
       const response = await fetch('/api/playbook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(playbackData)
+        body: JSON.stringify({playbackData,services})
       });
 
       if (!response.ok) {
@@ -344,7 +349,7 @@ const handleSteps = () => {
   if (!isStep5Done) {
     return {
       action: () => generateMarketingPlaybook(),
-      buttonText: "Generate Marketing Playbook"
+      buttonText: "Generate Inbound Marketing Blueprint"
     };
   }
   if (isStep5Done) {

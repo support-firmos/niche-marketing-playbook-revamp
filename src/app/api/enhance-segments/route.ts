@@ -9,7 +9,7 @@ export const runtime = 'edge';
 
 export async function POST(request: Request) {
   try {
-    const { niche, segments } = await request.json();
+    const { niche, segments, services } = await request.json();
     
     if (!segments || typeof segments !== 'string') {
       return NextResponse.json({ error: 'Invalid segments data' }, { status: 400 });
@@ -20,35 +20,37 @@ export async function POST(request: Request) {
 
       ${segments.substring(0, 20000)}
 
+      And here is a list of the services the client wants to avail: ${services}
+
       ## FORMAT INSTRUCTIONS
 
-      Create an enhanced analysis with clear visual formatting. Begin with this centered title:
+      Create an enhanced analysis with clear visual formatting. Consider markdown formatting. Begin with this centered title:
 
-      #  DEEP DIVE: BEST ${niche} SEGMENTS FOR HIGH-TICKET ADVISORY/ACCOUNTING SERVICES
+      # DEEP DIVE: Best *${niche}* segments for high-ticket advisory/accounting services
 
       Do not include introductory sentences.
 
       For each segment, use this exact visual formatting:
 
-      #SEGMENT #: *[SEGMENT NAME]*
+      ## SEGMENT #: *[SEGMENT NAME]*
 
-      A. **WHY THIS SEGMENT?**
-        Explain in 3 sentences why this segment needs premium accounting advisory services.
+      A. **Why this segment?**
+        Explain why this segment needs premium accounting advisory services.
+        Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
 
-      B. **HIGH-TICKET JUSTIFICATION**
+      B. **High-ticket justification** (Align/reflect to any of the client's desired services)
         • [Specific financial challenge/task]
         • [Specific financial challenge/task]
         • [Specific financial challenge/task]
         • [Specific financial challenge/task]
 
-      C. **HOW LUCRATIVE IS THIS MARKET?**
+      C. **Hhow lucrative is this market?**
         Assess market size, growth trends, and profitability potential in 2-3 sentences.
 
-      D. **MARKETING ANGLES**
+      D. **Marketing angles**
         • [Compelling marketing message #1]
         • [Compelling marketing message #2]
         • [Compelling marketing message #3]
-
 
       Keep each section concise and actionable. Maintain consistent formatting with clear visual separation between segments and sections.
     `;

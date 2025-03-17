@@ -59,12 +59,12 @@ export async function POST(request: Request) {
       } else {
         segmentInfo = String(segment);
       }
-      
+      const services = requestData.services;
       // Generate deep segment research for this segment
-      const result = await generateDeepSegmentResearch(segmentInfo);
+      const result = await generateDeepSegmentResearch(segmentInfo, services);
       return {
         name: segmentName,
-        deepResearch: result
+        deepResearch: result,
       };
     }));
     
@@ -89,11 +89,14 @@ export async function POST(request: Request) {
 }
 
 // Helper function to generate deep segment research for a single segment
-async function generateDeepSegmentResearch(segmentInfo: string) {
+async function generateDeepSegmentResearch(segmentInfo: string, services: string) {
   const prompt = `You are an empathetic B2B Researcher capable of deeply understanding and embodying the Ideal Customer Profile (ICP) for high-ticket advisory and consulting services.
 
 ## Your Task
 Analyze the ICP below provided below and generate a comprehensive market research profile following the exact structure below. Use the information to identify the most relevant and impactful insights.
+
+
+Here is a list of all the services the client wants to avail: ${services}
 
 ## Analysis Requirements
 Provide exactly 5 items per category. There is a guide below to help you write each item.
@@ -156,301 +159,304 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 
 ## Response Format
 
-##MARKET RESEARCH - \${segmentName}
+# DEEP INDUSTRY RESEARCH: [niche/industry name]
 
-###FEARS
+## *segment name* *segment number*
+### FEARS
 
-1️⃣ [Fear 1 title]
+1. [Fear 1 title]
 [A comprehensive explanation of the fear. Must include real-world business impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-2️⃣ [Fear 2 title]
+2. [Fear 2 title]
 [A comprehensive explanation of the fear. Must include real-world business impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
 
-3️⃣ [Fear 3 title]
+3. [Fear 3 title]
 [A comprehensive explanation of the fear. Must include real-world business impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
 
-4️⃣ [Fear 4 title]
+4. [Fear 4 title]
 [A comprehensive explanation of the fear. Must include real-world business impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
 
-5️⃣ [Fear 5 title]
+5. [Fear 5 title]
 [A comprehensive explanation of the fear. Must include real-world business impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
-###PAINS
+### PAINS
 
-1️⃣ [Pain 1 title]
+1. [Pain 1 title]
 [A comprehensive explanation of the pain. Must include real-world negative consequences or financial impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
 
-2️⃣ [Pain 2 title]
+2. [Pain 2 title]
 [A comprehensive explanation of the pain. Must include real-world negative consequences or financial impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
 
-3️⃣ [Pain 3 title]
+3. [Pain 3 title]
 [A comprehensive explanation of the pain. Must include real-world negative consequences or financial impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
 
-4️⃣ [Pain 4 title]
+4. [Pain 4 title]
 [A comprehensive explanation of the pain. Must include real-world negative consequences or financial impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
 
-5️⃣ [Pain 5 title]
+5. [Pain 5 title]
 [A comprehensive explanation of the pain. Must include real-world negative consequences or financial impact. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services address it. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
 
-###OBJECTIONS
+### OBJECTIONS
 
-1️⃣ [Objection 1 title]
+1. [Objection 1 title]
 [A comprehensive explanation of the objection. Must include real-world client concerns. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss and counter by providing benefits of high-ticket advisory services. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss and counter by providing benefits of high-ticket advisory services, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-2️⃣ [Objection 2 title]
+2. [Objection 2 title]
 [A comprehensive explanation of the objection. Must include real-world client concerns. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss and counter by providing benefits of high-ticket advisory services. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss and counter by providing benefits of high-ticket advisory services, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-3️⃣ [Objection 3 title]
+3. [Objection 3 title]
 [A comprehensive explanation of the objection. Must include real-world client concerns. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss and counter by providing benefits of high-ticket advisory services. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss and counter by providing benefits of high-ticket advisory services, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-4️⃣ [Objection 4 title]
+4. [Objection 4 title]
 [A comprehensive explanation of the objection. Must include real-world client concerns. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss and counter by providing benefits of high-ticket advisory services. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss and counter by providing benefits of high-ticket advisory services, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-5️⃣ [Objection 5 title]
+5. [Objection 5 title]
 [A comprehensive explanation of the objection. Must include real-world client concerns. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss and counter by providing benefits of high-ticket advisory services. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss and counter by providing benefits of high-ticket advisory services, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-###GOALS
+### GOALS
 
-1️⃣ [Goal 1 title]
+1. [Goal 1 title]
 [A comprehensive explanation of the goal. Must include desired real-world outcomes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help attain the goal. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services help attain the goal, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-2️⃣ [Goal 2 title]
+2. [Goal 2 title]
 [A comprehensive explanation of the goal. Must include desired real-world outcomes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help attain the goal. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services help attain the goal, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-3️⃣ [Goal 3 title]
+3. [Goal 3 title]
 [A comprehensive explanation of the goal. Must include desired real-world outcomes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help attain the goal. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services help attain the goal, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-4️⃣ [Goal 4 title]
+4. [Goal 4 title]
 [A comprehensive explanation of the goal. Must include desired real-world outcomes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help attain the goal. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services help attain the goal, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-5️⃣ [Goal 5 title]
+5. [Goal 5 title]
 [A comprehensive explanation of the goal. Must include desired real-world outcomes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services help attain the goal. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services help attain the goal, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-###VALUES
+### VALUES
 
-1️⃣ [Value 1 title]
+1. [Value 1 title]
 [A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services align with this value, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-2️⃣ [Value 2 title]
+2. [Value 2 title]
 [A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services align with this value, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-3️⃣ [Value 3 title]
+3. [Value 3 title]
 [A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services align with this value, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-4️⃣ [Value 4 title]
+4. [Value 4 title]
 [A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services align with this value, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-5️⃣ [Value 5 title]
+5. [Value 5 title]
 [A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services align with this value. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services align with this value, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-###DECISION-MAKING PROCESSES
+### DECISION-MAKING PROCESSES
 
-1️⃣ [Decision-Making Process 1 title]
+1. [Decision-Making Process 1 title]
 [A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services fit into this process, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-2️⃣ [Decision-Making Process 2 title]
+2. [Decision-Making Process 2 title]
 [A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services fit into this process, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-3️⃣ [Decision-Making Process 3 title]
+3. [Decision-Making Process 3 title]
 [A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services fit into this process, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-4️⃣ [Decision-Making Process 4 title]
+4. [Decision-Making Process 4 title]
 [A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services fit into this process, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-5️⃣ [Decision-Making Process 5 title]
+5. [Decision-Making Process 5 title]
 [A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services fit into this process. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services fit into this process, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-###INFLUENCES
+### INFLUENCES
 
-1️⃣ [Influence 1 title]
+1. [Influence 1 title]
 [A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can leverage this influence, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-2️⃣ [Influence 2 title]
+2. [Influence 2 title]
 [A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can leverage this influence, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-3️⃣ [Influence 3 title]
+3. [Influence 3 title]
 [A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can leverage this influence, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-4️⃣ [Influence 4 title]
+4. [Influence 4 title]
 [A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can leverage this influence, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-5️⃣ [Influence 5 title]
+5. [Influence 5 title]
 [A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can leverage this influence. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can leverage this influence, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-###COMMUNICATION PREFERENCES
+### COMMUNICATION PREFERENCES
 
-1️⃣ [Communication Preference 1 title]
+1. [Communication Preference 1 title]
 [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-2️⃣ [Communication Preference 2 title]
+2. [Communication Preference 2 title]
 [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-3️⃣ [Communication Preference 3 title]
+3. [Communication Preference 3 title]
 [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
 
-4️⃣ [Communication Preference 4 title]
+4. [Communication Preference 4 title]
 [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
-
-5️⃣ [Communication Preference 5 title]
+5. [Communication Preference 5 title]
 [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
 
-💡 How Advisory Services Can Help
-[Comprehensively discuss how high-ticket advisory services can adapt to this preference. Use paragraph and/or bullet points.]
+**How Advisory Services Can Help**
+[Comprehensively discuss how high-ticket advisory services can adapt to this preference, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
 
+---
+
+IMPORTANT NOTE: Always refer to the services the client wants to avail (mentioned above) and contextualize your responses with it, as you may see fit and appropriate.
 
 ## Segment Information to Analyze:
 ${segmentInfo}`;
@@ -541,8 +547,6 @@ Based on the deep research of these segments, a multi-faceted marketing approach
 function formatSegmentsForDisplay(segments: Array<SegmentData & { deepResearch?: string }>): string {
   return segments.map((segment) => {
     return `
-#DEEP SEGMENT RESEARCH: ${segment.name}
-
 ${segment.deepResearch || 'No deep research available'}
 `;
   }).join('\n\n');

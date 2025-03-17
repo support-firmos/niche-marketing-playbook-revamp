@@ -67,7 +67,7 @@ export default function ResearchResult({
             ? 'Enhanced Market Research' 
             : resultType === 'segments' ? 'Market Research' :
             resultType === 'deepSegment' ? 'Deep Segment Research' : 
-            resultType === 'playbook' ? 'Marketing Playbook' : undefined}
+            resultType === 'playbook' ? 'Inbound Marketing Blueprint' : undefined}
       </h2>
         <div className="flex space-x-2">
           <Button 
@@ -141,7 +141,7 @@ export default function ResearchResult({
           {resultType === 'salesNav'  ?  'Deep Segment Research in progress...' 
             : resultType === 'segments' ? 'Enhancing segments...' 
             : resultType === 'enhanced' ? 'Creating LinkedIn Sales Navigator Strategy...' 
-            : resultType === 'deepSegment' ? 'Creating Marketing Playbook...' : 'Processing' }
+            : resultType === 'deepSegment' ? 'Creating Inbound Marketing Blueprint...' : 'Processing' }
         </p>
       </div>
       )}

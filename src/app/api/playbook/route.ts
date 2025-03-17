@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   try {
     const requestData = await request.json();
     let segmentData;
-    
+    const services = requestData.services;
     // Handle different input formats
     if (requestData.segmentInfo) {
       if (typeof requestData.segmentInfo === 'string') {
@@ -55,20 +55,18 @@ ${segment.deepResearch || 'No deep research available for this segment'}
     
     console.log('Segment data prepared for playbook generation');
     
-    const prompt = `You are an expert AI copywriter tasked with creating a single, cohesive marketing playbook for high-ticket advisory and accounting services that incorporates insights from ALL market segment research provided. Your goal is to create ONE unified playbook, not a collection of segment-specific strategies.
+    const prompt = `You are an expert AI copywriter tasked with creating a single, cohesive marketing playbook for high-ticket advisory and accounting services that incorporates insights from ALL market segments provided. Your goal is to create a unified playbook.
 
 ## Your Task
-Create a comprehensive, integrated marketing playbook that synthesizes insights from all segment research into a unified strategy. Rather than addressing segments separately, find the common themes, patterns, and synergies to develop an overarching approach that works across all segments while acknowledging important variations.
+Create a comprehensive, integrated marketing playbook that synthesizes insights from all segment research into a unified strategy. Find the common themes, patterns, and synergies to develop an overarching approach that works across all segments while acknowledging important variations.
+Please, highly contextualize (if applicable) your responses based on the services that the client wants to avail: ${services}
 
 ## Format Requirements - FOLLOW THESE EXACTLY
 - Begin with a compelling title that references specific industry segments covered in your playbook (e.g., "Financial Strategy Mastery: Unified Marketing Playbook for Property Management, Development & Brokerage Services")
-- Format each section with a clear, numbered emoji header exactly like this: "🔹 1️⃣ TARGET AUDIENCE 🔹"
-- Use consistent section dividers exactly like this: "✧═══════════════✧" between major sections
-- For each numbered point within sections, start with the exact number emoji (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣)
-- Use exactly 5 points for each section, each starting with the corresponding number emoji
+- Use exactly 5 points for each section
 - Each point must be a SINGLE PARAGRAPH (not multiple paragraphs)
 - Each point must be substantive and detailed (4-6 sentences minimum)
-- Do NOT use markdown formatting (no **, no *, no ## or #)
+- Follow markdown formatting
 - Begin directly with the title and first section (no narrative introduction)
 
 ## Marketing Playbook Structure
@@ -76,70 +74,60 @@ Your playbook MUST follow this EXACT structure and format:
 
 #[COMPELLING TITLE THAT REFERENCES SPECIFIC INDUSTRY SEGMENTS]
 
-✧═══════════════✧
+## AUDIENCE APPROACH
 
-1️⃣##UNIFIED AUDIENCE APPROACH
+1. [First detailed point as a single paragraph with 4-6 sentences]
+2. [Second detailed point as a single paragraph with 4-6 sentences]
+3. [Third detailed point as a single paragraph with 4-6 sentences]
+4. [Fourth detailed point as a single paragraph with 4-6 sentences]
+5. [Fifth detailed point as a single paragraph with 4-6 sentences]
 
-1️⃣ [First detailed point as a single paragraph with 4-6 sentences]
-2️⃣ [Second detailed point as a single paragraph with 4-6 sentences]
-3️⃣ [Third detailed point as a single paragraph with 4-6 sentences]
-4️⃣ [Fourth detailed point as a single paragraph with 4-6 sentences]
-5️⃣ [Fifth detailed point as a single paragraph with 4-6 sentences]
+---
 
-✧═══════════════✧
+## UNIVERSAL PAIN POINTS
 
- 2️⃣ ##UNIVERSAL PAIN POINTS
+1. [First detailed point as a single paragraph with 4-6 sentences]
+2. [Second detailed point as a single paragraph with 4-6 sentences]
+3. [Third detailed point as a single paragraph with 4-6 sentences]
+4. [Fourth detailed point as a single paragraph with 4-6 sentences]
+5. [Fifth detailed point as a single paragraph with 4-6 sentences]
 
-1️⃣ [First detailed point as a single paragraph with 4-6 sentences]
-2️⃣ [Second detailed point as a single paragraph with 4-6 sentences]
-3️⃣ [Third detailed point as a single paragraph with 4-6 sentences]
-4️⃣ [Fourth detailed point as a single paragraph with 4-6 sentences]
-5️⃣ [Fifth detailed point as a single paragraph with 4-6 sentences]
+---
 
 [CONTINUE THIS EXACT FORMAT FOR ALL REMAINING SECTIONS]
 
 ## Marketing Playbook Sections
 For each section below, provide EXACTLY 5 points that offer concrete, specific insights drawing from ALL segments in the research:
 
-🔹 1️⃣ UNIFIED AUDIENCE APPROACH 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create a unified approach to targeting all audience segments. Identify common characteristics, overlapping needs, and shared decision patterns. Focus on creating a single messaging framework that resonates across all identified segments.]
-
-🔹 2️⃣ UNIVERSAL PAIN POINTS 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Extract the most significant pain points that appear across multiple segments. Focus on those that represent common ground and create a unified approach to addressing them through advisory and accounting services.]
-
-🔹 3️⃣ INTEGRATED FEAR MITIGATION 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Develop a comprehensive approach to addressing fears and concerns across all segments. Create unified messaging that addresses these fears, acknowledging variations while focusing on common solutions.]
-
-🔹 4️⃣ UNIVERSAL GOALS AND ASPIRATIONS 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Identify overarching goals that span across segments and develop unified approaches to helping clients achieve them. Connect advisory services to these universal aspirations.]
-
-🔹 5️⃣ COMPREHENSIVE OBJECTION HANDLING 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create a unified objection-handling strategy that addresses the most important concerns across all segments. For each objection, develop a universal counter-argument that works regardless of segment.]
-
-🔹 6️⃣ CORE VALUE PROPOSITION 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Develop a single, powerful value proposition that aligns with the core values of all segments. Focus on the universal benefits that resonate across all audience groups.]
-
-🔹 7️⃣ UNIFIED DECISION-MAKING FRAMEWORK 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create a universal framework for understanding and influencing the decision-making process across all segments. Identify common stages, stakeholders, and considerations that apply broadly.]
-
-🔹 8️⃣ UNIVERSAL METRICS AND KPIs 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Identify key performance indicators and metrics that matter across all segments. Develop a unified measurement framework that demonstrates the value of advisory services regardless of client segment.]
-
-🔹 9️⃣ INTEGRATED COMMUNICATION STRATEGY 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Develop one comprehensive communication approach that works across all segments. Focus on channels, messaging formats, and cadence that effectively reach and engage all audience groups.]
-
-🔹 🔟 UNIFIED CONTENT FRAMEWORK 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Create a content strategy that addresses universal needs while accommodating segment variations. Identify themes, formats, and distribution approaches that work across all segments with minor adaptations.]
-
-🔹 1️⃣1️⃣ VERSATILE LEAD MAGNETS 🔹
-[Provide 5 detailed points using number emojis (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣). Develop lead magnet concepts that appeal to all segments, with slight modifications if needed. Focus on resources that address universal pain points while being adaptable to different contexts.]
+1. UNIFIED AUDIENCE APPROACH
+[Provide 5 detailed points. Create a unified approach to targeting all audience segments. Identify common characteristics, overlapping needs, and shared decision patterns. Focus on creating a single messaging framework that resonates across all identified segments.]
+2. UNIVERSAL PAIN POINTS
+[Provide 5 detailed points. Extract the most significant pain points that appear across multiple segments. Focus on those that represent common ground and create a unified approach to addressing them through advisory and accounting services.]
+3. INTEGRATED FEAR MITIGATION
+[Provide 5 detailed points. Develop a comprehensive approach to addressing fears and concerns across all segments. Create unified messaging that addresses these fears, acknowledging variations while focusing on common solutions.]
+4. UNIVERSAL GOALS AND ASPIRATIONS
+[Provide 5 detailed points. Identify overarching goals that span across segments and develop unified approaches to helping clients achieve them. Connect advisory services to these universal aspirations.]
+5. COMPREHENSIVE OBJECTION HANDLING
+[Provide 5 detailed points. Create a unified objection-handling strategy that addresses the most important concerns across all segments. For each objection, develop a universal counter-argument that works regardless of segment.]
+6. CORE VALUE PROPOSITION
+[Provide 5 detailed points. Develop a single, powerful value proposition that aligns with the core values of all segments. Focus on the universal benefits that resonate across all audience groups.]
+7. UNIFIED DECISION-MAKING FRAMEWORK
+[Provide 5 detailed points. Create a universal framework for understanding and influencing the decision-making process across all segments. Identify common stages, stakeholders, and considerations that apply broadly.]
+8. UNIVERSAL METRICS AND KPIs
+[Provide 5 detailed points. Identify key performance indicators and metrics that matter across all segments. Develop a unified measurement framework that demonstrates the value of advisory services regardless of client segment.]
+9. INTEGRATED COMMUNICATION STRATEGY
+[Provide 5 detailed points. Develop one comprehensive communication approach that works across all segments. Focus on channels, messaging formats, and cadence that effectively reach and engage all audience groups.]
+10. UNIFIED CONTENT FRAMEWORK
+[Provide 5 detailed points. Create a content strategy that addresses universal needs while accommodating segment variations. Identify themes, formats, and distribution approaches that work across all segments with minor adaptations.]
+11. VERSATILE LEAD MAGNETS
+[Provide 5 detailed points. Develop lead magnet concepts that appeal to all segments, with slight modifications if needed. Focus on resources that address universal pain points while being adaptable to different contexts.]
 
 ## Segment Research:
 ${segmentData}
 
 Important notes:
+- Consider the services the client wants to avail (mentioned above). Always contextualize and inspire your responses from them (if applicable).
 - Create a compelling title that CLEARLY NAMES the specific industry segments covered in the playbook (e.g., real estate development, property management, brokerage, STR management, etc.)
-- Format each numbered point with its own number emoji (1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣) - EACH POINT NEEDS ITS OWN NUMBER EMOJI
 - Each point must be a SINGLE paragraph (not multiple short paragraphs)
 - Focus on creating ONE unified playbook, not a collection of segment-specific approaches
 - Identify common patterns and themes across ALL segments and build a comprehensive strategy around them
