@@ -15,11 +15,12 @@ export default function AirtableUpload() {
     const { step3Segments } = useSalesNavSegmentsStore();
     const { step4DeepSegmentResearch } = useDeepSegmentResearchStore();
     const { step5GeneratedPlaybook } = usePlaybookStore();
-    let formattedSalesNav;
+    let formattedSalesNav, formattedDeepSegmentResearch;
 
     if(step3Segments){
         formattedSalesNav = formatSegmentsForDisplay(step3Segments);
     }
+
     const [ loading, setLoading ] = useState({
         salesNav: false,
         playbook: false

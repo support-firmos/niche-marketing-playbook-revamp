@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-interface SegmentResearch {
+export interface SegmentResearch {
   displayContent: string | null;
   originalContent: Record<string, unknown>;
 }

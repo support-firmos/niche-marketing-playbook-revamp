@@ -1,10 +1,11 @@
 'use client';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import { SegmentResearch } from '@/app/store/deepResearchStore';
 
 interface CardProps {
   title: string;
-  data: any;
+  data: string | null | undefined | SegmentResearch;
   onSendToApi?: () => Promise<void>;
   isLoading?: boolean;
   clientPicked: boolean;
