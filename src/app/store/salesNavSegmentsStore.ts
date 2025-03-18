@@ -1,8 +1,16 @@
 import { create } from 'zustand';
 
-interface Segment {
+export interface Segment {
   name: string;
-  content: string;
+  justification: string;
+  challenges: string;
+  jobtitles: string;
+  industries: string;
+  headcount: string;
+  companytype: string;
+  keywords: string;
+  boolean: string;
+  intentdata: string;
 }
 
 type SalesNavSegmentsStore = {

@@ -2,11 +2,8 @@
 import { useState } from 'react';
 import Button from './Button';
 import ReactMarkdown from 'react-markdown';
+import {Segment} from '../app/store/salesNavSegmentsStore'
 
-interface Segment {
-  name: string;
-  content: string;
-}
 
 interface ResearchResultProps {
   content: string;

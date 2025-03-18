@@ -27,103 +27,70 @@ export async function POST(request: Request) {
 
     Here are the services the client wants to avail: ${services}
 
-    FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a segment with two attributes, namely name and content:
+    FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a segment with 10 attributes:
     [
       {
         "name": "segment name here",
         "justification":
           "
-            **A. Why This Segment?**
             [3-5 sentences explaining why this segment needs fractional CFO services. Provide specific business context, industry challenges, and financial pain points. Detail how their size, growth stage, and business model create a need for sophisticated financial leadership without the cost of a full-time CFO. Explain their complexity and why they're particularly suited for fractional services.]
             [Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above)]
           ",
         "challenges" :
           "
-
-          ",
-        "jobtitles" :
-          "
-
-          ",
-        "industries" :
-          "
-
-          ",
-        "headcout" :
-          "
-
-          ",
-        "companytype" :
-          "
-
-          ",
-        "keywords" :
-          "
-
-          ",
-        "intentdata" :
-          "
-
-          ",
-
-
-
-
-
-        "content":
-          "
-
-            
-            **B. Key Challenges:**
             - [Challenge 1] — [Detailed explanation of the challenge with specific examples and business implications]
             - [Challenge 2] — [Detailed explanation of the challenge with specific examples and business implications]
             - [Challenge 3] — [Detailed explanation of the challenge with specific examples and business implications]
             - [Challenge 4] — [Detailed explanation of the challenge with specific examples and business implications]
-        
-            **C. Sales Navigator Filters:**
-                Job Titles (Business Decision-Makers & Leaders):
-                  [List in bullet points 20-30 non-finance *job titles* (italicized), one per line, focusing on business owners, executives, and operational leadership who would make decisions about hiring financial services. Include multiple variants of similar roles (Owner, Co-Owner, Founder, Co-Founder, etc.)]
-                  Examples:
-                  Owner
-                  Co-Owner
-                  Founder
-                  Co-Founder
-                  CEO
-                  President
-                  Managing Director
-                  Managing Partner
-                  Partner
-                  Director
-                  Executive Director
-                  Chief Operating Officer
-                  COO
-                  VP of Operations
-                  General Manager
-                
-                Industry
-                  [List in bullet points 3-5 industry categories]
-                
-                Company Headcount
-                  [(In bullet points) Specify employee range using LinkedIn's standard brackets: 11-50, 51-200, 201-500, etc.]
-                
-                Company Type
-                  [List in bullet points company types]
-                
-                Keywords in Company Name
-                  [List in bullet points relevant keywords in quotation marks]
-                
-                Boolean Search Query
-                  [Provide a sample boolean search string using OR operators]
-                
-            **D. Best Intent Data Signals**
+
+          ",
+        "jobtitles" :
+          "
+            [List in bullet points 20-30 non-finance *job titles* (italicized), one per line, focusing on business owners, executives, and operational leadership who would make decisions about hiring financial services. Include multiple variants of similar roles (Owner, Co-Owner, Founder, Co-Founder, etc.)]
+            Examples:
+            Owner
+            Co-Owner
+            Founder
+            Co-Founder
+            CEO
+            President
+            Managing Director
+            Managing Partner
+            Partner
+            Director
+            Executive Director
+            Chief Operating Officer
+            COO
+            VP of Operations
+            General Manager
+          ",
+        "industries" :
+          "
+            [List in bullet points 3-5 industry categories]
+          ",
+        "headcount" :
+          "
+            [(In bullet points) Specify employee range using LinkedIn's standard brackets: 11-50, 51-200, 201-500, etc.]
+          ",
+        "companytype" :
+          "
+            [List in bullet points company types]
+          ",
+        "keywords" :
+          "
+            [List in bullet points relevant keywords in quotation marks]
+          ",
+        "boolean" :
+          "
+            [Provide a sample boolean search string using OR operators]
+          ",
+        "intentdata" :
+          "
                 - [Signal 1] (Detailed explanation with specific business implications)
                 - [Signal 2] (Detailed explanation with specific business implications)
                 - [Signal 3] (Detailed explanation with specific business implications)
                 - [Signal 4] (Detailed explanation with specific business implications)
-            ---
-            \n\n
-            
-          "
+          ",
       },
       {...same format above for the next segments}
     ]
@@ -208,6 +175,7 @@ export async function POST(request: Request) {
     
     // Extract the content from the response
     const content = responseData.choices[0].message.content;
+
     let parsedSegments = [];
     
     try {
@@ -236,19 +204,61 @@ export async function POST(request: Request) {
 }
 
 // Function to format segments into human-readable text
-function formatSegmentsForDisplay(segments: Array<{ name: string; content: string }>): string {
+export function formatSegmentsForDisplay(segments: Array<{
+  name: string;
+  justification: string;
+  challenges: string;
+  jobtitles: string;
+  industries: string;
+  headcount: string;
+  companytype: string;
+  keywords: string;
+  boolean: string;
+  intentdata: string;
+}>): string {
   if (!segments || segments.length === 0) {
     return "No segments available";
   }
   
   return segments.map((segment, index) => {
-    const segmentName = segment.name || `Segment ${index + 1}`;
-    const segmentContent = segment.content || '';
+    const name = segment.name || `Segment ${index + 1}`;
+    const justification = segment.justification || '';
+    const challenges = segment.challenges || '';
+    const jobtitles = segment.jobtitles || '';
+    const industries = segment.industries || '';
+    const headcount = segment.headcount || '';
+    const companytype = segment.companytype || '';
+    const keywords = segment.keywords || '';
+    const boolean = segment.boolean || '';
+    const intentdata = segment.intentdata || '';
     
     return `
-## SEGMENT ${index + 1}: ${segmentName}
+## SEGMENT ${index + 1}: ${name}
 **A. Why This Segment?**
-${segmentContent}
+${justification}
+
+**B. Key Challenges:**
+${challenges}
+
+**C. Sales Navigator Filters:**
+
+  Job Titles (Business Decision-Makers & Leaders):
+  ${jobtitles}
+  Industries
+  ${industries}
+  Company Headcount
+  ${headcount}
+  Company Type
+  ${companytype}
+  Keywords in Company Name
+  ${keywords}
+  Boolean Search Query
+  ${boolean}
+
+**D. Best Intent Data Signals**
+${intentdata}
+---
+\n
 `;
   }).join('\n\n');
 }
