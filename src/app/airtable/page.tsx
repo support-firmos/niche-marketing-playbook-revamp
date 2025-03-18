@@ -42,7 +42,7 @@ export default function AirtableUpload() {
         setLoading(prev => ({...prev, salesNav: true}));
 
         try{   
-            const response = await fetch('api/send-sales-nav', {
+            await fetch('api/send-sales-nav', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'},
                 body: JSON.stringify({
@@ -54,6 +54,7 @@ export default function AirtableUpload() {
 
         }catch(e){
             console.error('Error sending Sales Nav to Airtable', e);
+            setError('Error uploading to Airtable!')
         }finally{
             setLoading(prev => ({...prev, salesNav: false}));
         }
