@@ -84,7 +84,7 @@ Your playbook MUST follow this EXACT structure and format:
 
 ---\n\n
 
-## UNIVERSAL PAIN POINTS
+## PAIN POINTS
 
 1. [First detailed point as a single paragraph with 4-6 sentences]
 2. [Second detailed point as a single paragraph with 4-6 sentences]
@@ -99,27 +99,27 @@ Your playbook MUST follow this EXACT structure and format:
 ## Marketing Playbook Sections
 For each section below, provide EXACTLY 5 points that offer concrete, specific insights drawing from ALL segments in the research:
 
-1. UNIFIED AUDIENCE APPROACH
+1. AUDIENCE APPROACH
 [Provide 5 detailed points. Create a unified approach to targeting all audience segments. Identify common characteristics, overlapping needs, and shared decision patterns. Focus on creating a single messaging framework that resonates across all identified segments.]
-2. UNIVERSAL PAIN POINTS
+2. PAIN POINTS
 [Provide 5 detailed points. Extract the most significant pain points that appear across multiple segments. Focus on those that represent common ground and create a unified approach to addressing them through advisory and accounting services.]
-3. INTEGRATED FEAR MITIGATION
+3. FEAR MITIGATION
 [Provide 5 detailed points. Develop a comprehensive approach to addressing fears and concerns across all segments. Create unified messaging that addresses these fears, acknowledging variations while focusing on common solutions.]
-4. UNIVERSAL GOALS AND ASPIRATIONS
+4. GOALS AND ASPIRATIONS
 [Provide 5 detailed points. Identify overarching goals that span across segments and develop unified approaches to helping clients achieve them. Connect advisory services to these universal aspirations.]
-5. COMPREHENSIVE OBJECTION HANDLING
+5. OBJECTION HANDLING
 [Provide 5 detailed points. Create a unified objection-handling strategy that addresses the most important concerns across all segments. For each objection, develop a universal counter-argument that works regardless of segment.]
 6. CORE VALUE PROPOSITION
 [Provide 5 detailed points. Develop a single, powerful value proposition that aligns with the core values of all segments. Focus on the universal benefits that resonate across all audience groups.]
-7. UNIFIED DECISION-MAKING FRAMEWORK
+7. DECISION-MAKING FRAMEWORK
 [Provide 5 detailed points. Create a universal framework for understanding and influencing the decision-making process across all segments. Identify common stages, stakeholders, and considerations that apply broadly.]
-8. UNIVERSAL METRICS AND KPIs
+8. METRICS AND KPIs
 [Provide 5 detailed points. Identify key performance indicators and metrics that matter across all segments. Develop a unified measurement framework that demonstrates the value of advisory services regardless of client segment.]
-9. INTEGRATED COMMUNICATION STRATEGY
+9. COMMUNICATION STRATEGY
 [Provide 5 detailed points. Develop one comprehensive communication approach that works across all segments. Focus on channels, messaging formats, and cadence that effectively reach and engage all audience groups.]
-10. UNIFIED CONTENT FRAMEWORK
+10. CONTENT FRAMEWORK
 [Provide 5 detailed points. Create a content strategy that addresses universal needs while accommodating segment variations. Identify themes, formats, and distribution approaches that work across all segments with minor adaptations.]
-11. VERSATILE LEAD MAGNETS
+11. LEAD MAGNETS
 [Provide 5 detailed points. Develop lead magnet concepts that appeal to all segments, with slight modifications if needed. Focus on resources that address universal pain points while being adaptable to different contexts.]
 
 ## Segment Research:

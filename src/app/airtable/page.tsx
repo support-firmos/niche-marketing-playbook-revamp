@@ -15,7 +15,7 @@ export default function AirtableUpload() {
     const { step3Segments } = useSalesNavSegmentsStore();
     const { step4DeepSegmentResearch } = useDeepSegmentResearchStore();
     const { step5GeneratedPlaybook } = usePlaybookStore();
-    let formattedSalesNav, formattedDeepSegmentResearch;
+    let formattedSalesNav;
 
     if(step3Segments){
         formattedSalesNav = formatSegmentsForDisplay(step3Segments);
