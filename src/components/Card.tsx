@@ -17,13 +17,11 @@ export default function Card({ title, data, onSendToApi, isLoading = false, clie
         <h3 className="text-xl font-semibold text-white">{title}</h3>
         <button
           onClick={onSendToApi}
-          disabled={isLoading || !data || clientPicked===false }
+          disabled={isLoading || !data || !clientPicked }
           className={`px-4 py-2 rounded-md ${
-            isLoading
-              ? 'bg-gray-300 cursor-not-allowed'
-              : data
-              ? 'bg-blue-600 hover:bg-blue-700 text-white'
-              : 'bg-gray-300 cursor-not-allowed text-gray-500'
+            isLoading || !data || !clientPicked
+            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+            : 'bg-blue-600 hover:bg-blue-700 text-white'
           } transition duration-200`}
         >
           {isLoading ? 'Sending...' : 'Upload to Airtable'}

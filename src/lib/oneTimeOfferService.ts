@@ -15,10 +15,13 @@ export async function generateOneTimeOffer(text: string): Promise<string> {
     const prompt = `
 IMPORTANT: Format your entire response using proper Markdown syntax. Begin your response EXACTLY with "# Introduction to One-Time Offers" - do NOT include any preamble, introduction, or explanation before this title.
 
-Please carefully analyze the provided text and identify the specific industry it pertains to. Based on your analysis, create a comprehensive One-Time Offer (OTO) strategy document for the ${industry} industry that follows the exact markdown format specified below.
+Please carefully analyze this provided Marketing Inbound Blueprint for a specific industry:
+${text}
+
+Use this to inform your creation of industry-specific one-time offers. Based on your analysis, create a comprehensive One-Time Offer (OTO) strategy document for the ${industry} industry that follows the exact markdown format specified below.
 
 STEP 1: INDUSTRY ANALYSIS (do not include this heading in your response)
-First, thoroughly examine the provided text to identify:
+First, thoroughly examine the provided Marketing Inbound Blueprint to identify:
 - The primary industry and any sub-industries or specializations
 - Key terminology, jargon, and industry-specific language
 - Major pain points, challenges, and needs in this industry
@@ -70,16 +73,19 @@ For each of the 10 one-time offers, follow this exact markdown format with prope
 
 ## Important requirements to follow:
 
-1. Apply the "Armor Piercing Approach" (from the book "4 conversations") - each offer should be something specific and personalized to the client that impresses them and creates a great client experience. Use language, examples, and terminology directly from the provided text.
+1. IMPORTANT NOTE: Each offer must be overarching the industry being pertained in the blueprint, thus, make it general and universal. Strictly take note that each offer must be general and not specific to a particular segment in that industry.
 
-2. Follow Jason Staats' notes on starting with a standalone project:
+2. Apply the "Armor Piercing Approach" (from the book "4 conversations") - each offer should be something specific and personalized to the client that impresses them and creates a great client experience. Use language, examples, and terminology directly from the provided text.
+
+3. Follow Jason Staats' notes on starting with a standalone project:
    - Attract higher quality clients with limited scope projects
    - Don't require prospects to leave their current provider
    - Do one specific thing exceptionally well to impress them
    - Screen clients to determine if you want to work with them long-term
    - This approach leads to 20-40% higher monthly recurring revenue
 
-3. Each offer must:
+4. Each offer must:
+   - Be overarching the industry being pertained in the blueprint, thus, make it general and universal. Strictly take note that each offer must be general and not specific to a particular segment in that industry.
    - Be standardizable to minimize upfront work (utilize templates and systems common in the ${industry} industry)
    - Deliver maximum perceived value to the target audience by addressing specific pain points identified in the provided text
    - Be priced between $299-$899
@@ -88,14 +94,14 @@ For each of the 10 one-time offers, follow this exact markdown format with prope
    - Require minimal information from prospects (optimize for low friction)
    - Solve a specific pain point in the ${industry} industry that you've identified from the provided text
 
-4. Ensure the document follows the exact markdown formatting shown in the example, with:
+5. Ensure the document follows the exact markdown formatting shown in the example, with:
    - Proper markdown headers (# for main title, ## for sections, ### for subsections)
    - Consistent use of markdown lists (- for bullet points)
    - Bold text (**text**) for section titles within offers
    - Clean, professional formatting throughout with proper spacing
    - Numbered offers (1 through 10) using markdown headers (### 1., ### 2., etc.)
 
-5. Industry Specificity and Output Format Requirements:
+6. Industry Specificity and Output Format Requirements:
    - Incorporate at least 3-5 industry-specific terms or phrases from the provided text in each offer
    - Address actual challenges, tools, regulations, or methodologies mentioned in the text without explicitly citing them
    - Ensure each offer title clearly signals its relevance to the ${industry} industry
@@ -103,11 +109,8 @@ For each of the 10 one-time offers, follow this exact markdown format with prope
    - Use examples that would be immediately recognized as relevant by professionals in this industry
    - After the final offer, include a single line of text stating that all offers are priced between $299-$899 and include a money-back guarantee
 
-Use the following research to inform your creation of industry-specific one-time offers:
-
-${text}
-
-Please create all 10 offers following this markdown structure exactly, ensuring they are specific to the actual industry represented in the provided text and address real pain points that companies in this space experience.
+IMPORTANT NOTE: Again, each offer must be overarching the industry being pertained in the blueprint, thus, make it general and universal. Strictly take note that each offer must be general and not specific to a particular segment in that industry.
+Please create all 10 offers following this markdown structure exactly, ensuring they address real pain points that companies in this space experience.
 `;
 
     // Try with different models if the first one fails - same approach as other route.ts files

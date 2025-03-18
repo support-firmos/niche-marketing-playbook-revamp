@@ -24,17 +24,17 @@ export async function POST(request: Request) {
       I have here 4 default advisories: Review of Financials, Goal & KPI setting, Cash Flow Forecasting, and Budgets & Projections.
       These are all advisory services available for subscription to the accounting firm clients.
 
-      Your task is to read and analyze the marketing playbook attached below.
-      And based on that playbook, generate a total of 2 industry-specific advisories.
-      Your output is to be included among the 4 default advisories stated above. The only difference is that the 2 advisories you generated is
-      much more tailored to the playbook and more industry-specific. Note that it must be an advisory.
-
-      This is the marketing playbook: 
+      This is the marketing inbound blueprint: 
       ${generatedPlaybook}
 
+      Your task is to read and analyze the marketing inbound blueprint attached above.
+      And based on that playbook, generate a total of 2 advisories based on that blueprint.
+      Your output is to be included among the 4 default advisories stated above. Therefore, please inspire your responses from those 4.
+      The only difference is that the 2 advisories you generated is much more tailored to the blueprint.
+      IMPORTANT NOTE: Strictly, your 2 advisories must be a general/universal/overarching advisory service tailored to the industry being discussed. Don't make the service too specific. 
+
       Please format your final response containing only two texts that are separated by a comma: advisory1, advisory2
-      No introductions, conclusions, or any text in your final response. 
-      Your final and only response must only constitute the two words separated with a comma.
+      IMPORTANT NOTE: No introductions, conclusions, or any text in your final response. Your final and only response must only constitute the two words separated with a comma.
     `;
     
     try {
