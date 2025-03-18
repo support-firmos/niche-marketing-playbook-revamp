@@ -7,7 +7,7 @@ import { useState } from "react"
 import { clients, Client } from "../constants/clients"
 import Card from "@/components/Card";
 import Sidebar from "@/components/Sidebar";
-import { formatSegmentsForDisplay } from "@/app/api/sales-nav/route";
+import { formatSegmentsForDisplay } from '@/app/utilities/formatSegments';
 
 export default function AirtableUpload() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -88,73 +88,73 @@ export default function AirtableUpload() {
             <div className="relative flex">
                 <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                     <div  className="w-full px-4 py-8 flex justify-center">
-                    <div className="w-full max-w-2xl"> {/* This div limits width to 50% and centers content */}
-                    <h1 className="text-3xl font-bold mb-8 text-center">Send Research to Airtable</h1>
+                        <div className="w-full max-w-2xl"> {/* This div limits width to 50% and centers content */}
+                        <h1 className="text-3xl font-bold mb-8 text-center">Upload Airtable</h1>
+                        
+                        {/* Client selection dropdown */}
+                        <div className="mb-8">
+                            <label htmlFor="client-select" className="block text-sm font-medium text-white mb-2">
+                                Select Client
+                            </label>
+                            <div className="relative">
+                                <select
+                                    id="client-select"
+                                    className="block w-full px-4 py-3 bg-gray-300 border border-gray-300 rounded-md shadow-sm focus:outline-none text-black  appearance-none"
+                                    onChange={handleClientChange}
+                                    value={selectedClient?.id || ""}
+                                >
+                                    <option value="">-- Select a client --</option>
+                                    {clients.map(client => (
+                                        <option key={client.id} value={client.id}>
+                                            {client.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
+                            {!selectedClient && (
+                                <p className="mt-2 text-sm text-yellow-600">
+                                    Please select a client!
+                                </p>
+                            )}
+                        </div>
+                        
+                        {error && (
+                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                                {error}
+                            </div>
+                        )}
+                        
+                        <div className="grid grid-cols-1 gap-6">
+                            <Card 
+                                title="Industry Research" 
+                                data={step2EnhancedResearch}
+                                clientPicked={!selectedClient ? false : true}
+                            />    
+                            <Card 
+                                title="Sales Navigator Srategy" 
+                                data={formattedSalesNav} 
+                                onSendToApi={sendSalesNavToAirtable}
+                                isLoading={loading.salesNav}
+                                clientPicked={!selectedClient ? false : true}
+                            />        
+                            <Card 
+                                title="Deep Industry Research" 
+                                data={step4DeepSegmentResearch} 
+                                clientPicked={!selectedClient ? false : true}
                     
-                    {/* Client selection dropdown */}
-                    <div className="mb-8">
-                        <label htmlFor="client-select" className="block text-sm font-medium text-white mb-2">
-                            Select Client
-                        </label>
-                        <div className="relative">
-                            <select
-                                id="client-select"
-                                className="block w-full px-4 py-3 bg-gray-300 border border-gray-300 rounded-md shadow-sm focus:outline-none text-black  appearance-none"
-                                onChange={handleClientChange}
-                                value={selectedClient?.id || ""}
-                            >
-                                <option value="">-- Select a client --</option>
-                                {clients.map(client => (
-                                    <option key={client.id} value={client.id}>
-                                        {client.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
+                            />
+                            <Card 
+                                title="Marketing Inbound Blueprint" 
+                                data={step5GeneratedPlaybook} 
+                                clientPicked={!selectedClient ? false : true}
+                            />
                             </div>
                         </div>
-                        {!selectedClient && (
-                            <p className="mt-2 text-sm text-yellow-600">
-                                Please select a client!
-                            </p>
-                        )}
-                    </div>
-                    
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-                            {error}
-                        </div>
-                    )}
-                    
-                    <div className="grid grid-cols-1 gap-6">
-                        <Card 
-                            title="Industry Research" 
-                            data={step2EnhancedResearch}
-                            clientPicked={!selectedClient ? false : true}
-                        />    
-                        <Card 
-                            title="Sales Navigator Srategy" 
-                            data={formattedSalesNav} 
-                            onSendToApi={sendSalesNavToAirtable}
-                            isLoading={loading.salesNav}
-                            clientPicked={!selectedClient ? false : true}
-                        />        
-                        <Card 
-                            title="Deep Industry Research" 
-                            data={step4DeepSegmentResearch} 
-                            clientPicked={!selectedClient ? false : true}
-                
-                        />
-                        <Card 
-                            title="Marketing Inbound Blueprint" 
-                            data={step5GeneratedPlaybook} 
-                            clientPicked={!selectedClient ? false : true}
-                        />
-                    </div>
-                </div>
                 </div>
             </div>
         </div>
