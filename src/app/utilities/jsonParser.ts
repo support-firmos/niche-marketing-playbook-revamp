@@ -24,21 +24,23 @@ export function parseJSON(content: string) {
       
       return result;
     } catch (firstError) {
+      console.log(`Failed to parse JSON: ${firstError}`);
       try {
         // If that fails, try handling any escaped characters properly
         cleaned = cleaned.replace(/\\n/g, '\n')
                         .replace(/\\"/g, '"')
                         .replace(/\\\\/g, '\\');
         return JSON.parse(cleaned);
-      } catch (_) {
+      } catch (secondError) {
+        console.log("Second parsing attempt failed:", secondError);
         // Third approach: try parsing after removing any "real" newlines 
         try {
           const compactCleaned = cleaned.replace(/\n\s*/g, ' ');
           return JSON.parse(compactCleaned);
-        } catch (_) {
+        } catch (thirdError) {
           // If all approaches fail, provide a detailed error
           console.error("JSON parsing failed. Content sample:", cleaned.substring(0, 100) + "...");
-          throw new Error(`Failed to parse JSON: ${firstError}`);
+          console.error(`Failed to parse JSON: ${thirdError}`);
         }
       }
     }
