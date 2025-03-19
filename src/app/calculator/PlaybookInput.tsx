@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { usePlaybookStore } from '../store/playbookStore';
+import { usePlaybookStringStore } from '../store/playbookStringStore';
 
 export default function PlaybookInput() {
-  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
-  const setStep5GeneratedPlaybook = usePlaybookStore(state => state.setStep5GeneratedPlaybook);
-  
-  // Local state for form inputs before submission
-  const [playbookContent, setPlaybookContent] = useState<string>(step5GeneratedPlaybook || '');
+  const {step5StringPlaybook, setStep5StringPlaybook} = usePlaybookStringStore();
+  //local
+  const [playbookContent, setPlaybookContent] = useState<string>(step5StringPlaybook || '');
   
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -17,8 +15,6 @@ export default function PlaybookInput() {
       reader.onload = (event) => {
         const content = event.target?.result as string;
         setPlaybookContent(content);
-        // Remove the automatic state update
-        // setStep5GeneratedPlaybook(content);
       };
       reader.readAsText(file);
     }
@@ -26,16 +22,12 @@ export default function PlaybookInput() {
 
   const handlePlaybookChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPlaybookContent(e.target.value);
-    // Remove the automatic state update
-    // setStep5GeneratedPlaybook(e.target.value);
   };
 
   // New handler for the submit button
   const handleSubmit = () => {
     if (isFormValid) {
-      setStep5GeneratedPlaybook(playbookContent);
-      // Optionally: Navigate to the next page
-      // router.push('/next-page');
+      setStep5StringPlaybook(playbookContent);
     }
   };
 

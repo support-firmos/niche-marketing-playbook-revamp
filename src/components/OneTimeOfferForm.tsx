@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Button from './Button';
-import { usePlaybookStore } from '../app/store/playbookStore';
+import { usePlaybookStringStore } from '@/app/store/playbookStringStore';
 
 interface OneTimeOfferFormProps {
   onSubmit: (content: string) => void;
@@ -12,11 +12,10 @@ interface OneTimeOfferFormProps {
 
 export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOfferFormProps) {
   // Directly access the store state
-  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
-  const setStep5GeneratedPlaybook = usePlaybookStore(state => state.setStep5GeneratedPlaybook);
+  const {step5StringPlaybook, setStep5StringPlaybook} = usePlaybookStringStore();
   
   const [file, setFile] = useState<File | null>(null);
-  const [fileContent, setFileContent] = useState<string>(step5GeneratedPlaybook || '');
+  const [fileContent, setFileContent] = useState<string>(step5StringPlaybook || '');
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -67,7 +66,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
       setError('Please enter or upload some content');
       return;
     }
-    setStep5GeneratedPlaybook(fileContent); // Update the store
+    setStep5StringPlaybook(fileContent); // Update the store
     onSubmit(fileContent);
   };
 

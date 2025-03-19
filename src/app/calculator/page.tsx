@@ -1,7 +1,7 @@
 'use client';
 // app/calculator/page.tsx
 import { Suspense } from 'react';
-import { usePlaybookStore } from '../store/playbookStore';
+import { usePlaybookStringStore } from '../store/playbookStringStore';
 import { useServicesStore } from '../store/servicesStore';
 import ServiceTiersClient from './ServiceTierClient';
 import PlaybookInput from './PlaybookInput';
@@ -14,11 +14,11 @@ export default function CalculatorPage() {
   const router = useRouter();
   // Initialize state to track if component is in client-side rendering
   const [isClient, setIsClient] = useState(false);
-  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook);
+  const {step5StringPlaybook} = usePlaybookStringStore();
   const { selectedServices } = useServicesStore();
 
   useEffect(() => {
-    if(selectedServices.length === 0 || !step5GeneratedPlaybook ){
+    if(selectedServices.length === 0 || !step5StringPlaybook ){
       router.push('/');
     }
   }, [selectedServices, router]);
@@ -40,7 +40,7 @@ export default function CalculatorPage() {
     <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
       <div className="relative flex">
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        {!step5GeneratedPlaybook || step5GeneratedPlaybook === '' ? (
+        {!step5StringPlaybook || step5StringPlaybook === '' ? (
           <PlaybookInput />
         ) : (
           <ServiceTiersClient />

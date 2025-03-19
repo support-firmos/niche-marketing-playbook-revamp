@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import React from 'react'
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { usePlaybookStore } from '../store/playbookStore';
+import { usePlaybookStringStore } from '../store/playbookStringStore';
 import { useCallback, useMemo } from "react";
 import { useServicesStore } from '../store/servicesStore';
 import { useRevenueStore } from '../store/revenueStore';
@@ -29,17 +29,17 @@ interface TierData {
 
 export default function ServiceTiersClient() {
   const router = useRouter();
-  const step5GeneratedPlaybook = usePlaybookStore(state => state.step5GeneratedPlaybook) ?? '';
+  const {step5StringPlaybook} = usePlaybookStringStore();
   const queryRevenue = useRevenueStore(state => state.revenue);
   const queryServices = useServicesStore(state => state.selectedServices);
 
   useEffect(() => {
     // If playbook data doesn't exist or is empty, redirect to homepage
-    if (!step5GeneratedPlaybook || step5GeneratedPlaybook === '') {
+    if (!step5StringPlaybook || step5StringPlaybook === '') {
       // Redirect to homepage
       router.push('/service-selection');
     }
-  }, [step5GeneratedPlaybook, router]);
+  }, [step5StringPlaybook, router]);
 
   const searchParams = useSearchParams();
   const [revenue, setRevenue] = useState<string>('');
@@ -249,10 +249,10 @@ export default function ServiceTiersClient() {
   // Add this before your main useEffect
   useEffect(() => {
     // Only call when component first mounts
-    if (step5GeneratedPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '' ) {
-      generateAdvisories(step5GeneratedPlaybook);
+    if (step5StringPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '' ) {
+      generateAdvisories(step5StringPlaybook);
     }
-  }, [generateAdvisories, step5GeneratedPlaybook]);
+  }, [generateAdvisories, step5StringPlaybook]);
 
   useEffect(() => {
     // Get the query parameters using useSearchParams

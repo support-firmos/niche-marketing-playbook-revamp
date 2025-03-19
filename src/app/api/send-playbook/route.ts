@@ -1,6 +1,5 @@
 
 import { NextResponse } from 'next/server';
-import {Playbook} from '@/app/store/playbookStore';
 
 export const maxDuration = 60;
 export const runtime = 'edge';

@@ -5,20 +5,20 @@ import Link from 'next/link';
 import OneTimeOfferForm from '@/components/OneTimeOfferForm';
 import OneTimeOfferResult from '@/components/OneTimeOfferResult';
 import Button from '@/components/Button';
-import { usePlaybookStore } from '@/app/store/playbookStore';
+import { usePlaybookStringStore } from '../store/playbookStringStore';
 import { useOneTimeOfferStore } from '../store/oneTimeOfferStore';
 
 export default function OneTimeOfferPage() {
-  const { step5GeneratedPlaybook } = usePlaybookStore();
+  const {step5StringPlaybook} = usePlaybookStringStore();
   const { generatedResult, setGeneratedResult } = useOneTimeOfferStore();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (step5GeneratedPlaybook && !generatedResult && !isProcessing) {
-      handleSubmit(step5GeneratedPlaybook);
+    if (step5StringPlaybook && !generatedResult && !isProcessing) {
+      handleSubmit(step5StringPlaybook);
     }
-  }, [step5GeneratedPlaybook, generatedResult, isProcessing]);
+  }, [step5StringPlaybook, generatedResult, isProcessing]);
 
   const handleSubmit = async (fileContent: string) => {
     setError(null);
