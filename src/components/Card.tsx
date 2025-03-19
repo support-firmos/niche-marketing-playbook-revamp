@@ -2,10 +2,11 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { SegmentResearch } from '@/app/store/deepResearchStore';
+import { Playbook } from '@/app/store/playbookStore';
 
 interface CardProps {
   title: string;
-  data: string | null | undefined | SegmentResearch;
+  data: string | null | undefined | SegmentResearch | Playbook;
   onSendToApi?: () => Promise<void>;
   isLoading?: boolean;
   clientPicked: boolean;

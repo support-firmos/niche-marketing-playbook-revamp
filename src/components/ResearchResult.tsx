@@ -87,7 +87,7 @@ export default function ResearchResult({
             variant="secondary" 
             size="sm" 
             onClick={onReset}
-            className="bg-[#1A1A1A] text-[#f7f8f8] border border-[#8a8f98]/20 hover:bg-[#202020]"
+            className="bg-slate-800 text-[#f7f8f8] hover:bg-slate-500"
           >
             New Research
           </Button>

@@ -90,25 +90,33 @@ export async function POST(request: Request) {
     ## SEGMENT 1: [SEGMENT NAME]
 
     **A. Justification for Advisory Services**
-      - Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
-      - Explain specific need for recurring financial leadership
-      - Briefly discuss this service' achievability by reflecting it to the offerer's credibilities above (success stories, current clients, background,  profitability).
-      - Briefly discuss why and how a team with ${teamSize} members can achieve this service
+        [bullet list]
+        • Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
+        • Explain specific need for recurring financial leadership
+        • Briefly discuss this service' achievability by reflecting it to the offerer's credibilities above (success stories, current clients, background,  profitability).
+        • Briefly discuss why and how a team with ${teamSize} members can achieve this service
+
     **B. Estimated Market US Potential**: [X companies, $Y–$Z revenue range]
+
     **C. Ease of Outreach**: [Low/Medium/High based on decision-maker visibility]
+
     **D. Pain Points**: [Key financial challenges this segment faces]
 
     ---
-    \n\n
+
     ## SEGMENT 2: [SEGMENT NAME]
 
     **A. Justification for Advisory Services**
-      - Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
-      - Explain specific need for recurring financial leadership
-      - Briefly discuss this service' achievability by reflecting it to the offerer's credibilities above (success stories, current clients, background,  profitability).
-      - Briefly discuss why and how a team with ${teamSize} members can achieve this service
+        [bullet list]
+       • Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
+       • Explain specific need for recurring financial leadership
+       • Briefly discuss this service' achievability by reflecting it to the offerer's credibilities above (success stories, current clients, background,  profitability).
+       • Briefly discuss why and how a team with ${teamSize} members can achieve this service
+
     **B. Estimated Market US Potential** - [X companies, $Y–$Z revenue range]
+
     **C. Ease of Outreach** - [Low/Medium/High based on decision-maker visibility]
+
     **D. Pain Points** - [Key financial challenges this segment faces]
     
     *continue same format for all 5-7 segments*

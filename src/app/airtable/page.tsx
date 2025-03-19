@@ -4,10 +4,11 @@ import { useSalesNavSegmentsStore } from "../store/salesNavSegmentsStore";
 import { useDeepSegmentResearchStore } from "../store/deepResearchStore";
 import { usePlaybookStore } from "../store/playbookStore";
 import { useState } from "react"
-import { clients, Client } from "../constants/clients"
+import { clients, Client, firmOSCustomersTableID, firmOSOperationsBaseID } from "../constants/clients"
 import Card from "@/components/Card";
 import Sidebar from "@/components/Sidebar";
 import { formatSegmentsForDisplay } from '@/app/utilities/formatSegments';
+import { formatPlaybookForDisplay } from "../utilities/formatPlaybook";
 
 export default function AirtableUpload() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,10 +16,14 @@ export default function AirtableUpload() {
     const { step3Segments } = useSalesNavSegmentsStore();
     const { step4DeepSegmentResearch } = useDeepSegmentResearchStore();
     const { step5GeneratedPlaybook } = usePlaybookStore();
-    let formattedSalesNav;
+    let formattedSalesNav, formattedPlaybook;
 
     if(step3Segments){
         formattedSalesNav = formatSegmentsForDisplay(step3Segments);
+    }
+
+    if(step5GeneratedPlaybook){
+        formattedPlaybook = formatPlaybookForDisplay(step5GeneratedPlaybook);
     }
 
     const [ loading, setLoading ] = useState({
@@ -54,34 +59,35 @@ export default function AirtableUpload() {
             });
 
         }catch(e){
-            console.error('Error sending Sales Nav to Airtable', e);
+            console.error('Error sending Sales Nav to Airtable:', e);
             setError('Error uploading to Airtable!')
         }finally{
             setLoading(prev => ({...prev, salesNav: false}));
         }
     }
-    /*
+
     const sendPlaybookToAirtable = async () => {
-        if(!step3Segments || !selectedClient) return;
-        setLoading(prev => ({...prev, salesNav: true}));
+        if(!step5GeneratedPlaybook || !selectedClient) return;
+        setLoading(prev => ({...prev, playbook: true}));
 
         try{   
-            const response = await fetch('api/send-sales-nav', {
+            await fetch('api/send-playbook', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    data: step3Segments,
-                    clientID: selectedClient.id,            
+                    data: step5GeneratedPlaybook,
+                    firmOSTableID: firmOSCustomersTableID,
+                    firmOSBaseID: firmOSOperationsBaseID,
+                    recordID: selectedClient.recordID    
                 }),
             });
 
         }catch(e){
-            console.error('Error sending Sales Nav to Airtable', e);
+            console.error('Error sending Marketing Playbook to Airtable:', e);
         }finally{
-            setLoading(prev => ({...prev, salesNav: false}));
+            setLoading(prev => ({...prev, playbook: false}));
         }
     }
-    */
     
     return (
         <div>
@@ -144,13 +150,14 @@ export default function AirtableUpload() {
                             />        
                             <Card 
                                 title="Deep Industry Research" 
-                                data={step4DeepSegmentResearch} 
+                                data={step4DeepSegmentResearch?.displayContent} 
                                 clientPicked={!selectedClient ? false : true}
                     
                             />
                             <Card 
                                 title="Marketing Inbound Blueprint" 
-                                data={step5GeneratedPlaybook} 
+                                data={formattedPlaybook} 
+                                onSendToApi={sendPlaybookToAirtable}
                                 clientPicked={!selectedClient ? false : true}
                             />
                             </div>

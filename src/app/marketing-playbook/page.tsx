@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import ResearchForm from '@/components/ResearchForm';
 import ResearchResult from '@/components/ResearchResult';
 import { usePlaybookStore } from '../store/playbookStore';
+import { usePlaybookStringStore } from '../store/playbookStringStore';
 import { useRevenueStore } from '../store/revenueStore';
 import { useServicesStore } from '../store/servicesStore';
 import { useSegmentsStore } from '../store/segmentsStore';
@@ -48,7 +49,7 @@ export default function Home() {
   const { step3Segments, setStep3Segments } = useSalesNavSegmentsStore();
   const { step4DeepSegmentResearch, setStep4DeepSegmentResearch } = useDeepSegmentResearchStore();
   const { step5GeneratedPlaybook, setStep5GeneratedPlaybook } = usePlaybookStore();
-  
+  const { step5StringPlaybook, setStep5StringPlaybook } = usePlaybookStringStore();
   const [isGeneratingNextStep, setIsGeneratingNextStep] = useState(false);
   const [currentNiche, setCurrentNiche] = useState<string>("");
   //const [progressStatus, setProgressStatus] = useState<string>('');
@@ -62,6 +63,7 @@ export default function Home() {
     setStep3Segments(null);
     setStep4DeepSegmentResearch(null);
     setStep5GeneratedPlaybook(null);
+    setStep5StringPlaybook(null);
     setCurrentNiche(formData.nicheConsideration.split("\n")[0]); // Use first line of niche description
 
     try {
@@ -153,6 +155,7 @@ export default function Home() {
     setStep3Segments(null);
     setStep4DeepSegmentResearch(null);
     setStep5GeneratedPlaybook(null);
+    setStep5StringPlaybook(null);
     setIsGeneratingNextStep(true);
 
     try {
@@ -184,6 +187,7 @@ export default function Home() {
       // Set the segments for deep segment research
       if (data.result.segments && Array.isArray(data.result.segments) && data.result.segments.length > 0) {
         console.log(`Received ${data.result.segments.length} segments for deep research`);
+        console.log(`Received segments: data.result.segments: `, data.result.segments);
         setStep3Segments(data.result.segments);
       } else {
         setError('No segments were found in the Sales Navigator response. Please try again.');
@@ -252,7 +256,8 @@ export default function Home() {
   const generateMarketingPlaybook = async (input?: string) => {
     console.log('Generating marketing playbook');
     setError(null);
-    setStep5GeneratedPlaybook('');
+    setStep5StringPlaybook(null);
+    setStep5GeneratedPlaybook([]);
     setIsGeneratingNextStep(true);
 
     try {
@@ -279,13 +284,21 @@ export default function Home() {
       }
 
       const data = await response.json();
-      
+      console.log(`api data: `, data)
+      console.log(`formatted playbook: `, data.result.formattedContent)
+      console.log(`playbook content: `, data.result.content)
+      console.log(`playbook: `, data.result.playbook)
       if (!data.result) {
         throw new Error('No result returned from marketing playbook generation');
       }
+
+      setStep5StringPlaybook(data.result.formattedContent || data.result.content);
       
-      const playbook = data.result;
-      setStep5GeneratedPlaybook(playbook);
+      if (data.result.playbook && data.result.playbook.length > 0) {
+        setStep5GeneratedPlaybook(data.result.playbook);
+      } else {
+        setError('Playbook not found. Please try again.');
+      }
       
     } catch (error) {
       console.error('Error generating marketing playbook:', error);
@@ -309,12 +322,13 @@ export default function Home() {
     setStep3Segments(null);
     setStep4DeepSegmentResearch(null);
     setStep5GeneratedPlaybook(null);
+    setStep5StringPlaybook(null);
     setError(null);
     setCurrentNiche("");
   };
 
   // Determine which content to show
-  const displayContent = step5GeneratedPlaybook || 
+  const displayContent = step5StringPlaybook || 
     (step4DeepSegmentResearch ? 
       (typeof step4DeepSegmentResearch === 'string' ? 
         step4DeepSegmentResearch : 
@@ -392,7 +406,7 @@ return (
                 onNextSteps={handleSteps()?.action}
                 nextStepButtonText={handleSteps()?.buttonText}
                 isGeneratingNextStep={isGeneratingNextStep}
-                resultType={step5GeneratedPlaybook ? 'playbook' : step4DeepSegmentResearch ? 'deepSegment' : step3GeneratedSalesNav ? 'salesNav' : step2EnhancedResearch ? 'enhanced' : 'segments'}
+                resultType={step5StringPlaybook ? 'playbook' : step4DeepSegmentResearch ? 'deepSegment' : step3GeneratedSalesNav ? 'salesNav' : step2EnhancedResearch ? 'enhanced' : 'segments'}
                 segments={step3Segments || []}
               />
             ) : (

@@ -28,32 +28,38 @@ export function formatSegmentsForDisplay(segments: Array<{
       const intentdata = segment.intentdata || '';
       
       return `
-  ## SEGMENT ${index + 1}: ${name}
-  **A. Why This Segment?**
-  ${justification}
+---
+## SEGMENT ${index + 1}: ${name}
   
-  **B. Key Challenges:**
-  ${challenges}
+**A. Why This Segment?**
+${justification}
   
-  **C. Sales Navigator Filters:**
+**B. Key Challenges:**
+${challenges}
   
-    Job Titles (Business Decision-Makers & Leaders):
-    ${jobtitles}
-    Industries
-    ${industries}
-    Company Headcount
-    ${headcount}
-    Company Type
-    ${companytype}
-    Keywords in Company Name
-    ${keywords}
-    Boolean Search Query
-    ${boolean}
+**C. Sales Navigator Filters:**
   
-  **D. Best Intent Data Signals**
-  ${intentdata}
-  ---
-  \n
+**Job Titles (Business Decision-Makers & Leaders)**:
+${jobtitles}
+
+**Industries**
+${industries}
+
+**Company Headcount**
+${headcount}
+
+**Company Type**
+${companytype}
+
+**Keywords in Company Name**
+${keywords}
+
+**Boolean Search Query**
+${boolean}
+  
+**D. Best Intent Data Signals**
+${intentdata}
+  
   `;
     }).join('\n\n');
   }
