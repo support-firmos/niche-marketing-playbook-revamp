@@ -109,7 +109,7 @@ export default function ResearchResult({
             Download
           </Button>
           <Button 
-            variant="outline" 
+            variant="primary" 
             size="sm" 
             onClick={onReset}
             className="bg-slate-800 text-[#f7f8f8] hover:bg-slate-500"

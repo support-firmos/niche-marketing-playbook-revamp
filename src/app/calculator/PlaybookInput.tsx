@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { usePlaybookStringStore } from '../store/playbookStringStore';
+import Button from '@/components/Button';
 
 export default function PlaybookInput() {
   const {step5StringPlaybook, setStep5StringPlaybook} = usePlaybookStringStore();
@@ -24,7 +25,6 @@ export default function PlaybookInput() {
     setPlaybookContent(e.target.value);
   };
 
-  // New handler for the submit button
   const handleSubmit = () => {
     if (isFormValid) {
       setStep5StringPlaybook(playbookContent);
@@ -62,7 +62,7 @@ export default function PlaybookInput() {
       </div>
         
       <div className="text-center">
-        <button
+        <Button
           onClick={handleSubmit}
           disabled={!isFormValid}
           className={`px-6 py-2 rounded font-medium ${
@@ -72,7 +72,7 @@ export default function PlaybookInput() {
           }`}
         >
           Calculate Service
-        </button>
+        </Button>
       </div>
     </div>
   );

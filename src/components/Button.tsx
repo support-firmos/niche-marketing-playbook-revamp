@@ -22,7 +22,7 @@ export default function Button({
         'font-inter font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md disabled:cursor-not-allowed',
         {
           /** Primary: Solid Green (No Gradient) */
-          'bg-green-700 text-white hover:bg-green-800 disabled:bg-gray-600':
+          'bg-green-600 text-white hover:bg-green-800 disabled:bg-gray-600':
             variant === 'primary',
 
           /** Secondary: Dark Mode Styling */
@@ -30,7 +30,7 @@ export default function Button({
             variant === 'secondary',
 
           /** Outline: Simple Bordered Button */
-          'bg-transparent text-green-700 border border-green-700 hover:bg-green-100 disabled:text-gray-500 disabled:border-gray-500 disabled:bg-transparent':
+          'bg-transparent text-green-600 border border-green-600 hover:bg-green-100 disabled:text-gray-500 disabled:border-gray-500 disabled:bg-transparent':
             variant === 'outline',
 
           /** Sizes */

@@ -3,6 +3,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { SegmentResearch } from '@/app/store/deepResearchStore';
 import { Playbook } from '@/app/store/playbookStore';
+import Button from './Button';
 
 interface CardProps {
   title: string;
@@ -17,7 +18,8 @@ export default function Card({ title, data, onSendToApi, isLoading = false, clie
     <div className="bg-transparent rounded-lg shadow-md p-6 mb-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-semibold text-white">{title}</h3>
-        <button
+        <Button
+          variant='primary'
           onClick={onSendToApi}
           disabled={isLoading || !data || !clientPicked }
           className={`px-4 py-2 rounded-md ${
@@ -27,7 +29,7 @@ export default function Card({ title, data, onSendToApi, isLoading = false, clie
           } transition duration-200`}
         >
           {isLoading ? 'Sending...' : 'Upload to Airtable'}
-        </button>
+        </Button>
       </div>
       
       <div className="bg-gray-800 p-4 rounded-md max-h-80 overflow-auto">

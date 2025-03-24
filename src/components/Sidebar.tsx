@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import Image from 'next/image';
+import Button from './Button';
 import { 
   faHome, 
   faTag, 
@@ -87,14 +88,14 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
         </div>
         
-        {/* Toggle button - now inside the sidebar */}
-        <button 
+        <Button
+          variant = 'secondary'
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="absolute top-4 right-0 transform translate-x-1/2 z-20 p-2 bg-slate-700 rounded-full shadow-lg text-white hover:bg-slate-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-400 h-8 w-8 flex items-center justify-center"
           aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
           <FontAwesomeIcon icon={sidebarOpen ? faTimes : faBars} className="h-3 w-3" />
-        </button>
+        </Button>
         
         {/* Navigation links */}
         <nav className={`mt-6 ${sidebarOpen ? 'px-4' : 'px-0'}`}>

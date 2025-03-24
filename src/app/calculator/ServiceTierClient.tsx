@@ -11,6 +11,7 @@ import { useServicesStore } from '../store/servicesStore';
 import { useRevenueStore } from '../store/revenueStore';
 import { useAdvisoriesState } from '../store/twoAdvisoriesStore';
 import Button from '@/components/Button';
+import PricingCard from '@/components/PricingCard';
 
 interface ServiceItem {
   id: string;
@@ -189,14 +190,12 @@ export default function ServiceTiersClient() {
   // Define which categories and services should always be shown
   const alwaysShowCategories = ["Advisory", "Communication"];
   const alwaysShowServices = [
-    // Advisory services
     "reviewOfFinancials", 
     "goalAndKPISetting", 
     "cashFlowForecasting", 
     "budgetsAndProjections", 
     "industrySpecificAdvisory1", 
     "industrySpecificAdvisory2",
-    // Communication services
     "emailResponseTime", 
     "zoomCalls"
   ];
@@ -431,8 +430,8 @@ export default function ServiceTiersClient() {
                   {categoryServices.map((service, index) => (
                     <tr key={service.id}     className={
                       service.id === 'industrySpecificAdvisory1' || service.id === 'industrySpecificAdvisory2'
-                        ? 'bg-slate-900' // Special background for advisory rows
-                        : index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'
+                        ? 'bg-transparent' // Special background for advisory rows
+                        : 'bg-transparent'
                     }>
                       <td className="py-3 px-4 border-b border-r">{service.name}</td>
                       <td className="py-3 px-4 text-center border-b border-r">
@@ -449,45 +448,24 @@ export default function ServiceTiersClient() {
                 </React.Fragment>
               );
             })}
-            <tr className="bg-gray-600">
-              <td colSpan={4} className="py-2 px-4 font-semibold border-b">
-                Pricing
-              </td>
-            </tr>
-            <tr>
-              <td className="py-3 px-4 border-b border-r">Pricing</td>
-              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(premiumPricing)}</td>
-              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(standardPricing)}</td>
-              <td className="py-3 px-4 text-center border-b bg-slate-800">
-                <input
-                  type="number"
-                  value={basicPricing}
-                  onChange={(e) => setBasicPricing(Number(e.target.value))}
-                  className="w-24 text-center bg-transparent"
-                />
-              </td>
-            </tr>
-            <tr>
-              <td className="py-3 px-4 border-b border-r">ARR</td>
-              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(arrPremium)}</td>
-              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(arrStandard)}</td>
-              <td className="py-3 px-4 text-center border-b">{formatCurrency(arrBasic)}</td>
-            </tr>
-            <tr>
-              <td className="py-3 px-4 border-b border-r">Average Annual Revenue Per Client</td>
-              <td className="py-3 px-4 text-center border-b border-r ">{formatCurrency(convertedRevenue)}</td>
-              <td className="py-3 px-4 text-center border-b border-r ">{formatCurrency(convertedRevenue)}</td>
-              <td className="py-3 px-4 text-center border-b ">{formatCurrency(convertedRevenue)}</td>
-            </tr>
-            <tr>
-              <td className="py-3 px-4 border-b border-r">Net ROI</td>
-              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(netRoiPremium)}</td>
-              <td className="py-3 px-4 text-center border-b border-r">{formatCurrency(netRoiStandard)}</td>
-              <td className="py-3 px-4 text-center border-b">{formatCurrency(netRoiBasic)}</td>
-            </tr>
           </tbody>
         </table>
       </div>
+
+            {/* New Pricing Card Component */}
+            <PricingCard 
+        basicPricing={basicPricing}
+        standardPricing={standardPricing}
+        premiumPricing={premiumPricing}
+        arrBasic={arrBasic}
+        arrStandard={arrStandard}
+        arrPremium={arrPremium}
+        convertedRevenue={convertedRevenue}
+        netRoiBasic={netRoiBasic}
+        netRoiStandard={netRoiStandard}
+        netRoiPremium={netRoiPremium}
+        setBasicPricing={setBasicPricing}
+      />
       
       <div className="mt-8 text-center">
         <Button 

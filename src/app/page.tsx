@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
+import Button from '@/components/Button';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -30,12 +31,13 @@ export default function LandingPage() {
           Uncover <em>niche segments</em>, build targeted <em>Sales Navigator Strategies</em>, and create <em>Inbound Marketing Blueprint</em> in minutes!
         </p>
         
-        <button
+        <Button
+          variant='primary'
           onClick={handleSubmit}
           className="px-8 py-3 bg-green-700  rounded-lg hover:bg-slate-800 transition-all"
         >
           Start Research
-        </button>
+        </Button>
       </main>
     </div>
     </div>

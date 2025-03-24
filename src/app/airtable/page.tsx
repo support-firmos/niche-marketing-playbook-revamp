@@ -8,7 +8,7 @@ import { clients, Client, firmOSCustomersTableID, firmOSOperationsBaseID } from 
 import Card from "@/components/Card";
 import Sidebar from "@/components/Sidebar";
 import { formatSegmentsForDisplay } from '@/app/utilities/formatSegments';
-import { formatPlaybookForDisplay } from "../utilities/formatPlaybook";
+import { formatPlaybookForDisplay } from "@/app/utilities/formatPlaybook";
 
 export default function AirtableUpload() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -92,12 +92,10 @@ export default function AirtableUpload() {
     return (
         <div>
             <div className="relative bg-black">
-                {/* Fixed position sidebar */}
                 <div className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                     <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                 </div>
 
-                
                 <div className="max-w-3xl mx-auto relative z-10">
                 <div className="bg-slate-950 backdrop-blur-sm rounded-xl p-8 shadow-xl">
                         <div className="w-full max-w-2xl"> {/* This div limits width to 50% and centers content */}

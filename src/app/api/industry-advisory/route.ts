@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       ${generatedPlaybook}
 
       Your task is to read and analyze the marketing inbound blueprint attached above.
-      And based on that playbook, generate a total of 2 advisories based on that blueprint.
+      And based on that playbook, generate a total of 2 GENERAL/OVERARCHING/UNIVERSAL advisories based on that blueprint.
       Your output is to be included among the 4 default advisories stated above. Therefore, please inspire your responses from those 4.
       The only difference is that the 2 advisories you generated is much more tailored to the blueprint.
       IMPORTANT NOTE: Strictly, your 2 advisories must be a general/universal/overarching advisory service tailored to the industry being discussed. Don't make the service too specific. 
