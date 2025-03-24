@@ -38,7 +38,7 @@ export default function CalculatorPage() {
   // Conditionally render based on whether playbook data exists
   return (
     <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
-      <div className="relative flex">
+      <div className="relative flex bg-black">
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         {!step5StringPlaybook || step5StringPlaybook === '' ? (
           <PlaybookInput />

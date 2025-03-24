@@ -9,6 +9,7 @@ interface ResearchResultProps {
   content: string;
   industry?: string;
   onReset: () => void;
+  onRetry?: () => Promise<void>; 
   onNextSteps?: (content: string, selectedSegment?: Segment) => Promise<void>;
   currentStepDone?: boolean;
   isGeneratingNextStep?: boolean;
@@ -20,13 +21,14 @@ interface ResearchResultProps {
 export default function ResearchResult({ 
   content, 
   onReset, 
+  onRetry,
   onNextSteps,
   isGeneratingNextStep = false,
   nextStepButtonText,
   resultType
 }: ResearchResultProps) {
   const [copySuccess, setCopySuccess] = useState('');
-  
+  const [isRetrying, setIsRetrying] = useState(false);
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(content);
@@ -36,7 +38,18 @@ export default function ResearchResult({
       setCopySuccess('Failed to copy');
     }
   };
-  
+
+  const handleRetry = async () => {
+    if (onRetry) {
+      setIsRetrying(true);
+      try {
+        await onRetry();
+      } finally {
+        setIsRetrying(false);
+      }
+    }
+  };
+
   const handleDownload = () => {
     const element = document.createElement('a');
     const file = new Blob([content], { type: 'text/plain' });
@@ -65,7 +78,19 @@ export default function ResearchResult({
             : resultType === 'segments' ? 'Industry Research' :
             resultType === 'deepSegment' ? 'Deep Industry Research' : 
             resultType === 'playbook' ? 'Inbound Marketing Blueprint' : undefined}
+                {onRetry && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleRetry}
+            disabled={isRetrying}
+            className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
+          >
+            <i className={`fas ${isRetrying ? 'fa-spinner fa-spin' : 'fa-redo'}`} />
+          </Button>
+          )}
       </h2>
+      
         <div className="flex space-x-2">
           <Button 
             variant="outline" 
@@ -118,7 +143,7 @@ export default function ResearchResult({
         </div>
       </div>
 
-      {!isGeneratingNextStep && onNextSteps && (
+      {!isGeneratingNextStep && !isRetrying && onNextSteps && (
         <div className="flex justify-center mt-4">
           <Button
             variant="primary"
@@ -131,11 +156,12 @@ export default function ResearchResult({
         </div>
       )}
 
-      {isGeneratingNextStep && (
+      {(isGeneratingNextStep || isRetrying) && (
         <div className="flex items-center justify-center space-x-2 mt-4">
         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#8a8f98]"></div>
         <p className="text-[#8a8f98]">
-          {resultType === 'salesNav'  ?  'Deep Industry Research in progress...' 
+          {isRetrying ? 'Regenerating content...' : 
+            resultType === 'salesNav'  ?  'Deep Industry Research in progress...' 
             : resultType === 'segments' ? 'Enhancing segments...' 
             : resultType === 'enhanced' ? 'Creating Sales Navigator Strategy...' 
             : resultType === 'deepSegment' ? 'Creating Inbound Marketing Blueprint...' : 'Processing' }

@@ -163,6 +163,13 @@ FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a 
   },
 ]
 
+Format Requirements - FOLLOW THESE EXACTLY
+- Format your ENTIRE response as a valid JSON array that can be parsed with JSON.parse()
+- Do NOT include any text before or after the JSON
+- Please provide a valid JSON response without markdown formatting or additional text.
+- Maintain the exact structure shown above
+- Do NOT include any introductory text, disclaimers, or conclusions
+
 Important notes:
 - Consider the CFO/Advisory services the client wants to avail (mentioned above). Always contextualize and inspire your responses from them (if applicable).
 - Focus on creating a unified playbook, not a collection of segment-specific approaches
@@ -177,13 +184,6 @@ Important notes:
 - When describing how advisory and accounting services help, use the exact solutions mentioned in the research
 - If the research includes specific industry challenges or trends, incorporate these directly
 - Make each point highly detailed (4-6 sentences minimum) using content directly from the research
-
-## Format Requirements - FOLLOW THESE EXACTLY
-    - Format your ENTIRE response as a valid JSON array that can be parsed with JSON.parse()
-    - Do NOT include any text before or after the JSON
-    - Please provide a valid JSON response without markdown formatting or additional text.
-    - Maintain the exact structure shown above
-    - Do NOT include any introductory text, disclaimers, or conclusions
 `;
     
     // Try with different models if the first one fails

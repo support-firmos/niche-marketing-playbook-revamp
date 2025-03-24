@@ -60,6 +60,8 @@ export default function Home() {
     setStep5StringPlaybook(null);
     setCurrentNiche(formData.nicheConsideration.split("\n")[0]); // Use first line of niche description
 
+    localStorage.setItem('lastFormData', JSON.stringify(formData));
+    
     try {
       console.log('Starting segment generation with input data');
       
@@ -108,6 +110,56 @@ export default function Home() {
     }
   };
 
+  const retrySegments = async () => {
+    setError(null);
+    setIsGeneratingNextStep(true);
+    
+    try {
+      // Retrieve the last form data from localStorage
+      const savedFormData = localStorage.getItem('lastFormData');
+      if (!savedFormData) {
+        setError('No previous form data found to retry generation.');
+        return;
+      }
+      
+      const formData = JSON.parse(savedFormData);
+      
+      // Re-run the generation with the same data
+      const initialResponse = await fetch('/api/generate-segments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nicheConsideration: formData.nicheConsideration,
+          profitability: formData.profitability,
+          experience: formData.experience,
+          clientPercentage: formData.clientPercentage,
+          successStories: formData.successStories,
+          teamSize: formData.teamSize,
+          services
+        }),
+      });
+  
+      if (!initialResponse.ok) {
+        throw new Error(`Failed to regenerate segments: ${initialResponse.status}`);
+      }
+  
+      const initialData = await initialResponse.json();
+      
+      if (!initialData.result) {
+        throw new Error('No result returned from segment regeneration');
+      }
+      
+      const initialSegments = initialData.result;
+      setStep1GeneratedResearch(initialSegments);
+      
+    } catch (error) {
+      console.error('Error regenerating segments:', error);
+      setError('An error occurred while regenerating the segments. Please try again.');
+    } finally {
+      setIsGeneratingNextStep(false);
+    }
+  };
+
   const enhanceSegments = async (segments: string, niche: string) => {
     setError(null);
     setIsGeneratingNextStep(true);
@@ -138,6 +190,46 @@ export default function Home() {
     } catch (enhanceError) {
       console.error('Error enhancing segments:', enhanceError);
       setError('Could not enhance the segments. Please try again.');
+    } finally {
+      setIsGeneratingNextStep(false);
+    }
+  };
+
+  const retryEnhancedSegments = async () => {
+    if (!step1GeneratedResearch) {
+      setError('No segments available to enhance');
+      return;
+    }
+    
+    setError(null);
+    setIsGeneratingNextStep(true);
+    
+    try {
+      const enhancedResponse = await fetch('/api/enhance-segments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          niche: currentNiche,
+          segments: step1GeneratedResearch,
+          services
+        }),
+      });
+  
+      if (!enhancedResponse.ok) {
+        throw new Error(`Failed to regenerate enhanced segments: ${enhancedResponse.status}`);
+      }
+  
+      const enhancedData = await enhancedResponse.json();
+      
+      if (!enhancedData.result) {
+        throw new Error('No result returned from enhanced segments regeneration');
+      }
+      
+      setStep2EnhancedResearch(enhancedData.result);
+      
+    } catch (error) {
+      console.error('Error regenerating enhanced segments:', error);
+      setError('An error occurred while regenerating the enhanced segments. Please try again.');
     } finally {
       setIsGeneratingNextStep(false);
     }
@@ -195,6 +287,52 @@ export default function Home() {
     }
   };
 
+  const retrySalesNav = async () => {
+    if (!step2EnhancedResearch) {
+      setError('No enhanced segments available to generate Sales Navigator strategy');
+      return;
+    }
+    
+    setError(null);
+    setIsGeneratingNextStep(true);
+    
+    try {
+      const response = await fetch('/api/sales-nav', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          niche: currentNiche,
+          segments: step2EnhancedResearch,
+          services
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to regenerate sales navigator: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      
+      if (!data.result) {
+        throw new Error('No result returned from sales navigator regeneration');
+      }
+      
+      setStep3GeneratedSalesNav(data.result.formattedContent || data.result.content);
+      
+      if (data.result.segments && Array.isArray(data.result.segments) && data.result.segments.length > 0) {
+        setStep3Segments(data.result.segments);
+      } else {
+        setError('No segments were found in the Sales Navigator response. Please try again.');
+      }
+      
+    } catch (error) {
+      console.error('Error regenerating Sales Navigator strategy:', error);
+      setError('An error occurred while regenerating the Sales Navigator strategy. Please try again.');
+    } finally {
+      setIsGeneratingNextStep(false);
+    }
+  };
+
   const generateDeepSegmentResearch = async () => {
     if (!step3Segments || step3Segments.length === 0) {
       setError('No segments available for deep research');
@@ -242,6 +380,53 @@ export default function Home() {
     } catch (error) {
       console.error('Error generating deep segment research:', error);
       setError('An error occurred while generating the deep segment research. Please try again.');
+    } finally {
+      setIsGeneratingNextStep(false);
+    }
+  };
+
+  const retryDeepSegmentResearch = async () => {
+    if (!step3Segments || step3Segments.length === 0) {
+      setError('No segments available for deep research');
+      return;
+    }
+    
+    setError(null);
+    setIsGeneratingNextStep(true);
+    
+    try {
+      const response = await fetch('/api/deep-segment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          segments: step3Segments,
+          services
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to regenerate deep segment research: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      
+      if (!data.result) {
+        throw new Error('No result returned from deep segment research regeneration');
+      }
+      
+      const resultContent = data.result;
+      
+      const displayContent = resultContent.formattedContent || 
+                           (typeof resultContent === 'string' ? resultContent : JSON.stringify(resultContent, null, 2));
+      
+      setStep4DeepSegmentResearch({
+        displayContent,
+        originalContent: resultContent
+      });
+      
+    } catch (error) {
+      console.error('Error regenerating deep segment research:', error);
+      setError('An error occurred while regenerating the deep segment research. Please try again.');
     } finally {
       setIsGeneratingNextStep(false);
     }
@@ -302,12 +487,58 @@ export default function Home() {
     }
   };
 
+  const retryMarketingPlaybook = async () => {
+    if (!step4DeepSegmentResearch) {
+      setError('No deep segment research available to generate marketing playbook');
+      return;
+    }
+    
+    setError(null);
+    setIsGeneratingNextStep(true);
+    
+    try {
+      const playbackData = {
+        segmentInfo: step4DeepSegmentResearch,
+        services
+      };
+      
+      const response = await fetch('/api/playbook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playbackData)
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to regenerate marketing playbook: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      
+      if (!data.result) {
+        throw new Error('No result returned from marketing playbook regeneration');
+      }
+  
+      setStep5StringPlaybook(data.result.formattedContent || data.result.content);
+      
+      if (data.result.playbook && data.result.playbook.length > 0) {
+        setStep5GeneratedPlaybook(data.result.playbook);
+      } else {
+        setError('Playbook not found. Please try again.');
+      }
+      
+    } catch (error) {
+      console.error('Error regenerating marketing playbook:', error);
+      setError('An error occurred while regenerating the marketing playbook. Please try again.');
+    } finally {
+      setIsGeneratingNextStep(false);
+    }
+  };
+
   const goToCalculator = async() => {
     await router.push('/calculator');
   }
 
   const resetGenerator = () => {
-
     setRevenue(null);
     setSelectedServices([]);
     setStep1GeneratedResearch(null);
@@ -370,6 +601,25 @@ const handleSteps = () => {
   return undefined;
 };
 
+const getRetryHandler = () => {
+  if (step5StringPlaybook) {
+    return retryMarketingPlaybook;
+  } 
+  if (step4DeepSegmentResearch) {
+    return retryDeepSegmentResearch;
+  }
+  if (step3GeneratedSalesNav) {
+    return retrySalesNav;
+  }
+  if (step2EnhancedResearch) {
+    return retryEnhancedSegments;
+  }
+  if (step1GeneratedResearch) {
+    return retrySegments;
+  }
+  return undefined;
+};
+
 return (
   <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 py-10 px-4">   
     {error && (
@@ -398,6 +648,7 @@ return (
               content={displayContent} 
               industry={currentNiche}
               onReset={resetGenerator}
+              onRetry={getRetryHandler()}
               onNextSteps={handleSteps()?.action}
               nextStepButtonText={handleSteps()?.buttonText}
               isGeneratingNextStep={isGeneratingNextStep}

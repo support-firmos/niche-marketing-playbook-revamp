@@ -26,7 +26,7 @@ export default function Button({
             variant === 'primary',
 
           /** Secondary: Dark Mode Styling */
-          'bg-black text-white border border-gray-500 hover:bg-gray-900 disabled:bg-gray-600':
+          'bg-transparent text-white border-none hover:bg-gray-900 disabled:bg-gray-600':
             variant === 'secondary',
 
           /** Outline: Simple Bordered Button */

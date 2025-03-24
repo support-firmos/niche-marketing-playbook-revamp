@@ -10,6 +10,7 @@ import { useCallback, useMemo } from "react";
 import { useServicesStore } from '../store/servicesStore';
 import { useRevenueStore } from '../store/revenueStore';
 import { useAdvisoriesState } from '../store/twoAdvisoriesStore';
+import Button from '@/components/Button';
 
 interface ServiceItem {
   id: string;
@@ -30,7 +31,7 @@ interface TierData {
 export default function ServiceTiersClient() {
   const router = useRouter();
   const {step5StringPlaybook} = usePlaybookStringStore();
-  const queryRevenue = useRevenueStore(state => state.revenue);
+  const queryRevenue: number | null = useRevenueStore(state => state.revenue);
   const queryServices = useServicesStore(state => state.selectedServices);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function ServiceTiersClient() {
   }, [step5StringPlaybook, router]);
 
   const searchParams = useSearchParams();
-  const [revenue, setRevenue] = useState<string>('');
+  const [revenue, setRevenue] = useState<number>(0);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [basicPricing, setBasicPricing] = useState<number>(500);
 
@@ -256,7 +257,7 @@ export default function ServiceTiersClient() {
 
   useEffect(() => {
     // Get the query parameters using useSearchParams
-    const parsedRevenue = parseInt(queryRevenue || '0', 10);
+    const parsedRevenue = queryRevenue || 0;
     setConvertedRevenue(parsedRevenue);
     
     // Calculate pricing based on basicPricing
@@ -299,7 +300,7 @@ export default function ServiceTiersClient() {
         name: serviceNames[id] || id,
         category: serviceCategories[id] || "Other"
       }));
-    setRevenue("Not Specified");
+    setRevenue(0);
     }
     
     // Always add the services from alwaysShowCategories
@@ -489,12 +490,12 @@ export default function ServiceTiersClient() {
       </div>
       
       <div className="mt-8 text-center">
-        <button 
+        <Button 
+          variant='primary'
           onClick={() => router.push('/one-time-offer')}
-          className=" text-black px-6 py-2 rounded font-medium hover:bg-blue-700 mr-4 bg-slate-50"
         >
           One Time Offer
-        </button>
+        </Button>
       </div>
     </div>
   );
