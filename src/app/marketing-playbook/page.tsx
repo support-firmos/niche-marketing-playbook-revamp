@@ -1,7 +1,7 @@
 // src/app/page.tsx
 'use client';
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import ResearchForm from '@/components/ResearchForm';
 import ResearchResult from '@/components/ResearchResult';
 import { usePlaybookStore } from '../store/playbookStore';
@@ -30,7 +30,7 @@ export default function Home() {
   const router = useRouter();
 
   //new update: service selection prior to the marketing playbook generation:
-  const { revenue, setRevenue } = useRevenueStore();
+  const { setRevenue } = useRevenueStore();
   const { selectedServices, setSelectedServices } = useServicesStore();
   const services = selectedServices
   .map(service => service.label)

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import Image from 'next/image';
 import { 
   faHome, 
@@ -20,7 +21,7 @@ interface SidebarProps {
 interface NavItem {
   path: string;
   label: string;
-  icon: any;
+  icon: IconDefinition;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
