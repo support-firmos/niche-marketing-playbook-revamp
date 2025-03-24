@@ -182,11 +182,6 @@ export default function ServiceTiersClient() {
     zoomCalls: "Zoom Calls (30 min)",
   }), [industryAdvisory1, industryAdvisory2]);
 
-  // Function to format currency
-  const formatCurrency = (amount: number) => {
-    return `$${amount.toLocaleString()}`;
-  };
-
   // Define which categories and services should always be shown
   const alwaysShowCategories = ["Advisory", "Communication"];
   const alwaysShowServices = [
@@ -427,7 +422,7 @@ export default function ServiceTiersClient() {
                       {category}
                     </td>
                   </tr>
-                  {categoryServices.map((service, index) => (
+                  {categoryServices.map((service) => (
                     <tr key={service.id}     className={
                       service.id === 'industrySpecificAdvisory1' || service.id === 'industrySpecificAdvisory2'
                         ? 'bg-transparent' // Special background for advisory rows
