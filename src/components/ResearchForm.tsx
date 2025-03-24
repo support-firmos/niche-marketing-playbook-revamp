@@ -134,7 +134,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="rounded-lg p-6 shadow-inner md:col-span-2">
           <label htmlFor="nicheConsideration" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            1. Your Client's Niche
+            1. Your Client&apos;s Niche
           </label>
           <textarea
             id="nicheConsideration"
