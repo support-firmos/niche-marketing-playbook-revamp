@@ -91,12 +91,18 @@ export default function AirtableUpload() {
     
     return (
         <div>
-            <div className="relative flex">
-                <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-                    <div  className="w-full px-4 py-8 flex justify-center">
+            <div className="relative bg-black">
+                {/* Fixed position sidebar */}
+                <div className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+                </div>
+
+                
+                <div className="max-w-3xl mx-auto relative z-10">
+                <div className="bg-slate-950 backdrop-blur-sm rounded-xl p-8 shadow-xl">
                         <div className="w-full max-w-2xl"> {/* This div limits width to 50% and centers content */}
-                        <h1 className="text-3xl font-bold mb-8 text-center">Upload Airtable</h1>
-                        
+                        <h1 className="text-3xl font-bold mb-8 text-center">Upload Your Research To Airtable</h1>
+  
                         {/* Client selection dropdown */}
                         <div className="mb-8">
                             <label htmlFor="client-select" className="block text-sm font-medium text-white mb-2">
@@ -163,6 +169,7 @@ export default function AirtableUpload() {
                             </div>
                         </div>
                 </div>
+            </div>
             </div>
         </div>
     );

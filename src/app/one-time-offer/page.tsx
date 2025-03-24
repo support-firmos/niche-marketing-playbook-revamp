@@ -7,8 +7,10 @@ import OneTimeOfferResult from '@/components/OneTimeOfferResult';
 import Button from '@/components/Button';
 import { usePlaybookStringStore } from '../store/playbookStringStore';
 import { useOneTimeOfferStore } from '../store/oneTimeOfferStore';
+import Sidebar from '@/components/Sidebar';
 
 export default function OneTimeOfferPage() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const {step5StringPlaybook} = usePlaybookStringStore();
   const { generatedResult, setGeneratedResult } = useOneTimeOfferStore();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -54,36 +56,20 @@ export default function OneTimeOfferPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-surface-1 to-black">
-      {/* Header with Navigation */}
-      <header className="border-b border-subtitleColor/10 backdrop-blur-md bg-black/80 sticky top-0 z-10 shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-3xl font-bold">
-            <span className="text-titleColor">One-Time Offer</span>
-            <span className="text-subtitleColor"> Generator</span>
-          </h1>
-          <Link href="/">
-            <Button variant="secondary" size="md" className="shadow-sm border border-subtitleColor/30 !bg-black hover:!bg-surface-1">
-              <span className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back to Home
-              </span>
-            </Button>
-          </Link>
-        </div>
-      </header>
-      
+    <div className="relative">
+    {/* Fixed position sidebar */}
+    <div className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+    </div>
+    <div className="min-h-screen from-surface-1 bg-black">   
       {/* Hero Section */}
       <section className="py-12 mb-8">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Generate Compelling One-Time Offers</h2>
-          <p className="text-subtitleColor max-w-2xl mx-auto text-lg mb-8">
+          <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
             Transform your business insights into persuasive one-time offers that convert prospects into loyal customers. 
             Simply upload your industry information and let our AI do the rest.
           </p>
-          <div className="w-24 h-1 bg-titleColor/70 mx-auto rounded-full"></div>
         </div>
       </section>
       
@@ -121,6 +107,7 @@ export default function OneTimeOfferPage() {
           <p>Powered by AI technology to create industry-specific one-time offers.</p>
         </div>
       </footer>
+    </div>
     </div>
   );
 } 

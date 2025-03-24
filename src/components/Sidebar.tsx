@@ -1,79 +1,150 @@
 import Link from 'next/link';
-import Button from '@/components/Button';
+import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Image from 'next/image';
+import { 
+  faHome, 
+  faTag, 
+  faUpload, 
+  faBars, 
+  faTimes,
+  faBuilding,
+  faSearchDollar
+} from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
-    sidebarOpen: boolean;
-    setSidebarOpen: (open: boolean) => void;
-  }
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+}
+
+interface NavItem {
+  path: string;
+  label: string;
+  icon: any;
+}
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
+  const [currentPath, setCurrentPath] = useState('');
+  
+  useEffect(() => {
+    // Set current path for active state
+    if (typeof window !== 'undefined') {
+      setCurrentPath(window.location.pathname);
+    }
+  }, []);
+
+  const navItems: NavItem[] = [
+    {
+      path: '/',
+      label: 'Home',
+      icon: faHome
+    },
+    {
+      path: '/marketing-playbook',
+      label: 'Marketing Playbook',
+      icon: faSearchDollar
+    },
+    {
+      path: '/one-time-offer',
+      label: 'One-Time Offer',
+      icon: faTag
+    },
+    {
+      path: '/airtable',
+      label: 'Upload to Airtable',
+      icon: faUpload
+    },
+  ];
+
   return (
-    <>
-      {/* Sidebar toggle button */}
-      <button 
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="absolute top-0 left-0 z-10 p-2 bg-surface-1/60 rounded-lg shadow-md text-titleColor hover:bg-surface-1/80 transition-all duration-200"
-        aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+    <div className="flex h-full">
+      {/* Sidebar container - adapts between expanded and collapsed states */}
+      <div 
+        className={`fixed top-0 left-0 h-full bg-slate-900 transition-all duration-300 ease-in-out z-10 shadow-xl ${
+          sidebarOpen 
+            ? "md:w-64 w-72" 
+            : "w-16"
+        }`}
       >
-        {sidebarOpen ? (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        )}
-      </button>
-      
-      {/* Collapsible Sidebar */}
-      <div className={`md:w-64 bg-surface-1/40 border border-subtitleColor/10 rounded-xl p-6 shadow-lg h-fit transition-all duration-300 ease-in-out ${
-        sidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full md:opacity-0 md:-translate-x-full absolute"
-      }`}>
-        <div className="flex flex-col gap-4 pt-8">
-
-        <Link href="/">
-            <Button 
-              className="!bg-gradient-to-r from-titleColor/90 to-titleColor/70 text-black font-medium shadow-md shadow-titleColor/20 hover:shadow-titleColor/30 hover:from-titleColor hover:to-titleColor/80 border border-titleColor/50 !py-3 !px-5 w-full"
-            >
-              <span className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-                </svg>
-                Home
-              </span>
-            </Button>
-          </Link>
-
-          <Link href="/one-time-offer">
-            <Button 
-              className="!bg-gradient-to-r from-titleColor/90 to-titleColor/70 text-black font-medium shadow-md shadow-titleColor/20 hover:shadow-titleColor/30 hover:from-titleColor hover:to-titleColor/80 border border-titleColor/50 !py-3 !px-5 w-full"
-            >
-              <span className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-                </svg>
-                One-Time Offer Generator
-              </span>
-            </Button>
-          </Link>
-          
-          <Link href="/airtable">
-            <Button 
-              className="!bg-gradient-to-r from-titleColor/90 to-titleColor/70 text-black font-medium shadow-md shadow-titleColor/20 hover:shadow-titleColor/30 hover:from-titleColor hover:to-titleColor/80 border border-titleColor/50 !py-3 !px-5 w-full"
-            >
-              <span className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-                </svg>
-                Upload to Airtable
-              </span>
-            </Button>
-          </Link>
-          
+        {/* Logo area */}
+        <div className="flex items-center h-16 border-b border-slate-700 px-4">
+          <div className={`flex items-center ${sidebarOpen ? 'justify-center w-full' : 'justify-center w-full'}`}>
+            {sidebarOpen ? (
+              <>
+              <Image
+                src="https://storage.googleapis.com/firmos-pics/FirmOS%20Logo%20-%20White.png"
+                alt="FirmOS Logo"
+                width={100}
+                height={100}
+                className="object-contain"
+                unoptimized
+              />
+              </>
+            ) : (
+              <FontAwesomeIcon icon={faBuilding} className="w-7 h-7 text-white" />
+            )}
+          </div>
         </div>
+        
+        {/* Toggle button - now inside the sidebar */}
+        <button 
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="absolute top-4 right-0 transform translate-x-1/2 z-20 p-2 bg-slate-700 rounded-full shadow-lg text-white hover:bg-slate-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-400 h-8 w-8 flex items-center justify-center"
+          aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        >
+          <FontAwesomeIcon icon={sidebarOpen ? faTimes : faBars} className="h-3 w-3" />
+        </button>
+        
+        {/* Navigation links */}
+        <nav className={`mt-6 ${sidebarOpen ? 'px-4' : 'px-0'}`}>
+          {sidebarOpen && (
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2">
+              Marketing Playbook
+            </span>
+          )}
+          
+          <div className="mt-3 space-y-1">
+            {navItems.map((item) => {
+              const isActive = currentPath === item.path;
+              return (
+                <Link 
+                  href={item.path} 
+                  key={item.path}
+                  className={`flex items-center ${sidebarOpen ? 'px-3 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-200 group ${
+                    isActive 
+                      ? "bg-slate-700 text-white" 
+                      : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                  }`}
+                >
+                  <span className={`${sidebarOpen ? 'mr-3' : 'mx-auto'} ${isActive ? "text-white" : "text-slate-400 group-hover:text-white"}`}>
+                    <FontAwesomeIcon icon={item.icon} className="w-5 h-5" />
+                  </span>
+                  
+                  {sidebarOpen && (
+                    <>
+                      <span className="font-medium whitespace-nowrap">{item.label}</span>
+                      
+                      {isActive && (
+                        <span className="ml-auto h-2 w-2 rounded-full bg-blue-400" />
+                      )}
+                    </>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+        
       </div>
-    </>
+
+      {/* Mobile overlay - only shows when sidebar is open on mobile */}
+      <div 
+        className={`fixed inset-0 bg-black/50 z-0 md:hidden transition-opacity duration-300 ${
+          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setSidebarOpen(false)}
+      />
+    </div>
   );
 };
 

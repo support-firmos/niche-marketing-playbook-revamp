@@ -1,4 +1,3 @@
-// src/components/Button.tsx
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import classNames from 'classnames';
 
@@ -20,15 +19,24 @@ export default function Button({
   return (
     <button
       className={classNames(
-        'font-inter font-medium rounded-lg transition-all duration-300 shadow-sm hover:shadow-md',
+        'font-inter font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md disabled:cursor-not-allowed',
         {
-          'bg-gradient-to-r from-titleColor/90 to-titleColor/70 text-black hover:from-titleColor hover:to-titleColor/80 border border-titleColor/50': variant === 'primary',
-          'bg-black text-titleColor border border-subtitleColor/20 hover:bg-surface-1/20': variant === 'secondary',
-          'bg-transparent text-titleColor border border-titleColor/40 hover:bg-titleColor/10': variant === 'outline',
+          /** Primary: Solid Green (No Gradient) */
+          'bg-green-700 text-white hover:bg-green-800 disabled:bg-gray-600':
+            variant === 'primary',
+
+          /** Secondary: Dark Mode Styling */
+          'bg-black text-white border border-gray-500 hover:bg-gray-900 disabled:bg-gray-600':
+            variant === 'secondary',
+
+          /** Outline: Simple Bordered Button */
+          'bg-transparent text-green-700 border border-green-700 hover:bg-green-100 disabled:text-gray-500 disabled:border-gray-500 disabled:bg-transparent':
+            variant === 'outline',
+
+          /** Sizes */
           'py-2 px-3 text-sm': size === 'sm',
           'py-3 px-4 text-base': size === 'md',
           'py-4 px-6 text-lg': size === 'lg',
-          'opacity-70 cursor-not-allowed': isLoading || props.disabled,
         },
         className
       )}

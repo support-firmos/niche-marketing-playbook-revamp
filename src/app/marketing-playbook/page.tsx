@@ -36,12 +36,6 @@ export default function Home() {
   .map(service => service.label)
   .join(', ');
 
-  useEffect(() => {
-    if (!revenue || revenue === '' || !services || services === '') {
-      router.push('/');
-    }
-  }, [revenue, services, router]);
-
   //using Zustand (global state library) to access this data accross different pages (step5GeneratedPlaybook is needed for Calculator page)
   const { step1GeneratedResearch, setStep1GeneratedResearch } = useSegmentsStore();
   const { step2EnhancedResearch, setStep2EnhancedResearch } = useEnhancedStore();
@@ -377,44 +371,45 @@ const handleSteps = () => {
 };
 
 return (
-  <div className="min-h-screen bg-gradient-to-b from-surface-1 to-black py-10 px-4">
-        <header className="flex justify-center items-center mb-12 mt-10 md:mt-0">
-          <h1 className="text-2xl sm:text-3xl font-bold text-titleColor">
-            Customer Niche Marketing Playbook
-          </h1>
-        </header>
-        
-        {error && (
-          <div className="bg-black/40 border-l-4 border-red-500 text-subtitleColor p-4 rounded mb-8 shadow-md">
-            <div className="flex items-center">
-              <svg className="h-6 w-6 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <p>{error}</p>
-            </div>
-          </div>
-        )}
-        <div className="relative flex">
-          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <div className="max-w-3xl mx-auto">
-          <div className="card bg-surface-1/30 border border-subtitleColor/10 rounded-xl p-6 shadow-lg">
-            {displayContent ? (
-              <ResearchResult 
-                content={displayContent} 
-                industry={currentNiche}
-                onReset={resetGenerator}
-                onNextSteps={handleSteps()?.action}
-                nextStepButtonText={handleSteps()?.buttonText}
-                isGeneratingNextStep={isGeneratingNextStep}
-                resultType={step5StringPlaybook ? 'playbook' : step4DeepSegmentResearch ? 'deepSegment' : step3GeneratedSalesNav ? 'salesNav' : step2EnhancedResearch ? 'enhanced' : 'segments'}
-                segments={step3Segments || []}
-              />
-            ) : (
-              <ResearchForm onSubmit={generateResearch} />
-            )}
-          </div>
+  <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 py-10 px-4">   
+    {error && (
+      <div className="bg-red-900/40 border-l-4 border-red-500 text-white p-4 rounded-md mb-8 shadow-md max-w-3xl mx-auto">
+        <div className="flex items-center">
+          <svg className="h-6 w-6 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <p>{error}</p>
         </div>
       </div>
+    )}
+    
+    {/* Use a positioned sidebar with a fixed content area */}
+    <div className="relative">
+      {/* Fixed position sidebar */}
+      <div className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       </div>
+      
+      {/* Main content - always centered, not shifting */}
+      <div className="max-w-3xl mx-auto relative z-10">
+        <div className="bg-slate-950 backdrop-blur-sm rounded-xl p-8 shadow-xl">
+          {displayContent ? (
+            <ResearchResult 
+              content={displayContent} 
+              industry={currentNiche}
+              onReset={resetGenerator}
+              onNextSteps={handleSteps()?.action}
+              nextStepButtonText={handleSteps()?.buttonText}
+              isGeneratingNextStep={isGeneratingNextStep}
+              resultType={step5StringPlaybook ? 'playbook' : step4DeepSegmentResearch ? 'deepSegment' : step3GeneratedSalesNav ? 'salesNav' : step2EnhancedResearch ? 'enhanced' : 'segments'}
+              segments={step3Segments || []}
+            />
+          ) : (
+            <ResearchForm onSubmit={generateResearch} />
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
 );
 }

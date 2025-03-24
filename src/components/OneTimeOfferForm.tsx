@@ -73,9 +73,9 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
   return (
     <form onSubmit={handleSubmit} className="p-6">
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-titleColor mb-2">Industry Information</h3>
+        <h3 className="text-xl font-bold text-titleColor mb-2">Marketing Inbound Blueprint</h3>
         <p className="text-subtitleColor mb-6">
-          Upload a text file with your industry information or enter it directly in the field below.
+          Upload a text file with your Marketing Inbound Blueprint or enter it directly in the field below.
         </p>
         
         <div
@@ -88,7 +88,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
           <input {...getInputProps()} />
           <div className="flex flex-col items-center justify-center">
             <svg 
-              className={`w-12 h-12 mb-3 ${isDragActive ? 'text-titleColor' : 'text-subtitleColor/60'}`} 
+              className={`w-12 h-10 mb-3 ${isDragActive ? 'text-titleColor' : 'text-subtitleColor/60'}`} 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 
@@ -147,9 +147,11 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
           <Button 
             type="submit" 
             disabled={isProcessing} 
-            className="bg-gradient-to-r from-titleColor/90 to-titleColor/60 hover:from-titleColor hover:to-titleColor/80 
-                       text-black font-medium px-6 py-3 rounded-lg transition-all shadow-lg 
-                       shadow-titleColor/20 hover:shadow-titleColor/30 border border-titleColor/50"
+            className={`
+              bg-green-700 hover:bg-green-800 text-white font-medium text-base rounded-md 
+              !py-2 !px-4 transition-all duration-300 
+              disabled:bg-gray-600 disabled:cursor-not-allowed
+            `}
           >
             {isProcessing ? (
               <div className="flex items-center">
