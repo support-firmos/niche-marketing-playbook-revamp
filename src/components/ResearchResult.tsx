@@ -84,7 +84,7 @@ export default function ResearchResult({
             Download
           </Button>
           <Button 
-            variant="secondary" 
+            variant="outline" 
             size="sm" 
             onClick={onReset}
             className="bg-slate-800 text-[#f7f8f8] hover:bg-slate-500"
@@ -94,7 +94,7 @@ export default function ResearchResult({
         </div>
       </div>
       
-      <div className="bg-[#141414] p-5 rounded-xl border border-[#8a8f98]/20 max-h-80 overflow-auto">
+      <div className="bg-gray-700 p-5 rounded-xl border border-[#8a8f98]/20 max-h-80 overflow-auto">
         <div className="text-[#f7f8f8] font-inter text-sm markdown-content">
         <ReactMarkdown 
             components={{
@@ -112,7 +112,7 @@ export default function ResearchResult({
               li: ({...props}) => <li className="mb-1" {...props} />
             }}
           >
-            {/* Convert single newlines to break tags for proper rendering */}
+
             {content.replace(/\n(?!\n)/g, '  \n')}
           </ReactMarkdown>
         </div>

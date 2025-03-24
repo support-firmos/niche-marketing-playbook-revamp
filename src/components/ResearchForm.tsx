@@ -46,13 +46,11 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
     }
   });
 
-  // You might also need to modify useEffect to only update services when the selectedServices prop changes
   useEffect(() => {
     setValue('revenue', revenue ?? null);
   }, [revenue, setValue]);
 
   useEffect(() => {
-    // Convert selectedServices array to a Record<string, boolean> for the local state
     const servicesMap: Record<string, boolean> = {};
     selectedServices.forEach(service => {
       servicesMap[service.id] = true;
@@ -136,7 +134,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="rounded-lg p-6 shadow-inner md:col-span-2">
           <label htmlFor="nicheConsideration" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            1. Input Your Client's Niche
+            1. Your Client's Niche
           </label>
           <textarea
             id="nicheConsideration"
@@ -151,7 +149,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
 
         <div className="rounded-lg p-6 shadow-inner md:col-span-2">
           <label htmlFor="profitability" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            2. Have these clients been profitable for your firm?
+            2. How profitable are your existing clients under this niche?
           </label>
           <textarea
             id="profitability"
