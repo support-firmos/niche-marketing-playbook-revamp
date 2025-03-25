@@ -94,9 +94,14 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
     <form onSubmit={handleSubmit(submitHandler)} className="space-y-8">
       {/* Services Selection Section */}
       <div className="rounded-lg p-6 shadow-inner">
-        <label className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-          Select The Services For Your Client
+      <div className = "rounded-xl bg-green-900 mb-5 p-6">
+        <h1 className="block text-[#f7f8f8] font-medium mb-3 text-4xl">
+          Services Offered For Your Firm
+        </h1>
+        <label className="block text-white font-medium mb-3 text-md">
+          Below is a list of all services your firm can avail. These services ranage from tax, bookkeeping, auditing, and other specialized services. Please check out all that applies:
         </label>
+        </div>
         <div className="space-y-6">
           {serviceCategories.map((category, index) => (
             <div key={index} className="bg-gray-800 rounded-md p-5">
@@ -132,14 +137,35 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
 
       {/* Original form fields - styled consistently */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="rounded-lg p-6 shadow-inner md:col-span-2">
+
+        <div className = "rounded-lg p-6 shadow-inner md:col-span-2 bg-green-900 mx-5">
+          <h1 className="block mb-1  text-[#f7f8f8] font-medium text-4xl ">
+            We Want To Know About You
+          </h1>
+          <label className="block text-white font-medium text-md">
+            Below is a series of questions for you to answer. Refer to the text below each question to guide your input.
+          </label>
+        </div>
+
+        <div className="rounded-lg px-6 shadow-inner md:col-span-2">
           <label htmlFor="nicheConsideration" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            1. Your Client&apos;s Niche
+          Describe your niche in detail. Who are they? What industry do they belong to? What unique challenges do they face?
+          </label>
+          <label className="block text-gray-400 font-medium mb-4 text-xs">
+          A niche is an industry or client segment where you can maximize profitability, standardize operations and demand premium pricing. A strong niche is one where you:
+          <br/>
+          ✅ Enjoy working with the most
+          <br/>
+          ✅ Earn the most revenue
+          <br/>
+          ✅ Represent a significant portion of your client base
+          <br/>
+          ✅ Deliver the best results 
+          <br/>
           </label>
           <textarea
             id="nicheConsideration"
-            className=" border-none resize-none input-field text-sm min-h-[120px] w-full bg-gray-800 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
-            placeholder="Describe your niche (or potential niche) in detail. Who are they? What industry do they belong to? What unique challenges do they face?"
+            className=" border-none resize-none input-field text-sm min-h-[90px] w-full bg-gray-800 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
             {...register('nicheConsideration')}
           />
           {errors.nicheConsideration && (
@@ -147,14 +173,25 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
           )}
         </div>
 
-        <div className="rounded-lg p-6 shadow-inner md:col-span-2">
+        <div className="rounded-lg px-6 shadow-inner md:col-span-2">
           <label htmlFor="profitability" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            2. How profitable are your existing clients under this niche?
+          Describe the financial and strategic benefits of working with this niche. How do they compare to other clients?
+          </label>
+          <label className="block text-gray-400 font-medium mb-4 text-xs">
+          Think about your best clients within this niche:
+          <br/>
+            • Are they easy to work with?
+          <br/>
+            • Do they see your services as a valuable investment rather than an expense?
+          <br/>
+            • Have they referred other businesses to you?
+          <br/>
+            • What makes you enjoy working with them?
+          <br/>
           </label>
           <textarea
             id="profitability"
-            className="resize-none input-field text-sm min-h-[120px] w-full bg-gray-800 border-none rounded-md px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
-            placeholder="Describe the financial and strategic benefits of working with this niche. How do they compare to other clients?"
+            className="resize-none input-field text-sm min-h-[90px] w-full bg-gray-800 border-none rounded-md px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
             {...register('profitability')}
           />
           {errors.profitability && (
@@ -162,14 +199,23 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
           )}
         </div>
 
-        <div className=" rounded-lg p-6 shadow-inner md:col-span-2">
+        <div className=" rounded-lg px-6 shadow-inner md:col-span-2">
           <label htmlFor="experience" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            3. What is your experience or background in this niche?
+          Explain your industry experience and why it positions you as an expert.
+          </label>
+          <label className="block text-gray-400 font-medium mb-4 text-xs">
+          Clients trust experts. The more credibility and insight you have in a specific industry, the easier it is to attract and retain high-value clients.
+          <br/>
+            • Have you worked in this industry before becoming an accountant?
+          <br/>
+            • Do you have specialized training, certifications, or insights that make you uniquely qualified?
+          <br/>
+            • Have you built deep relationships in this space?
+          <br/>
           </label>
           <textarea
             id="experience"
-            className="bg-gray-800 border-none resize-none input-field text-sm min-h-[120px] w-full rounded-md px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
-            placeholder="Explain your industry experience and why it positions you as an expert."
+            className="bg-gray-800 border-none resize-none input-field text-sm min-h-[90px] w-full rounded-md px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
             {...register('experience')}
           />
           {errors.experience && (
@@ -179,7 +225,10 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
 
         <div className="rounded-lg p-6 shadow-inner">
           <label htmlFor="clientPercentage" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            4. What percentage of your current clients are in this niche?
+          What percentage of your current clients are in this niche?
+          </label>
+          <label className="block text-gray-400 font-medium mb-4 text-xs">
+          A niche isn't just about expertise—it’s about traction. Understanding your client mix helps determine how easily you can scale in this niche.
           </label>
           <select
             id="clientPercentage"
@@ -199,7 +248,10 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
 
         <div className="0 rounded-lg p-6 shadow-inner">
           <label htmlFor="teamSize" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            5. How big is your current team?
+          How big is your current team?
+          </label>
+          <label className="block text-gray-400 font-medium mb-4 text-xs">
+          Understanding your team size will help determine the magnitude and level of services to be offered. 
           </label>
           <input
             id="teamSize"
@@ -215,9 +267,9 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
         </div>
 
       {/* Revenue Section */}
-      <div className=" rounded-lg p-6 bordershadow-inner md:col-span-2">
+      <div className=" rounded-lg px-6 bordershadow-inner md:col-span-2">
         <label htmlFor="revenue" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-          6. What is your average annual revenue per client($)?
+        What is your average annual revenue per client($)?
         </label>
         <input
           id="revenue"
@@ -238,12 +290,25 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
 
         <div className="rounded-lg p-6 shadow-inner md:col-span-2">
           <label htmlFor="successStories" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-            7. Share success stories of clients you&apos;ve helped in this niche
+          Describe your most impactful client results in detail
+          </label>
+          <label className="block text-gray-400 font-medium mb-4 text-xs">
+          Case studies build credibility and attract premium clients. Share real-world examples of how you've helped businesses achieve financial success. If you don’t have niche-specific stories, share wins from other industries.
+          <br/>
+          Examples of success metrics:
+          <br/>
+          ✅ Reduced tax liability – “Saved X amount on taxes through strategic planning.”
+          <br/>
+          ✅ Saved time & stress – “Automated financial processes, saving them X hours per week.”
+          <br/>
+          ✅ Increased profitability – “Helped them boost profit margins by X% through better financial strategy.”
+          <br/>
+          ✅ Reduced tax liability – “Saved X amount on taxes through strategic planning.”
+          <br/>
           </label>
           <textarea
             id="successStories"
             className="input-field border-none resize-none text-sm min-h-[120px] w-full bg-gray-800 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
-            placeholder="Describe your most impactful client results in detail. The more specific, the better!"
             {...register('successStories')}
           />
           {errors.successStories && (

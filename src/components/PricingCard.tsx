@@ -33,9 +33,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
   };
 
   const tierClasses = {
-    basic: "bg-green-900 border-slate-700 text-slate-200",
+    premium: "bg-purple-900 border-purple-800 text-purple-100",
     standard: "bg-blue-900 border-blue-800 text-blue-100",
-    premium: "bg-purple-900 border-purple-800 text-purple-100"
+    basic: "bg-green-900 border-slate-700 text-slate-200",
   };
 
   const PricingTier = ({ 
@@ -69,9 +69,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
             <span className="font-semibold">{formatCurrency(price)}</span>
           )}
         </div>
+        <br/>
         <div className="flex justify-between">
-          <span>Annual Recurring Revenue (ARR)</span>
+          <span>ARR</span>
           <span className="font-semibold">{formatCurrency(arr)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Avg. Annual Revenue</span>
+          <span className="font-semibold"> - {formatCurrency(convertedRevenue)}</span>
         </div>
         <div className="flex justify-between">
           <span>Net ROI</span>
@@ -84,13 +89,12 @@ const PricingCard: React.FC<PricingCardProps> = ({
   return (
     <div className="container mx-auto p-4 max-w-5xl">
       <div className="grid md:grid-cols-3 gap-4">
-        <PricingTier 
-          title="Basic Tier" 
-          price={basicPricing} 
-          arr={arrBasic} 
-          netRoi={netRoiBasic} 
-          colorClass={tierClasses.basic}
-          isEditable
+      <PricingTier 
+          title="Premium Tier" 
+          price={premiumPricing} 
+          arr={arrPremium} 
+          netRoi={netRoiPremium} 
+          colorClass={tierClasses.premium}
         />
         <PricingTier 
           title="Standard Tier" 
@@ -100,11 +104,12 @@ const PricingCard: React.FC<PricingCardProps> = ({
           colorClass={tierClasses.standard}
         />
         <PricingTier 
-          title="Premium Tier" 
-          price={premiumPricing} 
-          arr={arrPremium} 
-          netRoi={netRoiPremium} 
-          colorClass={tierClasses.premium}
+          title="Basic Tier" 
+          price={basicPricing} 
+          arr={arrBasic} 
+          netRoi={netRoiBasic} 
+          colorClass={tierClasses.basic}
+          isEditable
         />
       </div>
       <div className="mt-4 bg-slate-950 p-4 rounded-lg">

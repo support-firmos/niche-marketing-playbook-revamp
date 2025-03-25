@@ -1,6 +1,6 @@
 // src/app/api/playbook/route.ts
 import { formatPlaybookForDisplay } from '@/app/utilities/formatPlaybook';
-import { parseJSON } from '@/app/utilities/jsonParser';
+//import { parseJSON } from '@/app/utilities/jsonParser';
 import { NextResponse } from 'next/server';
 
 // Set maximum duration to 60 seconds
@@ -57,18 +57,15 @@ ${segment.deepResearch || 'No deep research available for this segment'}
     
     console.log('Segment data prepared for playbook generation');
     
-    const prompt = `You are an expert AI copywriter tasked with creating a single, cohesive marketing playbook for high-ticket advisory and accounting services that incorporates insights from ALL market segments provided. Your goal is to create a unified playbook.
-
-## Your Task
-Create a comprehensive, integrated marketing playbook that synthesizes insights from all segment research (attached below) into a unified strategy. Find the common themes, patterns, and synergies to develop an overarching approach that works across all segments while acknowledging important variations.
+    const prompt = `Create a comprehensive, integrated marketing playbook that synthesizes insights from all segment research (attached below) into a unified strategy. Find the common themes, patterns, and synergies to develop an overarching approach that works across all segments while acknowledging important variations.
 
 Here is the segment research:
 ${segmentData}
 
 Note that you must first heavily analyze this research to inspire and influence your output. Basically, your goal is to create a marketing playbook/marketing inbound blueprint out of that segment research.
-Also, please, highly contextualize (if applicable) it based on the CFO/Advisory services that the client wants to avail: ${services}
+And please, highly contextualize (if applicable) it based on the CFO/Advisory services that the client wants to avail: ${services}
 
-FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a segment with 12 attributes:
+FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents 12 attributes:
 [
   {
     "title": " compelling title here that references specific industry segments covered in your playbook (e.g., "Inbound Marketing Blueprint for Property Management, Development & Brokerage Services")",
@@ -162,8 +159,9 @@ FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a 
   },
 ]
 
-Format Requirements - FOLLOW THESE EXACTLY
-- Format your ENTIRE response as a valid JSON array that can be parsed with JSON.parse()
+Format Requirements (PLEASE FOLLOW THIS STRICTLY)
+- Format your ENTIRE response as a valid JSON array THAT CAN BE PARSED USING JSON.parse()
+- Avoid using characters that can make JSON.parse() unsuccessful
 - Do NOT include any text before or after the JSON
 - Please provide a valid JSON response without markdown formatting or additional text.
 - Maintain the exact structure shown above
@@ -173,8 +171,8 @@ Important notes:
 - Consider the CFO/Advisory services the client wants to avail (mentioned above). Always contextualize and inspire your responses from them (if applicable).
 - Focus on creating a unified playbook, not a collection of segment-specific approaches
 - Identify common patterns and themes across ALL segments in the research data given, and build a comprehensive strategy around them
-- Where segments differ significantly, develop adaptable approaches that work with minor modifications
 - Extract SPECIFIC details from the research - do not generalize or water down
+- Where segments differ significantly, develop adaptable approaches that work with minor modifications
 - Use EXACT terminology, examples, metrics, and concerns found in the research
 - For any point where the research provides detailed context (e.g., "Why it's a fear" or "Industry Insights"), include these specific details rather than summarizing
 - Maintain the depth and specificity of the original research in your playbook points
@@ -209,7 +207,10 @@ Important notes:
           },
           body: JSON.stringify({
             model: model,
-            messages: [{ role: 'user', content: prompt }],
+            messages: [{
+              role: 'user',
+              content: `You are an expert AI copywriter tasked with creating a single, cohesive marketing playbook for high-ticket advisory and accounting services that incorporates insights from ALL market segments provided. Your goal is to create a unified playbook. Refer to the details below:\n\n${prompt}`
+            }],
             stream: false,
             max_tokens: 25000,
             temperature: 0.8,
@@ -243,7 +244,7 @@ Important notes:
     let parsedPlaybook = [];
 
     try {
-      parsedPlaybook = parseJSON(content);
+      parsedPlaybook = JSON.parse(content.replace(/```json|```/g, '').trim());
       console.log(`Successfully parsed ${parsedPlaybook.length} from response`);
     } catch (error) {
       console.error('Error parsing playbook JSON:', error);
