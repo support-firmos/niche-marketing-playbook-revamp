@@ -228,7 +228,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
           What percentage of your current clients are in this niche?
           </label>
           <label className="block text-gray-400 font-medium mb-4 text-xs">
-          A niche isn't just about expertise—it’s about traction. Understanding your client mix helps determine how easily you can scale in this niche.
+          A niche isn&apos;t just about expertise—it&apos;s about traction. Understanding your client mix helps determine how easily you can scale in this niche.
           </label>
           <select
             id="clientPercentage"
@@ -293,7 +293,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
           Describe your most impactful client results in detail
           </label>
           <label className="block text-gray-400 font-medium mb-4 text-xs">
-          Case studies build credibility and attract premium clients. Share real-world examples of how you've helped businesses achieve financial success. If you don’t have niche-specific stories, share wins from other industries.
+          Case studies build credibility and attract premium clients. Share real-world examples of how you&apos;ve helped businesses achieve financial success. If you don&apos;t have niche-specific stories, share wins from other industries.
           <br/>
           Examples of success metrics:
           <br/>
