@@ -18,52 +18,22 @@ interface SegmentResearch {
 
 export async function POST(request: Request) {
   try {
-    const requestData = await request.json();
-    let segmentData;
-    const services = requestData.services;
-    // Handle different input formats
-    if (requestData.segmentInfo) {
-      if (typeof requestData.segmentInfo === 'string') {
-        segmentData = requestData.segmentInfo;
-      } else if (typeof requestData.segmentInfo === 'object') {
-        // If it's the formatted deep segment research object
-        if (requestData.segmentInfo.originalContent) {
-          if (requestData.segmentInfo.originalContent.allSegments) {
-            // Extract and process all segments
-            const segments = requestData.segmentInfo.originalContent.allSegments;
-            console.log(`Processing ${segments.length} segments for playbook`);
-            segmentData = segments.map((segment: SegmentResearch, index: number) => {
-              return `
-===== SEGMENT ${index + 1}: ${segment.name || 'Unnamed Segment'} =====
-
-${segment.deepResearch || 'No deep research available for this segment'}
-              `;
-            }).join('\n\n');
-          } else if (requestData.segmentInfo.originalContent.combinedResearch) {
-            // Use the combined research if available
-            segmentData = requestData.segmentInfo.originalContent.combinedResearch;
-          } else {
-            // Fallback to the displayContent
-            segmentData = requestData.segmentInfo.displayContent || JSON.stringify(requestData.segmentInfo, null, 2);
-          }
-        } else {
-          // Try to stringify the object
-          segmentData = JSON.stringify(requestData.segmentInfo, null, 2);
-        }
-      }
-    } else {
-      return NextResponse.json({ error: 'No segment information provided' }, { status: 400 });
-    }
+    console.log('Generate-segments API called');
     
-    console.log('Segment data prepared for playbook generation');
+    const requestData = await request.json();
+    const { content } = requestData;
+    
+    if (!content) {
+      console.error('content lacking');
+      return NextResponse.json({ error: 'content is required' }, { status: 400 });
+    }
     
     const prompt = `Create a comprehensive, integrated marketing playbook that synthesizes insights from all segment research (attached below) into a unified strategy. Find the common themes, patterns, and synergies to develop an overarching approach that works across all segments while acknowledging important variations.
 
 Here is the segment research:
-${segmentData}
+${content}
 
 Note that you must first heavily analyze this research to inspire and influence your output. Basically, your goal is to create a marketing playbook/marketing inbound blueprint out of that segment research.
-And please, highly contextualize (if applicable) it based on the CFO/Advisory services that the client wants to avail: ${services}
 
 FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents 12 attributes:
 [
@@ -168,7 +138,6 @@ Format Requirements (PLEASE FOLLOW THIS STRICTLY)
 - Do NOT include any introductory text, disclaimers, or conclusions
 
 Important notes:
-- Consider the CFO/Advisory services the client wants to avail (mentioned above). Always contextualize and inspire your responses from them (if applicable).
 - Focus on creating a unified playbook, not a collection of segment-specific approaches
 - Identify common patterns and themes across ALL segments in the research data given, and build a comprehensive strategy around them
 - Extract SPECIFIC details from the research - do not generalize or water down
@@ -240,22 +209,22 @@ Important notes:
       throw new Error(lastError || 'All models failed');
     }
     
-    const content = responseData.choices[0].message.content;
+    const result = responseData.choices[0].message.content;
     let parsedPlaybook = [];
 
     try {
-      parsedPlaybook = JSON.parse(content.replace(/```json|```/g, '').trim());
+      parsedPlaybook = JSON.parse(result.replace(/```json|```/g, '').trim());
       console.log(`Successfully parsed ${parsedPlaybook.length} from response`);
     } catch (error) {
       console.error('Error parsing playbook JSON:', error);
-      console.log('Raw content:', content.substring(0, 500) + '...');
+      console.log('Raw content:', result.substring(0, 500) + '...');
     }
 
     const formattedContent = formatPlaybookForDisplay(parsedPlaybook);
 
     return NextResponse.json({ 
       result: {
-        content,
+        result,
         formattedContent,
         playbook: parsedPlaybook
       }

@@ -9,7 +9,6 @@ import { usePlaybookStringStore } from '../store/playbookStringStore';
 import { useRevenueStore } from '../store/revenueStore';
 import { useServicesStore } from '../store/servicesStore';
 import { useSegmentsStore } from '../store/segmentsStore';
-import { useEnhancedStore } from '../store/enhancedStore';
 import { useSalesNavStore } from '../store/salesNavStore';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 import { useDeepSegmentResearchStore } from '../store/deepResearchStore';
@@ -38,7 +37,6 @@ export default function Home() {
 
   //using Zustand (global state library) to access this data accross different pages (step5GeneratedPlaybook is needed for Calculator page)
   const { step1GeneratedResearch, setStep1GeneratedResearch } = useSegmentsStore();
-  const { step2EnhancedResearch, setStep2EnhancedResearch } = useEnhancedStore();
   const { step3GeneratedSalesNav, setStep3GeneratedSalesNav } = useSalesNavStore();
   const { step3Segments, setStep3Segments } = useSalesNavSegmentsStore();
   const { step4DeepSegmentResearch, setStep4DeepSegmentResearch } = useDeepSegmentResearchStore();
@@ -52,7 +50,6 @@ export default function Home() {
   const generateResearch = async (formData: FormData) => {
     setError(null);
     setStep1GeneratedResearch('');
-    setStep2EnhancedResearch(null);
     setStep3GeneratedSalesNav(null);
     setStep3Segments(null);
     setStep4DeepSegmentResearch(null);
@@ -76,7 +73,7 @@ export default function Home() {
           clientPercentage: formData.clientPercentage,
           successStories: formData.successStories,
           teamSize: formData.teamSize,
-          services
+          services: services
         }),
       });
 
@@ -160,81 +157,6 @@ export default function Home() {
     }
   };
 
-  const enhanceSegments = async (segments: string, niche: string) => {
-    setError(null);
-    setIsGeneratingNextStep(true);
-    
-    try {
-      const enhancedResponse = await fetch('/api/enhance-segments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          niche,
-          segments,
-          services
-        }),
-      });
-
-      if (!enhancedResponse.ok) {
-        throw new Error(`Failed to enhance segments: ${enhancedResponse.status}`);
-      }
-
-      const enhancedData = await enhancedResponse.json();
-      
-      if (enhancedData.result) {
-        //setStep1GeneratedResearch(null); // Hide the original research
-        setStep2EnhancedResearch(enhancedData.result); // Show enhanced research
-      } else {
-        setError('Could not enhance the segments. Please try again.');
-      }
-    } catch (enhanceError) {
-      console.error('Error enhancing segments:', enhanceError);
-      setError('Could not enhance the segments. Please try again.');
-    } finally {
-      setIsGeneratingNextStep(false);
-    }
-  };
-
-  const retryEnhancedSegments = async () => {
-    if (!step1GeneratedResearch) {
-      setError('No segments available to enhance');
-      return;
-    }
-    
-    setError(null);
-    setIsGeneratingNextStep(true);
-    
-    try {
-      const enhancedResponse = await fetch('/api/enhance-segments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          niche: currentNiche,
-          segments: step1GeneratedResearch,
-          services
-        }),
-      });
-  
-      if (!enhancedResponse.ok) {
-        throw new Error(`Failed to regenerate enhanced segments: ${enhancedResponse.status}`);
-      }
-  
-      const enhancedData = await enhancedResponse.json();
-      
-      if (!enhancedData.result) {
-        throw new Error('No result returned from enhanced segments regeneration');
-      }
-      
-      setStep2EnhancedResearch(enhancedData.result);
-      
-    } catch (error) {
-      console.error('Error regenerating enhanced segments:', error);
-      setError('An error occurred while regenerating the enhanced segments. Please try again.');
-    } finally {
-      setIsGeneratingNextStep(false);
-    }
-  };
-
   const generateSalesNav = async (segments: string) => {
     setError(null);
     setStep3GeneratedSalesNav('');
@@ -288,8 +210,8 @@ export default function Home() {
   };
 
   const retrySalesNav = async () => {
-    if (!step2EnhancedResearch) {
-      setError('No enhanced segments available to generate Sales Navigator strategy');
+    if (!step1GeneratedResearch) {
+      setError('No  segments available to generate Sales Navigator strategy');
       return;
     }
     
@@ -302,7 +224,7 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           niche: currentNiche,
-          segments: step2EnhancedResearch,
+          segments: step1GeneratedResearch,
           services
         }),
       });
@@ -542,7 +464,6 @@ export default function Home() {
     setRevenue(null);
     setSelectedServices([]);
     setStep1GeneratedResearch(null);
-    setStep2EnhancedResearch(null);
     setStep3GeneratedSalesNav(null);
     setStep3Segments(null);
     setStep4DeepSegmentResearch(null);
@@ -560,20 +481,12 @@ export default function Home() {
         (step4DeepSegmentResearch.displayContent || JSON.stringify(step4DeepSegmentResearch, null, 2))
       ) : null) || 
     step3GeneratedSalesNav || 
-    step2EnhancedResearch || 
     step1GeneratedResearch;
-  const isStep2Done = !!step2EnhancedResearch;
   const isStep3Done = !!step3GeneratedSalesNav;
   const isStep4Done = !!step4DeepSegmentResearch;
   const isStep5Done = !!step5GeneratedPlaybook;
 
 const handleSteps = () => {
-  if (!isStep2Done) {
-    return {
-      action: (content: string) => enhanceSegments(content, currentNiche),
-      buttonText: "Enhance Industry Research"
-    };
-  }
   if (!isStep3Done) {
     return {
       action: (content: string) => generateSalesNav(content),
@@ -611,9 +524,7 @@ const getRetryHandler = () => {
   if (step3GeneratedSalesNav) {
     return retrySalesNav;
   }
-  if (step2EnhancedResearch) {
-    return retryEnhancedSegments;
-  }
+
   if (step1GeneratedResearch) {
     return retrySegments;
   }
@@ -652,7 +563,7 @@ return (
               onNextSteps={handleSteps()?.action}
               nextStepButtonText={handleSteps()?.buttonText}
               isGeneratingNextStep={isGeneratingNextStep}
-              resultType={step5StringPlaybook ? 'playbook' : step4DeepSegmentResearch ? 'deepSegment' : step3GeneratedSalesNav ? 'salesNav' : step2EnhancedResearch ? 'enhanced' : 'segments'}
+              resultType={step5StringPlaybook ? 'playbook' : step4DeepSegmentResearch ? 'deepSegment' : step3GeneratedSalesNav ? 'salesNav' : 'segments'}
               segments={step3Segments || []}
             />
           ) : (

@@ -19,22 +19,39 @@ export async function POST(request: Request) {
       clientPercentage, 
       successStories, 
       teamSize,
-      services 
+      selectedServices 
     } = requestData;
-    
-    if (!nicheConsideration) {
-      console.error('No niche consideration provided in request');
-      return NextResponse.json({ error: 'Niche consideration is required' }, { status: 400 });
+
+    if (!profitability) {
+      console.error('profitability lacking');
+      return NextResponse.json({ error: 'profitability is required' }, { status: 400 });
+    }
+    if (!experience) {
+      console.error('experience lacking');
+      return NextResponse.json({ error: 'experience is required' }, { status: 400 });
+    }
+    if (!clientPercentage) {
+      console.error('clientPercentage lacking');
+      return NextResponse.json({ error: 'clientPercentage is required' }, { status: 400 });
+    }
+    if (!successStories) {
+      console.error('successStories lacking');
+      return NextResponse.json({ error: 'successStories is required' }, { status: 400 });
+    }
+    if (!teamSize) {
+      console.error('teamSize lacking');
+      return NextResponse.json({ error: 'teamSize is required' }, { status: 400 });
     }
     
-    console.log('Niche details received in request');
-    
+    if (!selectedServices) {
+      console.error('services lacking');
+      return NextResponse.json({ error: 'services is required' }, { status: 400 });
+    }
+  
     // Extract a brief niche summary for the header
     const nicheShortSummary = nicheConsideration.split('\n')[0].trim();
     
     const prompt = `
-    services here: ${services}
-    
     ## Accounting Advisory Services - Market Fit & Segment Research for ${nicheShortSummary}
     
     ### Introduction & Context
@@ -47,14 +64,14 @@ export async function POST(request: Request) {
 
     This is the target niche/industry: ${nicheConsideration}
 
-    These are the services that the client wants to avail: ${services}
+    These are the services that the client wants to avail: ${selectedServices}
     
     Determine 5-7 specific segments within that niche that aligns to the list of services that the client wants to avail, and a the same time are fit for high-ticket, recurring accounting advisory services.
     
     ###CRITERIA FOR SEGMENTS (ranked, so criteria #1 must be the first priority in consideration)
 
     CRITERIA #1: Strictly, the segments, and the services for each each segment, must align and/or be connected to any of the services that the client wants
-                to avail (${services}). Make sure all of them are considered.
+                to avail (${selectedServices}). Make sure all of them are considered.
     CRITERIA #2: Getting to know the offerer:
               - The size of the offerer's team is ${teamSize}. The advisories/services for each segment you are about to generate is something
                 we will consider to offer as a paid service to the client. Make sure that these segments is feasible and attainable
@@ -84,40 +101,48 @@ export async function POST(request: Request) {
     **Industry:**
     *${nicheShortSummary}*
 
-    **Client's Desired Services:**
-    *${services}*
+    **Services:**
+    *${selectedServices}*
 
     ## SEGMENT 1: [SEGMENT NAME]
 
-    **A. Justification for Advisory Services**
-        [bullet list]
+    **A. Why This Segment?**
+        Explain why this segment needs premium accounting advisory services.
+        Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
+
+    **B. Justification for Advisory Services**
         • Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
         • Explain specific need for recurring financial leadership
         • Briefly discuss this service' achievability by reflecting it to the offerer's credibilities above (success stories, current clients, background,  profitability).
         • Briefly discuss why and how a team with ${teamSize} members can achieve this service
 
-    **B. Estimated Market US Potential**: [X companies, $Y–$Z revenue range]
+    **C. Estimated Market US Potential**: [X companies, $Y–$Z revenue range]
+        Assess market size, growth trends, and profitability potential in a paragraph. Explain comprehensively.
 
-    **C. Ease of Outreach**: [Low/Medium/High based on decision-maker visibility]
+    **D. Ease of Outreach**: [Low/Medium/High based on decision-maker visibility. Explain it comprehensively as well]
 
-    **D. Pain Points**: [Key financial challenges this segment faces]
+    **E. Pain Points**: [Key financial challenges this segment faces. Be comprehensive]
 
     ---
 
     ## SEGMENT 2: [SEGMENT NAME]
 
-    **A. Justification for Advisory Services**
-        [bullet list]
+    **A. Why This Segment?**
+        Explain why this segment needs premium accounting advisory services.
+        Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
+
+    **B. Justification for Advisory Services**
        • Dicuss how this segment is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  
        • Explain specific need for recurring financial leadership
        • Briefly discuss this service' achievability by reflecting it to the offerer's credibilities above (success stories, current clients, background,  profitability).
        • Briefly discuss why and how a team with ${teamSize} members can achieve this service
 
-    **B. Estimated Market US Potential** - [X companies, $Y–$Z revenue range]
+    **C. Estimated Market US Potential** - [X companies, $Y–$Z revenue range]
+        Assess market size, growth trends, and profitability potential in a paragraph. Explain comprehensively.
 
-    **C. Ease of Outreach** - [Low/Medium/High based on decision-maker visibility]
+    **D. Ease of Outreach** - [Low/Medium/High based on decision-maker visibility. Explain it comprehensively as well]
 
-    **D. Pain Points** - [Key financial challenges this segment faces]
+    **E. Pain Points** - [Key financial challenges this segment faces. Be comprehensive]
     
     *continue same format for all 5-7 segments*
 

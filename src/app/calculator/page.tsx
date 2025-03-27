@@ -17,12 +17,6 @@ export default function CalculatorPage() {
   const {step5StringPlaybook} = usePlaybookStringStore();
   const { selectedServices } = useServicesStore();
 
-  useEffect(() => {
-    if(selectedServices.length === 0 || !step5StringPlaybook ){
-      router.push('/');
-    }
-  }, [selectedServices, router]);
-
   // Set isClient to true after component mounts
   useEffect(() => {
     setIsClient(true);
@@ -40,7 +34,7 @@ export default function CalculatorPage() {
     <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
       <div className="relative flex bg-black">
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        {!step5StringPlaybook || step5StringPlaybook === '' ? (
+        {!selectedServices || selectedServices.length === 0 ? (
           <PlaybookInput />
         ) : (
           <ServiceTiersClient />

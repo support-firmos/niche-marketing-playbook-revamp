@@ -11,22 +11,16 @@ export const runtime = 'edge';
 export async function POST(request: Request) {
   try {
     const requestData = await request.json();
-    const { niche, segments, services } = requestData;
+    const content = requestData.content;
     
-    if (!segments || typeof segments !== 'string') {
-      return NextResponse.json({ error: 'Invalid segment information' }, { status: 400 });
+    if (!content || typeof content !== 'string') {
+      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
     
-    // Add niche context if available
-    const nicheContext = niche ? `Niche context: ${niche}` : '';
     
     // Modified section of the prompt in src/app/api/generate-segments/route.ts
     const prompt = `
-    You are a specialized LinkedIn Sales Navigator outreach strategist with deep expertise in B2B targeting and account-based marketing. Your task is to transform the segment information below into a structured LinkedIn Sales Navigator targeting strategy for fractional CFO services.
-
-    ${nicheContext}
-
-    Here are the services the client wants to avail: ${services}
+    You are a specialized LinkedIn Sales Navigator outreach strategist with deep expertise in B2B targeting and account-based marketing. Your task is to transform the each segment given above into a structured LinkedIn Sales Navigator targeting strategy for fractional CFO services.
 
     FORMAT YOUR RESPONSE AS A JSON ARRAY OF OBJECTS, where each object represents a segment with 10 attributes:
     [
@@ -109,8 +103,6 @@ export async function POST(request: Request) {
     - Include a diverse range of job title variants to maximize the total addressable market
     - Provide in-depth, detailed explanations for "Why This Segment?" and "Key Challenges" sections
     - End after completing the last segment with no closing remarks
-
-    ${segments.substring(0, 20000)}
     `;
 
     // Try with different models if the first one fails
@@ -140,7 +132,7 @@ export async function POST(request: Request) {
             messages: [
               { 
                 role: 'user', 
-                content: `Here are the market segments to create LinkedIn Sales Navigator targeting strategies for:\n\n${segments}\n\n${prompt}` 
+                content: `Here are the market segments to create LinkedIn Sales Navigator targeting strategies for:\n\n${content}\n\n${prompt}` 
               }
             ],
             stream: false,
@@ -175,17 +167,17 @@ export async function POST(request: Request) {
     console.log('Sales Navigator API response received');
     
     // Extract the content from the response
-    const content = responseData.choices[0].message.content;
+    const result = responseData.choices[0].message.content;
 
     let parsedSegments = [];
     
     try {
       // Try to parse the JSON response
-      parsedSegments = JSON.parse(content.replace(/```json|```/g, '').trim());
+      parsedSegments = JSON.parse(result.replace(/```json|```/g, '').trim());
       console.log(`Successfully parsed ${parsedSegments.length} segments from response`);
     } catch (error) {
       console.error('Error parsing segments JSON:', error);
-      console.log('Raw content:', content.substring(0, 500) + '...');
+      console.log('Raw content:', result.substring(0, 500) + '...');
     }
     
     // Format the segments into readable text format
@@ -193,7 +185,7 @@ export async function POST(request: Request) {
     
     return NextResponse.json({ 
       result: {
-        content,
+        result,
         formattedContent, // Add the formatted content for frontend display
         segments: parsedSegments
       }

@@ -11,7 +11,7 @@ import { useServicesStore } from '../store/servicesStore';
 import { useRevenueStore } from '../store/revenueStore';
 import { useAdvisoriesState } from '../store/twoAdvisoriesStore';
 import Button from '@/components/Button';
-import PricingCard from '@/components/PricingCard';
+import { ExportToExcel } from '@/app/calculator/exportToExcel'; 
 
 interface ServiceItem {
   id: string;
@@ -35,13 +35,11 @@ export default function ServiceTiersClient() {
   const queryRevenue: number | null = useRevenueStore(state => state.revenue);
   const queryServices = useServicesStore(state => state.selectedServices);
 
-  useEffect(() => {
-    // If playbook data doesn't exist or is empty, redirect to homepage
-    if (!step5StringPlaybook || step5StringPlaybook === '') {
-      // Redirect to homepage
-      router.push('/service-selection');
-    }
-  }, [step5StringPlaybook, router]);
+  // useEffect(() => {
+  //   if (!step5StringPlaybook || step5StringPlaybook === '') {
+  //     router.push('/service-selection');
+  //   }
+  // }, [step5StringPlaybook, router]);
 
   const searchParams = useSearchParams();
   const [revenue, setRevenue] = useState<number>(0);
@@ -60,7 +58,6 @@ export default function ServiceTiersClient() {
   const [netRoiStandard, setNetRoiStandard] = useState<number>(0);
   const [netRoiPremium, setNetRoiPremium] = useState<number>(0);
 
-  // Updated tier data based on the provided image
   const tierData: TierData = {
     // Compliance
     businessTaxFiling: { top: true, middle: true, free: true },
@@ -182,7 +179,6 @@ export default function ServiceTiersClient() {
     zoomCalls: "Zoom Calls (30 min)",
   }), [industryAdvisory1, industryAdvisory2]);
 
-  // Define which categories and services should always be shown
   const alwaysShowCategories = ["Advisory", "Communication"];
   const alwaysShowServices = [
     "reviewOfFinancials", 
@@ -195,59 +191,57 @@ export default function ServiceTiersClient() {
     "zoomCalls"
   ];
 
-   //LLM to generate 2 advisories
-   const generateAdvisories = useCallback(
-    async (generatedPlaybook: string) => {
-      if (!generatedPlaybook || generatedPlaybook === "") {
-       // setError("Data from previous step is not successfully read!");
-        return;
-      }
-      console.log("generated playbook: ", generatedPlaybook);
+  //  //LLM to generate 2 advisories
+  //  const generateAdvisories = useCallback(
+  //   async (generatedPlaybook: string) => {
+  //     if (!generatedPlaybook || generatedPlaybook === "") {
+  //      // setError("Data from previous step is not successfully read!");
+  //       return;
+  //     }
+  //     console.log("generated playbook: ", generatedPlaybook);
   
-      try {
-        const response = await fetch("/api/industry-advisory", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ generatedPlaybook }),
-        });
+  //     try {
+  //       const response = await fetch("/api/industry-advisory", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ generatedPlaybook }),
+  //       });
   
-        if (!response.ok) {
-          throw new Error(`Failed to generate advisories: ${response.status}`);
-        }
+  //       if (!response.ok) {
+  //         throw new Error(`Failed to generate advisories: ${response.status}`);
+  //       }
   
-        const advisories = await response.json();
-        console.log("advisories: ", advisories);
-        console.log("advisories.result: ", advisories.result);
+  //       const advisories = await response.json();
+  //       console.log("advisories: ", advisories);
+  //       console.log("advisories.result: ", advisories.result);
   
-        if (advisories.result) {
-          const advisoriesPreExtract: string = advisories.result;
-          const advisoriesExtracted: string[] = advisoriesPreExtract
-            .split(", ")
-            .map((word) => word.trim());
+  //       if (advisories.result) {
+  //         const advisoriesPreExtract: string = advisories.result;
+  //         const advisoriesExtracted: string[] = advisoriesPreExtract
+  //           .split(", ")
+  //           .map((word) => word.trim());
   
-          if (advisoriesExtracted.length >= 1) {
-            setIndustryAdvisory1(advisoriesExtracted[0]);
-          }
-          if (advisoriesExtracted.length >= 2) {
-            setIndustryAdvisory2(advisoriesExtracted[1]);
-          }
-        } else {
+  //         if (advisoriesExtracted.length >= 1) {
+  //           setIndustryAdvisory1(advisoriesExtracted[0]);
+  //         }
+  //         if (advisoriesExtracted.length >= 2) {
+  //           setIndustryAdvisory2(advisoriesExtracted[1]);
+  //         }
+  //       } else {
           
-        }
-      } catch (e) {
-        console.error("Error:", e);
-      }
-    },
-    [] // Dependencies go here
-  );
+  //       }
+  //     } catch (e) {
+  //       console.error("Error:", e);
+  //     }
+  //   },
+  //   [] // Dependencies go here
+  // );
 
-  // Add this before your main useEffect
-  useEffect(() => {
-    // Only call when component first mounts
-    if (step5StringPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '' ) {
-      generateAdvisories(step5StringPlaybook);
-    }
-  }, [generateAdvisories, step5StringPlaybook]);
+  // useEffect(() => {
+  //   if (step5StringPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '' ) {
+  //     generateAdvisories(step5StringPlaybook);
+  //   }
+  // }, [generateAdvisories, step5StringPlaybook]);
 
   useEffect(() => {
     // Get the query parameters using useSearchParams
@@ -443,32 +437,80 @@ export default function ServiceTiersClient() {
                 </React.Fragment>
               );
             })}
+          {/* New pricing rows */}
+          <tr className="bg-gray-600">
+            <td colSpan={4} className="py-2 px-4 font-semibold border-b bg-gray-600">
+              Pricing
+            </td>
+          </tr>
+          <tr className = ''>
+            <td className="py-3 px-4 border-b border-r">Monthly Subscription</td>
+            <td className="py-3 px-4 text-center border-b border-r">${premiumPricing}</td>
+            <td className="py-3 px-4 text-center border-b border-r">${standardPricing}</td>
+            <td className="py-3 px-4 text-center border-b">
+              <input
+                type="number"
+                value={basicPricing}
+                onChange={(e) => setBasicPricing(Number(e.target.value))}
+                className="w-20 text-center text-black bg-white border-2 rounded-sm"
+                min="0"
+                step="5"
+              />
+            </td>
+          </tr>
+          <tr className = ''>
+            <td className="py-3 px-4 border-b border-r">Annual Recurring Revenue (ARR) Per Client</td>
+            <td className="py-3 px-4 text-center border-b border-r">${arrPremium.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b border-r">${arrStandard.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b">${arrBasic.toLocaleString()}</td>
+          </tr>
+          <tr className = ''>
+            <td className="py-3 px-4 border-b border-r">Current Average ARR Per Client</td>
+            <td className="py-3 px-4 text-center border-b border-r">${convertedRevenue.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b border-r">${convertedRevenue.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b">${convertedRevenue.toLocaleString()}</td>
+          </tr>
+          <tr className="bg-green-900">
+            <td className="py-3 px-4 border-b border-r relative group">
+              Net Annual Gain From Service Repackaging
+            </td>
+            <td className="py-3 px-4 text-center border-b border-r">${netRoiPremium.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b border-r">${netRoiStandard.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b">${netRoiBasic.toLocaleString()}</td>
+          </tr>
           </tbody>
         </table>
+        <div className="text-xs text-gray-300 py-4">
+          Your Net Annual Gain represents the additional revenue generated by repackaging your current service offerings. It showcases the potential financial uplift from strategic pricing and service optimization.
+        </div>
       </div>
-
-            {/* New Pricing Card Component */}
-            <PricingCard 
-        basicPricing={basicPricing}
-        standardPricing={standardPricing}
-        premiumPricing={premiumPricing}
-        arrBasic={arrBasic}
-        arrStandard={arrStandard}
-        arrPremium={arrPremium}
-        convertedRevenue={convertedRevenue}
-        netRoiBasic={netRoiBasic}
-        netRoiStandard={netRoiStandard}
-        netRoiPremium={netRoiPremium}
-        setBasicPricing={setBasicPricing}
-      />
       
-      <div className="mt-8 text-center">
+      <div className="mt-8 text-center flex items-center gap-4">
+
         <Button 
           variant='primary'
           onClick={() => router.push('/one-time-offer')}
         >
           One Time Offer
         </Button>
+        
+        <ExportToExcel 
+          services={services}
+          tierData={tierData}
+          serviceNames={serviceNames}
+          pricingData={{
+            basicPricing,
+            standardPricing,
+            premiumPricing,
+            arrBasic,
+            arrStandard,
+            arrPremium,
+            convertedRevenue,
+            netRoiBasic,
+            netRoiStandard,
+            netRoiPremium
+          }}
+        />
       </div>
     </div>
   );
