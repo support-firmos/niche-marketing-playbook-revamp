@@ -172,6 +172,7 @@ export async function POST(request: Request) {
     let parsedSegments = [];
     
     try {
+
       // Try to parse the JSON response
       parsedSegments = JSON.parse(result.replace(/```json|```/g, '').trim());
       console.log(`Successfully parsed ${parsedSegments.length} segments from response`);
