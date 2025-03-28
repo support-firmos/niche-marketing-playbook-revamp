@@ -6,8 +6,7 @@ import Result from '@/app/deep-research/Result';
 import Sidebar from '@/components/Sidebar';
 import Link from 'next/link';
 import {useDeepSegmentResearchStore} from '@/app/store/deepResearchStore';
-import { SegmentResearch } from '@/app/store/deepResearchStore';
-import { Segment } from 'next/dist/server/app-render/types';
+
 
 export default function DeepSegmentResearch() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
