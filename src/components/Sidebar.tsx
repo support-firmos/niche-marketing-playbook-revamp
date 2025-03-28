@@ -11,21 +11,11 @@ import {
   faBars, 
   faTimes,
   faBuilding,
-  faSearchDollar,
-  faClock,
   faBook,
   faDollarSign,
   faSearchLocation,
-  faUniversity,
-  faAnchor,
-  fa5,
-  faShuttleSpace,
-  faShippingFast,
-  faRoadBridge,
-  faHourglass,
   faHourglass2
 } from '@fortawesome/free-solid-svg-icons';
-import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { faParachuteBox } from '@fortawesome/free-solid-svg-icons/faParachuteBox';
 
 interface SidebarProps {

@@ -6,7 +6,7 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { usePlaybookStringStore } from '../store/playbookStringStore';
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useServicesStore } from '../store/servicesStore';
 import { useRevenueStore } from '../store/revenueStore';
 import { useAdvisoriesState } from '../store/twoAdvisoriesStore';
@@ -31,7 +31,7 @@ interface TierData {
 
 export default function ServiceTiersClient() {
   const router = useRouter();
-  const {step5StringPlaybook} = usePlaybookStringStore();
+  //const {step5StringPlaybook} = usePlaybookStringStore();
   const queryRevenue: number | null = useRevenueStore(state => state.revenue);
   const queryServices = useServicesStore(state => state.selectedServices);
 
@@ -46,7 +46,7 @@ export default function ServiceTiersClient() {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [basicPricing, setBasicPricing] = useState<number>(500);
 
-  const {industryAdvisory1, industryAdvisory2, setIndustryAdvisory1, setIndustryAdvisory2 } = useAdvisoriesState();
+  const {industryAdvisory1, industryAdvisory2 } = useAdvisoriesState();
 
   const [convertedRevenue, setConvertedRevenue] = useState<number>(0);
   const [standardPricing, setStandardPricing] = useState<number>(0);

@@ -61,6 +61,16 @@ export default function InboundBlueprint() {
 
   return (
     <div className="relative">
+      {error && (
+        <div className="bg-red-900/40 border-l-4 border-red-500 text-white p-4 rounded-md mb-8 shadow-md max-w-3xl mx-auto">
+          <div className="flex items-center">
+            <svg className="h-6 w-6 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p>{error}</p>
+          </div>
+        </div>
+      )}
         {/* Fixed position sidebar */}
         <div className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -92,7 +102,7 @@ export default function InboundBlueprint() {
                             href="/deep-research" 
                             className="text-md text-gray-400 text-green-500 hover:text-green-200 transition-colors duration-200 underline mb-4"
                             >
-                            Haven't Done Deep Segment Research yet?
+                            Haven&apos;t Done Deep Segment Research yet?
                         </Link>
                     </div>
 

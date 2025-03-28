@@ -1,20 +1,9 @@
 // src/app/api/playbook/route.ts
 import { formatPlaybookForDisplay } from '@/app/utilities/formatPlaybook';
-//import { parseJSON } from '@/app/utilities/jsonParser';
 import { NextResponse } from 'next/server';
 
-// Set maximum duration to 60 seconds
 export const maxDuration = 300;
-
-// Use Edge runtime for better performance with long-running requests
 export const runtime = 'edge';
-
-// Define an interface for segment research
-interface SegmentResearch {
-  name?: string;
-  deepResearch?: string;
-  [key: string]: unknown;
-}
 
 export async function POST(request: Request) {
   try {

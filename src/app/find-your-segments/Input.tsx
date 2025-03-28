@@ -31,7 +31,7 @@ interface InputProps {
     isProcessing: boolean;
   }
 
-  export default function Input({ onSubmit, isProcessing }: InputProps) {
+  export default function Input({ onSubmit }: InputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { revenue, setRevenue } = useRevenueStore();
   const { selectedServices, setSelectedServices } = useServicesStore();

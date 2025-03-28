@@ -4,7 +4,16 @@ import { useState } from 'react';
 import Input from '@/app/find-your-segments/Input';
 import Result from '@/app/find-your-segments/Result';
 import Sidebar from '@/components/Sidebar';
-import { useServicesStore } from '../store/servicesStore';
+
+interface FormData {
+    nicheConsideration: string;
+    profitability: string;
+    experience: string;
+    clientPercentage: string;
+    successStories: string;
+    teamSize: number;
+    selectedServices: string;
+  }
 
 export default function FindYourSegments() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,7 +22,7 @@ export default function FindYourSegments() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const findYourSegmentsLLMCall = async (formData: any) => {
+    const findYourSegmentsLLMCall = async (formData: FormData) => {
 
     setError(null);
     setIsProcessing(true);
@@ -58,6 +67,16 @@ export default function FindYourSegments() {
 
   return (
     <div className="relative">
+    {error && (
+      <div className="bg-red-900/40 border-l-4 border-red-500 text-white p-4 rounded-md mb-8 shadow-md max-w-3xl mx-auto">
+        <div className="flex items-center">
+          <svg className="h-6 w-6 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <p>{error}</p>
+        </div>
+      </div>
+    )}
         {/* Fixed position sidebar */}
         <div className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -79,7 +98,7 @@ export default function FindYourSegments() {
                         <div className="container mx-auto px-4 text-center">
                             <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Find Your Segments</h2>
                             <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                            Check the appropriate services you offer, answer some questions, and you'll be able to find your segments in no time.
+                            Check the appropriate services you offer, answer some questions, and you&apos;ll be able to find your segments in no time.
                             Determine specific industry segments that would be the best fit for high-ticket, recurring CFO services.
                             </p>
                         </div>

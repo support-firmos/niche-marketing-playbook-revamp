@@ -11,8 +11,7 @@ import {
   faHourglass2,
   faBook,
   faDollarSign,
-  faTag,
-  faUpload
+  faTag
 } from '@fortawesome/free-solid-svg-icons';
 
 const cards = [
