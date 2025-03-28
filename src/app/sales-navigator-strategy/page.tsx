@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Input from '@/app/sales-navigator-strategy/Input';
 import Result from '@/app/sales-navigator-strategy/Result';
 import Sidebar from '@/components/Sidebar';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 import Link from 'next/link';
+import { useSalesNavStore } from '../store/salesNavStore';
 
 export default function SalesNavigatorStrategy() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -14,6 +15,14 @@ export default function SalesNavigatorStrategy() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { setStep3Segments } = useSalesNavSegmentsStore();
+    const {step3GeneratedSalesNav, setStep3GeneratedSalesNav } = useSalesNavStore();
+
+    useEffect(() => {
+      if (step3GeneratedSalesNav) {
+          setGeneratedResult(step3GeneratedSalesNav);
+          setDisplayContent(true);
+      }
+  }, [step3GeneratedSalesNav]);
 
     const salesNavigatorStrategyLLMCall = async (content: string) => {
 
@@ -35,6 +44,7 @@ export default function SalesNavigatorStrategy() {
       
       const data = await response.json();
       setGeneratedResult(data.result.formattedContent);
+      setStep3GeneratedSalesNav(data.result.formattedContent);
       setDisplayContent(true);
 
       if (data.result.segments && Array.isArray(data.result.segments) && data.result.segments.length > 0) {
@@ -51,6 +61,7 @@ export default function SalesNavigatorStrategy() {
 
   const handleReset = () => {
     setGeneratedResult(null);
+    setStep3GeneratedSalesNav(null);
     setDisplayContent(false);
     setError(null);
   };

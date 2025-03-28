@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Input from '@/app/inbound-blueprint/Input';
 import Result from '@/app/inbound-blueprint/Result';
 import Sidebar from '@/components/Sidebar';
@@ -15,7 +15,14 @@ export default function InboundBlueprint() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { setStep5GeneratedPlaybook } = usePlaybookStore();
-    const { setStep5StringPlaybook } = usePlaybookStringStore();
+    const { step5StringPlaybook, setStep5StringPlaybook } = usePlaybookStringStore();
+
+    useEffect(() => {
+      if (step5StringPlaybook) {
+          setGeneratedResult(step5StringPlaybook);
+          setDisplayContent(true);
+      }
+  }, [step5StringPlaybook]);
 
     const marketingInboundBlueprintLLMCall = async (content: string) => {
 
@@ -59,6 +66,7 @@ export default function InboundBlueprint() {
 
   const handleReset = () => {
     setGeneratedResult(null);
+    setStep5StringPlaybook(null);
     setDisplayContent(false);
     setError(null);
   };

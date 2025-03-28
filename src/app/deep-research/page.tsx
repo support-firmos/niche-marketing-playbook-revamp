@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Input from '@/app/deep-research/Input';
 import Result from '@/app/deep-research/Result';
 import Sidebar from '@/components/Sidebar';
 import Link from 'next/link';
+import {useDeepSegmentResearchStore} from '@/app/store/deepResearchStore';
+import { SegmentResearch } from '@/app/store/deepResearchStore';
+import { Segment } from 'next/dist/server/app-render/types';
 
 export default function DeepSegmentResearch() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -12,6 +15,14 @@ export default function DeepSegmentResearch() {
     const [generatedResult, setGeneratedResult] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { step4DeepSegmentResearch, setStep4DeepSegmentResearch } = useDeepSegmentResearchStore();
+
+    useEffect(() => {
+      if (step4DeepSegmentResearch) {
+          setGeneratedResult(step4DeepSegmentResearch.displayContent);
+          setDisplayContent(true);
+      }
+  }, [step4DeepSegmentResearch]);
 
     const deepSegmentResearchLLMCall = async (content: string) => {
 
@@ -33,6 +44,12 @@ export default function DeepSegmentResearch() {
       
       const data = await response.json();
       setGeneratedResult(data.result);
+
+      setStep4DeepSegmentResearch({ 
+        displayContent: data.result,
+        originalContent: { rawContent: content }
+      });
+
       setDisplayContent(true);
     } catch (error) {
       console.error('Error generating research:', error);
@@ -44,6 +61,7 @@ export default function DeepSegmentResearch() {
 
   const handleReset = () => {
     setGeneratedResult(null);
+    setStep4DeepSegmentResearch(null);
     setDisplayContent(false);
     setError(null);
   };

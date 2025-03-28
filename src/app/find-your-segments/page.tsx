@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Input from '@/app/find-your-segments/Input';
 import Result from '@/app/find-your-segments/Result';
 import Sidebar from '@/components/Sidebar';
+import { useSegmentsStore } from '../store/segmentsStore';
 
 interface FormData {
     nicheConsideration: string;
@@ -21,6 +22,15 @@ export default function FindYourSegments() {
     const [generatedResult, setGeneratedResult] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const {step1GeneratedResearch, setStep1GeneratedResearch } = useSegmentsStore();
+
+    // Use useEffect to check for stored research when component mounts
+    useEffect(() => {
+      if (step1GeneratedResearch) {
+          setGeneratedResult(step1GeneratedResearch);
+          setDisplayContent(true);
+      }
+  }, [step1GeneratedResearch]);
 
     const findYourSegmentsLLMCall = async (formData: FormData) => {
 
@@ -50,6 +60,7 @@ export default function FindYourSegments() {
       
       const data = await response.json();
       setGeneratedResult(data.result);
+      setStep1GeneratedResearch(data.result);
       setDisplayContent(true);
     } catch (error) {
       console.error('Error generating research:', error);
@@ -61,6 +72,7 @@ export default function FindYourSegments() {
 
   const handleReset = () => {
     setGeneratedResult(null);
+    setStep1GeneratedResearch(null);
     setDisplayContent(false);
     setError(null);
   };
