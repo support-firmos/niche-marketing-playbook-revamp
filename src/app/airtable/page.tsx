@@ -1,7 +1,7 @@
 'use client';
-import { useEnhancedStore } from "../store/enhancedStore";
+//import { useEnhancedStore } from "../store/enhancedStore";
 import { useSalesNavSegmentsStore } from "../store/salesNavSegmentsStore";
-import { useDeepSegmentResearchStore } from "../store/deepResearchStore";
+//import { useDeepSegmentResearchStore } from "../store/deepResearchStore";
 import { usePlaybookStore } from "../store/playbookStore";
 import { useState } from "react"
 import { clients, Client, firmOSCustomersTableID, firmOSOperationsBaseID } from "../constants/clients"
@@ -12,9 +12,9 @@ import { formatPlaybookForDisplay } from "@/app/utilities/formatPlaybook";
 
 export default function AirtableUpload() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { step2EnhancedResearch } = useEnhancedStore();
+    //const { step2EnhancedResearch } = useEnhancedStore();
     const { step3Segments } = useSalesNavSegmentsStore();
-    const { step4DeepSegmentResearch } = useDeepSegmentResearchStore();
+    //const { step4DeepSegmentResearch } = useDeepSegmentResearchStore();
     const { step5GeneratedPlaybook } = usePlaybookStore();
     let formattedSalesNav, formattedPlaybook;
 

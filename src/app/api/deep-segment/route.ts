@@ -221,7 +221,7 @@ function splitSegments(text: string) {
   // Remove empty segments and normalize the segment headers
   const filteredSegments = segments
     .filter(segment => segment.trim() !== '')
-    .map((segment, index) => `## SEGMENT${segment}`);
+    .map((segment) => `## SEGMENT${segment}`);
 
   return filteredSegments;
 }
