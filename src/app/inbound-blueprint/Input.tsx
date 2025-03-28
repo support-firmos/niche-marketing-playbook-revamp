@@ -149,7 +149,7 @@ export default function Input({ onSubmit, isProcessing }: InputProps) {
               </div>
             ) : (
               <div className="flex items-center">
-                Marketing Inbound Blueprint
+                Inbound Marketing Blueprint
               </div>
             )}
           </Button>

@@ -24,10 +24,10 @@ export async function POST(request: Request) {
       I have here 4 default advisories: Review of Financials, Goal & KPI setting, Cash Flow Forecasting, and Budgets & Projections.
       These are all advisory services available for subscription to the accounting firm clients.
 
-      This is the marketing inbound blueprint: 
+      This is the Inbound Marketing Blueprint: 
       ${generatedPlaybook}
 
-      Your task is to read and analyze the marketing inbound blueprint attached above.
+      Your task is to read and analyze the inbound marketing blueprint attached above.
       And based on that playbook, generate a total of 2 GENERAL/OVERARCHING/UNIVERSAL advisories based on that blueprint.
       Your output is to be included among the 4 default advisories stated above. Therefore, please inspire your responses from those 4.
       The only difference is that the 2 advisories you generated is much more tailored to the blueprint.

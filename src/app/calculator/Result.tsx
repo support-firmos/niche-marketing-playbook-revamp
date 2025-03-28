@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import React from 'react'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Head from 'next/head';
 import { useMemo } from "react";
 import { useServicesStore } from '../store/servicesStore';
@@ -11,6 +11,7 @@ import { useRevenueStore } from '../store/revenueStore';
 import { useAdvisoriesState } from '../store/twoAdvisoriesStore';
 import Button from '@/components/Button';
 import { ExportToExcel } from '@/app/calculator/exportToExcel'; 
+import { usePlaybookStringStore } from '../store/playbookStringStore';
 
 interface ServiceItem {
   id: string;
@@ -28,9 +29,9 @@ interface TierData {
   [key: string]: TierStatus;
 }
 
-export default function ServiceTiersClient() {
+export default function Result() {
   const router = useRouter();
-  //const {step5StringPlaybook} = usePlaybookStringStore();
+  const {step5StringPlaybook} = usePlaybookStringStore();
   const queryRevenue: number | null = useRevenueStore(state => state.revenue);
   const queryServices = useServicesStore(state => state.selectedServices);
 
@@ -45,7 +46,7 @@ export default function ServiceTiersClient() {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [basicPricing, setBasicPricing] = useState<number>(500);
 
-  const {industryAdvisory1, industryAdvisory2 } = useAdvisoriesState();
+  const {industryAdvisory1, industryAdvisory2, setIndustryAdvisory1, setIndustryAdvisory2 } = useAdvisoriesState();
 
   const [convertedRevenue, setConvertedRevenue] = useState<number>(0);
   const [standardPricing, setStandardPricing] = useState<number>(0);
@@ -191,56 +192,58 @@ export default function ServiceTiersClient() {
   ];
 
   //  //LLM to generate 2 advisories
-  //  const generateAdvisories = useCallback(
-  //   async (generatedPlaybook: string) => {
-  //     if (!generatedPlaybook || generatedPlaybook === "") {
-  //      // setError("Data from previous step is not successfully read!");
-  //       return;
-  //     }
-  //     console.log("generated playbook: ", generatedPlaybook);
+  const generateAdvisories = useCallback(
+    async (generatedPlaybook: string) => {
+      if (!generatedPlaybook || generatedPlaybook === "") {
+        // setError("Data from previous step is not successfully read!");
+        return;
+      }
+      console.log("generated playbook: ", generatedPlaybook);
   
-  //     try {
-  //       const response = await fetch("/api/industry-advisory", {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({ generatedPlaybook }),
-  //       });
+      try {
+        const response = await fetch("/api/industry-advisory", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ generatedPlaybook }),
+        });
   
-  //       if (!response.ok) {
-  //         throw new Error(`Failed to generate advisories: ${response.status}`);
-  //       }
+        if (!response.ok) {
+          throw new Error(`Failed to generate advisories: ${response.status}`);
+        }
   
-  //       const advisories = await response.json();
-  //       console.log("advisories: ", advisories);
-  //       console.log("advisories.result: ", advisories.result);
+        const advisories = await response.json();
+        console.log("advisories: ", advisories);
+        console.log("advisories.result: ", advisories.result);
   
-  //       if (advisories.result) {
-  //         const advisoriesPreExtract: string = advisories.result;
-  //         const advisoriesExtracted: string[] = advisoriesPreExtract
-  //           .split(", ")
-  //           .map((word) => word.trim());
+        if (advisories.result) {
+          const advisoriesPreExtract: string = advisories.result;
+          const advisoriesExtracted: string[] = advisoriesPreExtract
+            .split(", ")
+            .map((word) => word.trim());
   
-  //         if (advisoriesExtracted.length >= 1) {
-  //           setIndustryAdvisory1(advisoriesExtracted[0]);
-  //         }
-  //         if (advisoriesExtracted.length >= 2) {
-  //           setIndustryAdvisory2(advisoriesExtracted[1]);
-  //         }
-  //       } else {
-          
-  //       }
-  //     } catch (e) {
-  //       console.error("Error:", e);
-  //     }
-  //   },
-  //   [] // Dependencies go here
-  // );
+          if (advisoriesExtracted.length >= 1) {
+            setIndustryAdvisory1(advisoriesExtracted[0]);
+          }
+          if (advisoriesExtracted.length >= 2) {
+            setIndustryAdvisory2(advisoriesExtracted[1]);
+          }
+        }
+      } catch (e) {
+        console.error("Error:", e);
+      }
+    },
+    [] // Dependencies go here
+  );
 
-  // useEffect(() => {
-  //   if (step5StringPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '' ) {
-  //     generateAdvisories(step5StringPlaybook);
-  //   }
-  // }, [generateAdvisories, step5StringPlaybook]);
+  useEffect(() => {
+    // Uncomment the following line to get the playbook string from the store
+    // const step5StringPlaybook = usePlaybookStringStore(state => state.step5StringPlaybook);
+    
+    // If you have the playbook string and advisories are not set yet, generate them
+    if (step5StringPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '') {
+      generateAdvisories(step5StringPlaybook);
+    }
+  }, [generateAdvisories, step5StringPlaybook, industryAdvisory1, industryAdvisory2]);
 
   useEffect(() => {
     // Get the query parameters using useSearchParams
@@ -370,7 +373,7 @@ export default function ServiceTiersClient() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-5xl">
+    <div className="container mx-auto p-4 max-w-5xl items-center justify-center">
       <Head>
         <title>Pricing Calculator</title>
       </Head>

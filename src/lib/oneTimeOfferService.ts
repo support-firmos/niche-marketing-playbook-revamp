@@ -15,13 +15,13 @@ export async function generateOneTimeOffer(text: string): Promise<string> {
     const prompt = `
 IMPORTANT: Format your entire response using proper Markdown syntax. Begin your response EXACTLY with "# Introduction to One-Time Offers" - do NOT include any preamble, introduction, or explanation before this title.
 
-Please carefully analyze this provided Marketing Inbound Blueprint for a specific industry:
+Please carefully analyze this provided Inbound Marketing Blueprint for a specific industry:
 ${text}
 
 Use this to inform your creation of industry-specific one-time offers. Based on your analysis, create a comprehensive One-Time Offer (OTO) strategy document for the ${industry} industry that follows the exact markdown format specified below.
 
 STEP 1: INDUSTRY ANALYSIS (do not include this heading in your response)
-First, thoroughly examine the provided Marketing Inbound Blueprint to identify:
+First, thoroughly examine the provided Inbound Marketing Blueprint to identify:
 - The primary industry and any sub-industries or specializations
 - Key terminology, jargon, and industry-specific language
 - Major pain points, challenges, and needs in this industry

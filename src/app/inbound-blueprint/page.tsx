@@ -5,6 +5,7 @@ import Input from '@/app/inbound-blueprint/Input';
 import Result from '@/app/inbound-blueprint/Result';
 import Sidebar from '@/components/Sidebar';
 import { usePlaybookStore } from '../store/playbookStore';
+import { usePlaybookStringStore } from '../store/playbookStringStore';
 import Link from 'next/link';
 
 export default function InboundBlueprint() {
@@ -14,6 +15,7 @@ export default function InboundBlueprint() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { setStep5GeneratedPlaybook } = usePlaybookStore();
+    const { setStep5StringPlaybook } = usePlaybookStringStore();
 
     const marketingInboundBlueprintLLMCall = async (content: string) => {
 
@@ -44,6 +46,8 @@ export default function InboundBlueprint() {
       } else {
         setError('Playbook not found. Please try again.');
       }
+
+      setStep5StringPlaybook(data.result.formattedContent);
       
     } catch (error) {
       console.error('Error generating research:', error);
@@ -60,7 +64,7 @@ export default function InboundBlueprint() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative bg-black">
       {error && (
         <div className="bg-red-900/40 border-l-4 border-red-500 text-white p-4 rounded-md mb-8 shadow-md max-w-3xl mx-auto">
           <div className="flex items-center">
@@ -81,30 +85,32 @@ export default function InboundBlueprint() {
                 {displayContent ? (
                         <section className="pt-12">
                         <div className="container mx-auto px-4 text-center">
-                            <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Marketing Inbound Blueprint</h2>
+                            <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Inbound Marketing Blueprint</h2>
                             <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                              Here is your Marketing Inbound Blueprint:
+                              Here is your Inbound Marketing Blueprint!
                             </p>
                         </div>
                         </section>
                     ) : (
+                      <>
                         <section className="pt-12 mb-8">
                         <div className="container mx-auto px-4 text-center">
-                            <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Marketing Inbound Blueprint</h2>
+                            <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm"> Inbound Marketing Blueprint</h2>
                             <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                              Generate a Marketing Inbound Blueprint.
+                              Generate an overarching research that integrates all your target segments in your industry. This research enables deep understanding of the industry landscape.
                             </p>
                         </div>
                         </section>
+                        <div className='my-5 flex justify-center items-center'>
+                          <Link 
+                              href="/deep-research" 
+                              className="text-md text-gray-400 text-green-500 hover:text-green-200 transition-colors duration-200 underline mb-4"
+                              >
+                              Haven&apos;t Done Deep Segment Research yet?
+                          </Link>
+                         </div>
+                      </>
                     )}
-                    <div className='my-5 flex justify-center items-center'>
-                        <Link 
-                            href="/deep-research" 
-                            className="text-md text-gray-400 text-green-500 hover:text-green-200 transition-colors duration-200 underline mb-4"
-                            >
-                            Haven&apos;t Done Deep Segment Research yet?
-                        </Link>
-                    </div>
 
                 <div className="bg-slate-950 backdrop-blur-sm rounded-xl p-8 shadow-xl">
                     <div></div>

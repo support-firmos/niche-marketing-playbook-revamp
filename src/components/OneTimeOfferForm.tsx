@@ -73,9 +73,9 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
   return (
     <form onSubmit={handleSubmit} className="p-6">
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-titleColor mb-2">Marketing Inbound Blueprint</h3>
+        <h3 className="text-xl font-bold text-titleColor mb-2">Inbound Marketing Blueprint</h3>
         <p className="text-subtitleColor mb-6">
-          Upload a text file with your Marketing Inbound Blueprint or enter it directly in the field below.
+          Upload a text file with your Inbound Marketing Blueprint or enter it directly in the field below.
         </p>
         
         <div

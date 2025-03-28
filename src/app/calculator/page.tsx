@@ -2,8 +2,8 @@
 // app/calculator/page.tsx
 import { Suspense } from 'react';
 import { useServicesStore } from '../store/servicesStore';
-import ServiceTiersClient from './ServiceTierClient';
-import PlaybookInput from './PlaybookInput';
+import ServiceTiersClient from './Result';
+import PlaybookInput from './Input';
 import { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 

@@ -9,14 +9,14 @@ export default function PlaybookInput() {
   };
 
   return (
-    <div className="bg-black container mx-auto p-4 max-w-4xl">
+    <div className="bg-black container mx-auto p-4 max-w-4xl flex items-center justify-center">
       <div className="mb-6 bg-black">
         <label 
           htmlFor="marketingPlaybook" 
           className="block text-lg font-medium mb-2 cursor-pointer hover:underline text-blue-500"
           onClick={handleNavigate}
         >
-          You need to check some services to set up the Pricing Calculator! Click here.
+          CLICK HERE to check your services!
         </label>
       </div>
     </div>

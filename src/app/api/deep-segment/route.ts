@@ -18,12 +18,17 @@ export async function POST(request: Request) {
       console.error('content lacking');
       return NextResponse.json({ error: 'content is required' }, { status: 400 });
     }
-  
-    const prompt = `
+
+    // Split the content into segments
+    const segments = splitSegments(content);
+    
+    // Process each segment in parallel
+    const segmentPromises = segments.map(async (segment) => {
+      const segmentPrompt = `
  You are an empathetic B2B Researcher capable of deeply understanding and embodying the Ideal Customer Profile (ICP) for high-ticket advisory and consulting services.
 
 ## Your Task
-Analyze the ICP provided below and generate a comprehensive market research profile FOR EACH SEGMENTS following the exact structure below. Use the information to identify the most relevant and impactful insights.
+Analyze the ICP provided below and generate a comprehensive market research profile for the segment following the exact structure below. Use the information to identify the most relevant and impactful insights.
 Provide exactly 5 items per category. There is a guide below to help you write each item.
 
 ## Response Format (for each segment)
@@ -128,31 +133,25 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 
 ---\n\n
 
-[end of output format. repeat for each segment]
+[end of output format]
 
-## Segments to Analyze:
-${content}`;
+PLEASE, NO introductory texts, conversations, or conclusions. Just follow the format request above.
+
+## Segment to Analyze:
+${segment}`;
     
     console.log('OpenRouter API key exists:', !!process.env.OPENROUTER_API_KEY);
     
-    try {
-      // Use non-streaming approach for this first prompt
-      console.log('Sending request to OpenRouter API...');
-      
-      // Try with different models if the first one fails
+
       const availableModels = [
         'google/gemini-2.0-flash-001',
         'qwen/qwq-32b',
         'deepseek/deepseek-r1-zero:free'
       ];
       
-      let lastError = null;
-      let responseData = null;
-      
-      // Try each model until one works
+     // Try each model for this segment
       for (const model of availableModels) {
         try {
-          console.log(`Trying model: ${model}`);
           const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -163,58 +162,66 @@ ${content}`;
             },
             body: JSON.stringify({
               model: model,
-              messages: [{ role: 'user', content: prompt }],
+              messages: [{ role: 'user', content: segmentPrompt }],
               stream: false,
               max_tokens: 25000,
               temperature: 0.7,
             }),
           });
-          
+
           if (!response.ok) {
             const errorText = await response.text();
-            console.error(`Error with model ${model}:`, errorText);
-            lastError = `OpenRouter API error with model ${model}: ${response.status} - ${errorText}`;
-            continue; // Try the next model
+            console.error(`Error with model ${model} for segment:`, errorText);
+            continue; // Try next model
           }
-          
-          responseData = await response.json();
-          console.log(`Success with model: ${model}`);
-          break; // We got a successful response, break out of the loop
-          
-        } catch (modelError: Error | unknown) {
-          console.error(`Error with model ${model}:`, modelError);
-          lastError = `Error with model ${model}: ${modelError instanceof Error ? modelError.message : String(modelError)}`;
-          continue; // Try the next model
+
+          const responseData = await response.json();
+          return responseData.choices[0].message.content;
+        } catch (error) {
+          console.error(`Error with model ${model} for segment:`, error);
+          continue; // Try next model
         }
       }
-      
-      if (!responseData) {
-        throw new Error(lastError || 'All models failed');
-      }
-      
-      if (!responseData.choices || !responseData.choices[0] || !responseData.choices[0].message) {
-        console.error('Invalid response structure from OpenRouter:', JSON.stringify(responseData));
-        return NextResponse.json({ 
-          error: 'Invalid response structure from OpenRouter',
-          details: JSON.stringify(responseData) 
-        }, { status: 500 });
-      }
-      console.log('result: ', responseData);
-      return NextResponse.json({ 
-        result: responseData.choices[0].message.content 
-      });
-    } catch (apiError) {
-      console.error('Error calling OpenRouter API:', apiError);
-      return NextResponse.json({ 
-        error: 'Error calling OpenRouter API', 
-        details: apiError instanceof Error ? apiError.message : String(apiError) 
-      }, { status: 500 });
-    }
+    throw new Error('All models failed for segment');
+    });
+
+  // Wait for all segments to complete
+  try {
+    const results = await Promise.all(segmentPromises);
+    
+    // Combine all results with a separator
+    const combinedResult = results.join('\n\n---\n\n');
+    
+    return NextResponse.json({ result: combinedResult });
   } catch (error) {
-    console.error('Error in deep-research API:', error);
+    console.error('Error processing segments:', error);
     return NextResponse.json({ 
-      error: 'Failed to do deep research',
-      details: error instanceof Error ? error.message : String(error)
+      error: 'Error processing segments', 
+      details: error instanceof Error ? error.message : String(error) 
     }, { status: 500 });
   }
+  
+} catch (error) {
+  console.error('Error in deep-research API:', error);
+  return NextResponse.json({ 
+    error: 'Failed to do deep research',
+    details: error instanceof Error ? error.message : String(error)
+  }, { status: 500 });
+}
+}
+
+function splitSegments(text: string) {
+  // Match any variation of segment headers
+  // This will match: "SEGMENT", "## SEGMENT", "##SEGMENT", "---\nSEGMENT", etc.
+  const segmentRegex = /(?:---\s*\n\s*)?(?:##\s*)?SEGMENT/gi;
+  
+  // Split the text
+  const segments = text.split(segmentRegex);
+  
+  // Remove empty segments and normalize the segment headers
+  const filteredSegments = segments
+    .filter(segment => segment.trim() !== '')
+    .map((segment, index) => `## SEGMENT${segment}`);
+
+  return filteredSegments;
 }

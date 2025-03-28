@@ -66,7 +66,7 @@ export default function FindYourSegments() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative  bg-black">
     {error && (
       <div className="bg-red-900/40 border-l-4 border-red-500 text-white p-4 rounded-md mb-8 shadow-md max-w-3xl mx-auto">
         <div className="flex items-center">
@@ -98,7 +98,7 @@ export default function FindYourSegments() {
                         <div className="container mx-auto px-4 text-center">
                             <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Find Your Segments</h2>
                             <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                            Check the appropriate services you offer, answer some questions, and you&apos;ll be able to find your segments in no time.
+                            Check the appropriate services you offer, answer some questions, and you&apos;ll be able to find your target segments in no time.
                             Determine specific industry segments that would be the best fit for high-ticket, recurring CFO services.
                             </p>
                         </div>

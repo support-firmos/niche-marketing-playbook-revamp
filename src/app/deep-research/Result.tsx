@@ -88,7 +88,7 @@ export default function Result({ content, onReset }: ResultProps) {
                   size="sm" 
                   className="text-white flex items-center space-x-2"
                 >
-                  <span>Generate Marketing Inbound Blueprint</span>
+                  <span>Generate Inbound Marketing Blueprint</span>
                   <FontAwesomeIcon icon={faArrowRight} className="w-4 h-4" />
                 </Button>
             </Link>

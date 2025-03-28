@@ -62,7 +62,7 @@ export default function Card({ title, data, onSendToApi, isLoading = false, clie
             </pre>
           )
         ) : (
-          <p className="text-gray-400 italic">No research data yet. Please go to Marketing Playbook.</p>
+          <p className="text-gray-400 italic">No research data yet!</p>
         )}
       </div>
     </div>

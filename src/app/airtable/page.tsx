@@ -140,26 +140,26 @@ export default function AirtableUpload() {
                         )}
                         
                         <div className="grid grid-cols-1 gap-6">
-                            <Card 
+                            {/* <Card 
                                 title="Industry Research" 
                                 data={step2EnhancedResearch}
                                 clientPicked={!selectedClient ? false : true}
-                            />    
+                            />     */}
                             <Card 
-                                title="Sales Navigator Srategy" 
+                                title="Target Segments (Sales Nav Params)" 
                                 data={formattedSalesNav} 
                                 onSendToApi={sendSalesNavToAirtable}
                                 isLoading={loading.salesNav}
                                 clientPicked={!selectedClient ? false : true}
                             />        
-                            <Card 
+                            {/* <Card 
                                 title="Deep Industry Research" 
                                 data={step4DeepSegmentResearch?.displayContent} 
                                 clientPicked={!selectedClient ? false : true}
                     
-                            />
+                            /> */}
                             <Card 
-                                title="Marketing Inbound Blueprint" 
+                                title="Customers (Inbound Marketing Blueprint)" 
                                 data={formattedPlaybook} 
                                 onSendToApi={sendPlaybookToAirtable}
                                 clientPicked={!selectedClient ? false : true}

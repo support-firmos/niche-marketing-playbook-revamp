@@ -56,7 +56,7 @@ export default function SalesNavigatorStrategy() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative  bg-black">
       {error && (
         <div className="bg-red-900/40 border-l-4 border-red-500 text-white p-4 rounded-md mb-8 shadow-md max-w-3xl mx-auto">
           <div className="flex items-center">
@@ -84,23 +84,25 @@ export default function SalesNavigatorStrategy() {
                         </div>
                         </section>
                     ) : (
+                      <>
                         <section className="pt-12 mb-4">
                         <div className="container mx-auto px-4 text-center">
                             <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Generate Your Sales Nav Parameters</h2>
                             <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                                By the power of AI, you can now determine all the parameters required in order to reach out to your segments. Input your segments below or upload a file!
+                                By the power of AI, you can now determine all the parameters required in order to reach out to your segments. Input your target segments below or upload a file!
                             </p>
                         </div>
                         </section>
+                        <div className='my-5 flex justify-center items-center'>
+                            <Link 
+                                href="/find-your-segments" 
+                                className="text-md text-gray-400 text-green-500 hover:text-green-200 transition-colors duration-200 underline mb-4"
+                                >
+                                Still haven&apos;t found your segments?
+                            </Link>
+                        </div>
+                      </>
                     )}
-                    <div className='my-5 flex justify-center items-center'>
-                        <Link 
-                            href="/find-your-segments" 
-                            className="text-md text-gray-400 text-green-500 hover:text-green-200 transition-colors duration-200 underline mb-4"
-                            >
-                            Still haven&apos;t found your segments?
-                        </Link>
-                    </div>
 
                 <div className="bg-slate-950 backdrop-blur-sm rounded-xl p-8 shadow-xl">
                     <div></div>
