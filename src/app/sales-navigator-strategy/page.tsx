@@ -1,30 +1,41 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Input from '@/app/sales-navigator-strategy/Input';
+import Input from '@/app/find-your-segments/Input';
 import Result from '@/app/sales-navigator-strategy/Result';
 import Sidebar from '@/components/Sidebar';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 import Link from 'next/link';
 import { useSalesNavStore } from '../store/salesNavStore';
+import { Segment } from '../store/salesNavSegmentsStore';
+
+interface FormData {
+  nicheConsideration: string;
+  profitability: string;
+  experience: string;
+  clientPercentage: string;
+  successStories: string;
+  teamSize: number;
+  selectedServices: string;
+}
 
 export default function SalesNavigatorStrategy() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [displayContent, setDisplayContent] = useState(false);
-    const [generatedResult, setGeneratedResult] = useState<string | null>(null);
+    const [generatedResult, setGeneratedResult] = useState<Segment[] | []>([]);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { setStep3Segments } = useSalesNavSegmentsStore();
+    const { step3Segments, setStep3Segments } = useSalesNavSegmentsStore();
     const {step3GeneratedSalesNav, setStep3GeneratedSalesNav } = useSalesNavStore();
 
     useEffect(() => {
-      if (step3GeneratedSalesNav) {
-          setGeneratedResult(step3GeneratedSalesNav);
+      if (step3Segments) {
+          setGeneratedResult(step3Segments);
           setDisplayContent(true);
       }
-  }, [step3GeneratedSalesNav]);
+  }, [step3Segments]);
 
-    const salesNavigatorStrategyLLMCall = async (content: string) => {
+    const salesNavigatorStrategyLLMCall = async (formData: FormData) => {
 
     setError(null);
     setIsProcessing(true);
@@ -33,22 +44,28 @@ export default function SalesNavigatorStrategy() {
       const response = await fetch('/api/sales-nav', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            content
+        body: JSON.stringify({
+          nicheConsideration: formData.nicheConsideration,
+          profitability: formData.profitability,
+          experience: formData.experience,
+          clientPercentage: formData.clientPercentage,
+          successStories: formData.successStories,
+          teamSize: formData.teamSize,
+          selectedServices: formData.selectedServices
         }),
-      });
+    });
       
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
       
       const data = await response.json();
-      setGeneratedResult(data.result.formattedContent);
-      setStep3GeneratedSalesNav(data.result.formattedContent);
-      setDisplayContent(true);
 
       if (data.result.segments && Array.isArray(data.result.segments) && data.result.segments.length > 0) {
         setStep3Segments(data.result.segments);
+        setGeneratedResult(data.result.segments);
+        setStep3GeneratedSalesNav(data.result.formattedContent);
+        setDisplayContent(true);
       }
 
     } catch (error) {
@@ -60,7 +77,7 @@ export default function SalesNavigatorStrategy() {
   };
 
   const handleReset = () => {
-    setGeneratedResult(null);
+    setGeneratedResult([]);
     setStep3GeneratedSalesNav(null);
     setDisplayContent(false);
     setError(null);
@@ -104,14 +121,6 @@ export default function SalesNavigatorStrategy() {
                             </p>
                         </div>
                         </section>
-                        <div className='my-5 flex justify-center items-center'>
-                            <Link 
-                                href="/find-your-segments" 
-                                className="text-md text-gray-400 text-green-500 hover:text-green-200 transition-colors duration-200 underline mb-4"
-                                >
-                                Still haven&apos;t found your segments?
-                            </Link>
-                        </div>
                       </>
                     )}
 
@@ -119,7 +128,7 @@ export default function SalesNavigatorStrategy() {
                     <div></div>
                     {displayContent ? (
                         <Result
-                            content={generatedResult || ''}
+                            segments={generatedResult ?? []}
                             onReset={handleReset}
                         />
                     ) : (

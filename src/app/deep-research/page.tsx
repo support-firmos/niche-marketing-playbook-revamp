@@ -6,22 +6,25 @@ import Result from '@/app/deep-research/Result';
 import Sidebar from '@/components/Sidebar';
 import Link from 'next/link';
 import {useDeepSegmentResearchStore} from '@/app/store/deepResearchStore';
+import { useDeepResearchStore, DeepResearchSegment } from '@/app/store/deepResearchStore2';
 
 
 export default function DeepSegmentResearch() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [displayContent, setDisplayContent] = useState(false);
-    const [generatedResult, setGeneratedResult] = useState<string | null>(null);
+    const [generatedResult, setGeneratedResult] = useState<DeepResearchSegment[] | []>([]);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
     const { step4DeepSegmentResearch, setStep4DeepSegmentResearch } = useDeepSegmentResearchStore();
+    const { deepResearchSegments, setDeepResearchSegments } = useDeepResearchStore();
 
     useEffect(() => {
-      if (step4DeepSegmentResearch) {
-          setGeneratedResult(step4DeepSegmentResearch.displayContent);
+      if (deepResearchSegments) {
+          setGeneratedResult(deepResearchSegments);
           setDisplayContent(true);
       }
-  }, [step4DeepSegmentResearch]);
+  }, [deepResearchSegments]);
 
     const deepSegmentResearchLLMCall = async (content: string) => {
 
@@ -42,14 +45,14 @@ export default function DeepSegmentResearch() {
       }
       
       const data = await response.json();
-      setGeneratedResult(data.result);
 
-      setStep4DeepSegmentResearch({ 
-        displayContent: data.result,
-        originalContent: { rawContent: content }
-      });
-
-      setDisplayContent(true);
+      if (data.result.segments && Array.isArray(data.result.segments) && data.result.segments.length > 0) {
+        setDeepResearchSegments(data.result.segments);
+        setGeneratedResult(data.result.segments);
+        setStep4DeepSegmentResearch(data.result.formattedContent);
+        setDisplayContent(true);
+      }
+      
     } catch (error) {
       console.error('Error generating research:', error);
       setError('Failed to generate the research. Please try again.');
@@ -59,7 +62,7 @@ export default function DeepSegmentResearch() {
   };
 
   const handleReset = () => {
-    setGeneratedResult(null);
+    setGeneratedResult([]);
     setStep4DeepSegmentResearch(null);
     setDisplayContent(false);
     setError(null);
@@ -119,7 +122,7 @@ export default function DeepSegmentResearch() {
                     <div></div>
                     {displayContent ? (
                         <Result
-                            content={generatedResult || ''}
+                            segments={generatedResult || [] }
                             onReset={handleReset}
                         />
                     ) : (

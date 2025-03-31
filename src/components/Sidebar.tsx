@@ -45,11 +45,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       label: 'Home',
       icon: faHome
     },
-    {
-      path: '/find-your-segments',
-      label: 'Find Your Segments',
-      icon: faSearchLocation
-    },
+    //{
+      //path: '/find-your-segments',
+      //label: 'Find Your Segments',
+      //icon: faSearchLocation
+    //},
     {
       path: '/sales-navigator-strategy',
       label: 'Sales Nav Params',

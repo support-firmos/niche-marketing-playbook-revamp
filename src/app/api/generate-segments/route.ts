@@ -22,30 +22,9 @@ export async function POST(request: Request) {
       selectedServices 
     } = requestData;
 
-    if (!profitability) {
-      console.error('profitability lacking');
-      return NextResponse.json({ error: 'profitability is required' }, { status: 400 });
-    }
-    if (!experience) {
-      console.error('experience lacking');
-      return NextResponse.json({ error: 'experience is required' }, { status: 400 });
-    }
-    if (!clientPercentage) {
-      console.error('clientPercentage lacking');
-      return NextResponse.json({ error: 'clientPercentage is required' }, { status: 400 });
-    }
-    if (!successStories) {
-      console.error('successStories lacking');
-      return NextResponse.json({ error: 'successStories is required' }, { status: 400 });
-    }
-    if (!teamSize) {
-      console.error('teamSize lacking');
-      return NextResponse.json({ error: 'teamSize is required' }, { status: 400 });
-    }
-    
-    if (!selectedServices) {
-      console.error('services lacking');
-      return NextResponse.json({ error: 'services is required' }, { status: 400 });
+    if (!profitability ||!experience || !clientPercentage || !successStories ||!teamSize ||!selectedServices) {
+      console.error('Information lacking');
+      return NextResponse.json({ error: 'Information lacking' }, { status: 400 });
     }
   
     // Extract a brief niche summary for the header
@@ -71,7 +50,7 @@ export async function POST(request: Request) {
     ###CRITERIA FOR SEGMENTS (ranked, so criteria #1 must be the first priority in consideration)
 
     CRITERIA #1: Strictly, the segments, and the services for each each segment, must align and/or be connected to any of the services that the client wants
-                to avail (${selectedServices}). Make sure all of them are considered.
+                to avail (${selectedServices}).
     CRITERIA #2: Getting to know the offerer:
               - The size of the offerer's team is ${teamSize}. The advisories/services for each segment you are about to generate is something
                 we will consider to offer as a paid service to the client. Make sure that these segments is feasible and attainable

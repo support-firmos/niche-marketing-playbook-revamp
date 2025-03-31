@@ -177,7 +177,7 @@ interface InputProps {
 
         <div className="rounded-lg px-6 shadow-inner md:col-span-2">
           <label htmlFor="nicheConsideration" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-          Describe your niche in detail. Who are they? What industry do they belong to? What unique challenges do they face?
+          Describe your niche. Who are they? What industry do they belong to?
           </label>
           <label className="block text-gray-400 font-medium mb-4 text-xs">
           A niche is an industry or client segment where you can maximize profitability, standardize operations and demand premium pricing. A strong niche is one where you:
@@ -190,6 +190,7 @@ interface InputProps {
           <br/>
           ✅ Deliver the best results 
           <br/>
+          <br/> Examples: Real Estate, Healthcare, Construction, IT, etc.
           </label>
           <textarea
             id="nicheConsideration"

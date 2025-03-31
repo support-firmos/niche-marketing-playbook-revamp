@@ -1,5 +1,6 @@
 
 import { NextResponse } from 'next/server';
+import { formatDeepResearchForDisplay } from '@/app/utilities/formatDeepResearch';
 
 // Set maximum duration to 60 seconds
 export const maxDuration = 60;
@@ -31,168 +32,158 @@ export async function POST(request: Request) {
 Analyze the ICP provided below and generate a comprehensive market research profile for the segment following the exact structure below. Use the information to identify the most relevant and impactful insights.
 Provide exactly 5 items per category. There is a guide below to help you write each item.
 
-## Response Format (for each segment)
+FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
+{
+  "name": "segment name here",
+  "fears": [
+    {
+      "title": "Fear title here",
+      "explanation": "Comprehensive explanation of the fear including real-world business impact",
+      "advisoryHelp": "How high-ticket advisory services address this fear"
+    }
+    // ... 4 more fears following the same structure
+  ],
+  "pains": [
+    {
+      "title": "Pain point title here",
+      "explanation": "Comprehensive explanation of the pain including negative consequences",
+      "advisoryHelp": "How high-ticket advisory services address this pain point"
+    }
+    // ... 4 more pains following the same structure
+  ],
+  "objections": [
+    {
+      "title": "Objection title here",
+      "explanation": "Comprehensive explanation of the objection including client concerns",
+      "advisoryHelp": "How to counter with benefits of high-ticket advisory services"
+    }
+    // ... 4 more objections following the same structure
+  ],
+  "goals": [
+    {
+      "title": "Goal title here",
+      "explanation": "Comprehensive explanation of the goal including desired outcomes",
+      "advisoryHelp": "How high-ticket advisory services help attain this goal"
+    }
+    // ... 4 more goals following the same structure
+  ],
+  "values": [
+    {
+      "title": "Value title here",
+      "explanation": "Comprehensive explanation of the value including impact on decision-making",
+      "advisoryHelp": "How high-ticket advisory services align with this value"
+    }
+    // ... 4 more values following the same structure
+  ],
+  "decisionMaking": [
+    {
+      "title": "Decision-making process title here",
+      "explanation": "Comprehensive explanation including stakeholders and timeframes",
+      "advisoryHelp": "How high-ticket advisory services fit into this process"
+    }
+    // ... 4 more decision-making processes following the same structure
+  ],
+  "influences": [
+    {
+      "title": "Influence title here",
+      "explanation": "Comprehensive explanation of the influence including how it shapes perceptions",
+      "advisoryHelp": "How high-ticket advisory services can leverage this influence"
+    }
+    // ... 4 more influences following the same structure
+  ],
+  "communicationPreferences": [
+    {
+      "title": "Communication preference title here",
+      "explanation": "Comprehensive explanation including frequency and content type preferences",
+      "advisoryHelp": "How high-ticket advisory services can adapt to this preference"
+    }
+    // ... 4 more communication preferences following the same structure
+  ]
+}
 
-# DEEP SEGMENT RESEARCH: *segment name*
+IMPORTANT INSTRUCTIONS:
+- Format your ENTIRE response as a valid JSON object that can be parsed with JSON.parse()
+- Do NOT include any text before or after the JSON
+- Provide exactly 5 items for each category
+- Each explanation and advisoryHelp should be detailed and comprehensive
+- Focus on practical, actionable insights
+- Ensure all advisoryHelp sections align with the services the client wants to provide
 
-## FEARS
-
-1.  [Fear 1 title] - What keeps your ideal customer up at night regarding their business?
-    [A comprehensive explanation of the fear. Must include real-world business impact. Use paragraph and/or bullet points.]
-
-    **How Advisory Services Can Help**
-    [Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
-2. same format and content (explanation, advisory services) with 1- What are the worst-case scenarios they imagine could happen to their company?
-3. same format and content (explanation, advisory services) with 1- How do they perceive potential threats to their job security or business stability?
-4. same format and content (explanation, advisory services) with 1- What industry changes or market trends do they fear the most?
-5. same format and content (explanation, advisory services) with 1- How do they feel about the possibility of making a wrong decision in their role?
-
-## PAINS
-
-1.  [Pain 1 title] - What are the biggest daily frustrations your ideal customer experiences in their role?
-    [A comprehensive explanation of the pain. Must include real-world negative consequences or financial impact. Use paragraph and/or bullet points.]
-
-    **How Advisory Services Can Help**
-    [Comprehensively discuss how high-ticket advisory services address it, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above).  Use paragraph and/or bullet points.]
-2. same format and content (explanation, advisory services) with 1- What tasks or processes do they find most time-consuming or inefficient?
-3. same format and content (explanation, advisory services) with 1- How do they describe their main challenges when talking to peers or colleagues?
-4. same format and content (explanation, advisory services) with 1- What negative experiences have they had with similar products or services in the past?
-5. same format and content (explanation, advisory services) with 1- How do their current problems affect their ability to achieve their business goals?
-
-## OBJECTIONS
-
-1.  [Objection 1 title] - What are the primary reasons your ideal customer might be skeptical about your product or service?
-    [A comprehensive explanation of the objection. Must include real-world client concerns. Use paragraph and/or bullet points.]
-
-    **How Advisory Services Can Help**
-    [Comprehensively discuss and counter by providing benefits of high-ticket advisory services, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
-2. same format and content (explanation, advisory services) with 1-How do they evaluate the risks versus the benefits of adopting a new solution?
-3. same format and content (explanation, advisory services) with 1-  What previous experiences with other providers might make them wary of trying your solution?
-4. same format and content (explanation, advisory services) with 1- What financial or budgetary concerns do they have regarding your offering?
-5. same format and content (explanation, advisory services) with 1- How do they perceive the difficulty of integrating your product or service into their existing workflows?
-
-## GOALS
-
-1.  [Goal 1 title] - What are the top three goals your ideal customer aims to achieve in the next year?
-    [A comprehensive explanation of the goal. Must include desired real-world outcomes. Use paragraph and/or bullet points.]
-
-    **How Advisory Services Can Help**
-    [Comprehensively discuss how high-ticket advisory services help attain the goal, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
-2. same format and content (explanation, advisory services) with 1- How do they measure success in their role or business?
-3. same format and content (explanation, advisory services) with 1- What long-term visions or ambitions do they have for their company?
-4. same format and content (explanation, advisory services) with 1- What are the immediate milestones they are working towards?
-5. same format and content (explanation, advisory services) with 1- How do they prioritize their goals in the context of their daily responsibilities?
-
-## VALUES
-
-1.  [Value 1 title] - What ethical considerations are most important to your ideal customer when choosing a provider?
-    [A comprehensive explanation of the value. Must include the impact on decision-making. Use paragraph and/or bullet points.]
-
-    **How Advisory Services Can Help**
-    [Comprehensively discuss how high-ticket advisory services align with this value, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
-2. same format and content (explanation, advisory services) with 1- How do they define quality and value in a product or service?
-3. same format and content (explanation, advisory services) with 1- What company culture aspects do they value in their own organization?
-4. same format and content (explanation, advisory services) with 1- How do they prefer to build relationships with vendors and partners?
-5. same format and content (explanation, advisory services) with 1- What do they value most in their business relationships (e.g., transparency, reliability, innovation)?
-
-## DECISION-MAKING PROCESSES
-
-1.  [Decision-Making Process 1 title] - What steps do they typically follow when evaluating a new product or service?
-    [A comprehensive explanation of the decision-making process. Must include stakeholders and timeframes. Use paragraph and/or bullet points.]
-
-    **How Advisory Services Can Help**
-    [Comprehensively discuss how high-ticket advisory services fit into this process, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
-2. same format and content (explanation, advisory services) with 1- Who else is involved in the decision-making process within their company?
-3. same format and content (explanation, advisory services) with 1- What criteria are most important to them when selecting a solution?
-4. same format and content (explanation, advisory services) with 1- How do they gather and assess information before making a decision?
-5. same format and content (explanation, advisory services) with 1- What external resources (reviews, testimonials, case studies) do they rely on during the decision-making process?
-
-## INFLUENCES
-
-1.  [Influence 1 title] - Who are the thought leaders or industry experts your ideal customer trusts the most?
-    [A comprehensive explanation of the influence. Must include how it shapes perceptions. Use paragraph and/or bullet points.]
-
-    **How Advisory Services Can Help**
-    [Comprehensively discuss how high-ticket advisory services can leverage this influence, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
-2. same format and content (explanation, advisory services) with 1- What publications, blogs, or websites do they frequently read for industry news and insights?
-3. same format and content (explanation, advisory services) with 1- How do they engage with their professional network to seek advice or recommendations?
-4. same format and content (explanation, advisory services) with 1- What role do customer reviews and testimonials play in their purchasing decisions?
-5. same format with 1- How do industry events, conferences, and webinars influence their perceptions and decisions?
-
-## COMMUNICATION PREFERENCES
-
-1.  [Communication Preference 1 title] - What communication channels do they use most frequently (email, social media, phone, etc.)?
-    [A comprehensive explanation of the communication preference. Must include frequency and content type preferences. Use paragraph and/or bullet points.]
-
-    **How Advisory Services Can Help**
-    [Comprehensively discuss how high-ticket advisory services can adapt to this preference, particularly how this is aligned, reflected or connected to any of the services the client wants to avail (mentioned above). Use paragraph and/or bullet points.]
-2. same format and content (explanation, advisory services) with 1- How do they prefer to receive information about new products or services?
-3. same format and content (explanation, advisory services) with 1- What type of content (articles, videos, infographics) do they find most engaging and useful?
-4. same format and content (explanation, advisory services) with 1- How often do they like to be contacted by potential vendors?
-5. same format and content (explanation, advisory services) with 1- What tone and style of communication do they respond to best (formal, casual, informative, etc.)?
-
----\n\n
-
-[end of output format]
-
-PLEASE, NO introductory texts, conversations, or conclusions. Just follow the format request above.
-
-## Segment to Analyze:
+Segment to Analyze:
 ${segment}`;
     
     console.log('OpenRouter API key exists:', !!process.env.OPENROUTER_API_KEY);
     
+    const availableModels = [
+      'google/gemini-2.0-flash-001',
+      'qwen/qwq-32b',
+      'deepseek/deepseek-r1-zero:free'
+    ];
+    
+    let lastError = null;
+    
+    // Try each model for this segment
+    for (const model of availableModels) {
+      try {
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
+            'X-Title': 'Market Segment Research',
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: segmentPrompt }],
+            stream: false,
+            max_tokens: 25000,
+            temperature: 0.7,
+          }),
+        });
 
-      const availableModels = [
-        'google/gemini-2.0-flash-001',
-        'qwen/qwq-32b',
-        'deepseek/deepseek-r1-zero:free'
-      ];
-      
-     // Try each model for this segment
-      for (const model of availableModels) {
-        try {
-          const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-              'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://market-segment-generator.vercel.app/',
-              'X-Title': 'Market Segment Research',
-            },
-            body: JSON.stringify({
-              model: model,
-              messages: [{ role: 'user', content: segmentPrompt }],
-              stream: false,
-              max_tokens: 25000,
-              temperature: 0.7,
-            }),
-          });
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Error with model ${model} for segment:`, errorText);
-            continue; // Try next model
-          }
-
-          const responseData = await response.json();
-          return responseData.choices[0].message.content;
-        } catch (error) {
-          console.error(`Error with model ${model} for segment:`, error);
-          continue; // Try next model
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Error with model ${model} for segment:`, errorText);
+          lastError = `API error with model ${model}: ${errorText}`;
+          continue;
         }
-      }
-    throw new Error('All models failed for segment');
-    });
 
-  // Wait for all segments to complete
+        const responseData = await response.json();
+        const content = responseData.choices[0].message.content;
+
+        try {
+          // Parse the JSON response and return it
+          const parsedSegment = JSON.parse(content.replace(/```json|```/g, '').trim());
+          console.log(`Successfully parsed segment for model ${model}`);
+          return parsedSegment; // Return the parsed segment data
+        } catch (parseError) {
+          console.error(`Error parsing JSON from model ${model}:`, parseError);
+          lastError = `JSON parsing error with model ${model}: ${parseError}`;
+          continue;
+        }
+      } catch (error) {
+        console.error(`Error with model ${model} for segment:`, error);
+        lastError = `Error with model ${model}: ${error}`;
+        continue;
+      }
+    }
+
+    // If we get here, all models failed for this segment
+    throw new Error(lastError || 'All models failed for this segment');
+  });
+
+  // Wait for all segments to be processed
   try {
     const results = await Promise.all(segmentPromises);
+    console.log(`Successfully processed ${results.length} segments`);
     
-    // Combine all results with a separator
-    const combinedResult = results.join('\n\n---\n\n');
-    
-    return NextResponse.json({ result: combinedResult });
+    return NextResponse.json({ 
+      result: {
+        segments: results, // Array of parsed JSON objects
+        formattedContent: formatDeepResearchForDisplay(results)
+      }
+    });
   } catch (error) {
     console.error('Error processing segments:', error);
     return NextResponse.json({ 

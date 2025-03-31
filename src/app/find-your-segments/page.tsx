@@ -14,7 +14,7 @@ interface FormData {
     successStories: string;
     teamSize: number;
     selectedServices: string;
-  }
+}
 
 export default function FindYourSegments() {
     const [sidebarOpen, setSidebarOpen] = useState(false);

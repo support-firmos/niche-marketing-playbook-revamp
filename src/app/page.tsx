@@ -15,11 +15,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const cards = [
-  {
-    title: 'Find Your Segments',
-    path: '/find-your-segments',
-    icon: faSearchLocation
-  },
+  //{
+    //title: 'Find Your Segments',
+    //path: '/find-your-segments',
+    //icon: faSearchLocation
+  //},
   {
     title: 'Sales Nav Parameters',
     path: '/sales-navigator-strategy',
