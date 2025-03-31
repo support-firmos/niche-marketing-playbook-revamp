@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'; // Import useRouter
 export default function PlaybookInput() {
   const router = useRouter(); 
   const handleNavigate = () => {
-    router.push('/find-your-segments');
+    router.push('/sales-navigator-strategy');
   };
 
   return (
