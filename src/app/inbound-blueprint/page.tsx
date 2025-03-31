@@ -15,7 +15,7 @@ export default function InboundBlueprint() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { step5GeneratedPlaybook, setStep5GeneratedPlaybook } = usePlaybookStore();
-    const { step5StringPlaybook, setStep5StringPlaybook } = usePlaybookStringStore();
+    const { setStep5StringPlaybook } = usePlaybookStringStore();
 
     useEffect(() => {
       if (step5GeneratedPlaybook) {
