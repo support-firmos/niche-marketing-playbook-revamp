@@ -5,7 +5,6 @@ import Input from '@/app/find-your-segments/Input';
 import Result from '@/app/sales-navigator-strategy/Result';
 import Sidebar from '@/components/Sidebar';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
-import Link from 'next/link';
 import { useSalesNavStore } from '../store/salesNavStore';
 import { Segment } from '../store/salesNavSegmentsStore';
 
@@ -26,7 +25,7 @@ export default function SalesNavigatorStrategy() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { step3Segments, setStep3Segments } = useSalesNavSegmentsStore();
-    const {step3GeneratedSalesNav, setStep3GeneratedSalesNav } = useSalesNavStore();
+    const {setStep3GeneratedSalesNav } = useSalesNavStore();
 
     useEffect(() => {
       if (step3Segments) {

@@ -16,7 +16,7 @@ export default function DeepSegmentResearch() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const { step4DeepSegmentResearch, setStep4DeepSegmentResearch } = useDeepSegmentResearchStore();
+    const { setStep4DeepSegmentResearch } = useDeepSegmentResearchStore();
     const { deepResearchSegments, setDeepResearchSegments } = useDeepResearchStore();
 
     useEffect(() => {

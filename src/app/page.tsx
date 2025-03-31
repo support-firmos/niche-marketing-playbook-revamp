@@ -6,7 +6,6 @@ import Sidebar from '@/components/Sidebar';
 import PageCard from '@/components/PageCards';
 
 import { 
-  faSearchLocation,
   faParachuteBox,
   faHourglass2,
   faBook,

@@ -13,7 +13,6 @@ import {
   faBuilding,
   faBook,
   faDollarSign,
-  faSearchLocation,
   faHourglass2
 } from '@fortawesome/free-solid-svg-icons';
 import { faParachuteBox } from '@fortawesome/free-solid-svg-icons/faParachuteBox';
