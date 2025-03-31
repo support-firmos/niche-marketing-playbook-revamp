@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Button from '@/components/Button';
+import { useSalesNavStore } from '../store/salesNavStore';
 
 interface InputProps {
   onSubmit: (content: string) => Promise<void>;
@@ -10,8 +11,9 @@ interface InputProps {
 }
 
 export default function Input({ onSubmit, isProcessing }: InputProps) {
+  const {step3GeneratedSalesNav } = useSalesNavStore();
   const [file, setFile] = useState<File | null>(null);
-  const [fileContent, setFileContent] = useState<string>('');
+  const [fileContent, setFileContent] = useState<string>(step3GeneratedSalesNav||'');
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 

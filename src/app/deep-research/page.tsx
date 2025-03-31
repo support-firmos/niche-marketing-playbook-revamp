@@ -93,7 +93,7 @@ export default function DeepSegmentResearch() {
                         <div className="container mx-auto px-4 text-center">
                             <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Deep Segment Research</h2>
                             <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                              Here is an extensive deep segment research based on your segment information, parameters, and keywords.
+                              Here is an extensive deep segment research based on your segment information.
                             </p>
                         </div>
                         </section>
@@ -113,7 +113,7 @@ export default function DeepSegmentResearch() {
                         href="/sales-navigator-strategy" 
                         className="text-md text-gray-400 text-green-500 hover:text-green-200 transition-colors duration-200 underline mb-4"
                         >
-                        No Sales Nav Parameters yet?
+                        No Target Segments Yet?
                     </Link>
                 </div>
                 </>

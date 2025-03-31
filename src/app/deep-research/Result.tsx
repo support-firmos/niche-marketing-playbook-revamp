@@ -80,6 +80,28 @@ export default function Result({ segments, onReset }: ResultProps) {
         document.body.removeChild(element);
     };
 
+    const handleCopySegment = async (segment: DeepResearchSegment) => {
+        try {
+            const textContent = formatSegmentToText(segment);
+            await navigator.clipboard.writeText(textContent);
+            setCopySuccess(`Copied!`);
+            setTimeout(() => setCopySuccess(''), 2000);
+        } catch {
+            setCopySuccess('Failed to copy');
+        }
+    };
+    
+    const handleDownloadSegment = (segment: DeepResearchSegment) => {
+        const content = formatSegmentToText(segment);
+        const element = document.createElement('a');
+        const file = new Blob([content], { type: 'text/plain' });
+        element.href = URL.createObjectURL(file);
+        element.download = `Deep-Segment-Research-${segment.name}.txt`;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    };
+
     const renderSection = (items: Array<{ title: string; explanation: string; advisoryHelp: string }>, 
         title: string, 
         segmentName: string) => {
@@ -129,8 +151,26 @@ return (
                             icon={openSegments[segment.name] ? faChevronUp : faChevronDown} 
                             className="w-4 h-4"
                         />
+                
                     </button>
-                    
+                    <div className="flex gap-2 m-3">
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => handleCopySegment(segment)}
+                                className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
+                            >
+                                {copySuccess.includes(segment.name) ? copySuccess : 'Copy'}
+                            </Button>
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => handleDownloadSegment(segment)}
+                                className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
+                            >
+                                Download
+                            </Button>
+                        </div>
                     {openSegments[segment.name] && (
                         <div className="p-4 border-t border-[#8a8f98]/20 text-[#f7f8f8]">
                             {renderSection(segment.fears, 'Fears', segment.name)}
