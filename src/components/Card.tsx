@@ -1,13 +1,12 @@
 'use client';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { SegmentResearch } from '@/app/store/deepResearchStore';
 import { Playbook } from '@/app/store/playbookStore';
 import Button from './Button';
 
 interface CardProps {
   title: string;
-  data: string | null | undefined | SegmentResearch | Playbook;
+  data: string | null | undefined | Playbook;
   onSendToApi?: () => Promise<void>;
   isLoading?: boolean;
   clientPicked: boolean;
