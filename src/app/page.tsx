@@ -20,7 +20,7 @@ const cards = [
     //icon: faSearchLocation
   //},
   {
-    title: 'Sales Nav Parameters',
+    title: 'Find Your Segments',
     path: '/sales-navigator-strategy',
     icon: faParachuteBox
   },

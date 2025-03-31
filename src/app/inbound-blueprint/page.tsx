@@ -4,25 +4,25 @@ import { useState, useEffect } from 'react';
 import Input from '@/app/inbound-blueprint/Input';
 import Result from '@/app/inbound-blueprint/Result';
 import Sidebar from '@/components/Sidebar';
-import { usePlaybookStore } from '../store/playbookStore';
+import { usePlaybookStore, Playbook } from '../store/playbookStore';
 import { usePlaybookStringStore } from '../store/playbookStringStore';
 import Link from 'next/link';
 
 export default function InboundBlueprint() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [displayContent, setDisplayContent] = useState(false);
-    const [generatedResult, setGeneratedResult] = useState<string | null>(null);
+    const [generatedResult, setGeneratedResult] = useState<Playbook[] | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { setStep5GeneratedPlaybook } = usePlaybookStore();
+    const { step5GeneratedPlaybook, setStep5GeneratedPlaybook } = usePlaybookStore();
     const { step5StringPlaybook, setStep5StringPlaybook } = usePlaybookStringStore();
 
     useEffect(() => {
-      if (step5StringPlaybook) {
-          setGeneratedResult(step5StringPlaybook);
+      if (step5GeneratedPlaybook) {
+          setGeneratedResult(step5GeneratedPlaybook);
           setDisplayContent(true);
       }
-  }, [step5StringPlaybook]);
+  }, [step5GeneratedPlaybook]);
 
     const marketingInboundBlueprintLLMCall = async (content: string) => {
 
@@ -43,18 +43,17 @@ export default function InboundBlueprint() {
       }
       
       const data = await response.json();
-      setGeneratedResult(data.result.formattedContent);
-
-
+      setStep5StringPlaybook(data.result.formattedContent);
       setDisplayContent(true);
 
       if (data.result.playbook && data.result.playbook.length > 0) {
         setStep5GeneratedPlaybook(data.result.playbook);
+        setGeneratedResult(data.result.playbook);
       } else {
         setError('Playbook not found. Please try again.');
       }
 
-      setStep5StringPlaybook(data.result.formattedContent);
+  
       
     } catch (error) {
       console.error('Error generating research:', error);
@@ -66,6 +65,7 @@ export default function InboundBlueprint() {
 
   const handleReset = () => {
     setGeneratedResult(null);
+    setStep5GeneratedPlaybook(null);
     setStep5StringPlaybook(null);
     setDisplayContent(false);
     setError(null);
@@ -94,9 +94,6 @@ export default function InboundBlueprint() {
                         <section className="pt-12">
                         <div className="container mx-auto px-4 text-center">
                             <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Inbound Marketing Blueprint</h2>
-                            <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                              Here is your Inbound Marketing Blueprint!
-                            </p>
                         </div>
                         </section>
                     ) : (
@@ -124,7 +121,7 @@ export default function InboundBlueprint() {
                     <div></div>
                     {displayContent ? (
                         <Result
-                            content={generatedResult || ''}
+                            playbooks={generatedResult ?? []}
                             onReset={handleReset}
                         />
                     ) : (

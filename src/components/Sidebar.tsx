@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     //},
     {
       path: '/sales-navigator-strategy',
-      label: 'Sales Nav Params',
+      label: 'Find Your Segments',
       icon: faParachuteBox
     },
     {

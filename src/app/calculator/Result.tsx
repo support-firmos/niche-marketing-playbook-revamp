@@ -95,8 +95,8 @@ export default function Result() {
     goalAndKPISetting: { top: true, middle: true, free: false },
     cashFlowForecasting: { top: true, middle: false, free: false },
     budgetsAndProjections: { top: true, middle: false, free: false },
-    industrySpecificAdvisory1: { top: true, middle: true, free: false },
-    industrySpecificAdvisory2: { top: true, middle: true, free: false },
+    nicheSpecificAdvisory1: { top: true, middle: true, free: false },
+    nicheSpecificAdvisory2: { top: true, middle: true, free: false },
 
     // Communication - Add missing services
     emailResponseTime: { top: "1 Day", middle: "2 Days", free: "3 Days" },
@@ -134,8 +134,8 @@ export default function Result() {
     goalAndKPISetting: "Advisory",
     cashFlowForecasting: "Advisory",
     budgetsAndProjections: "Advisory",
-    industrySpecificAdvisory1: "Advisory",
-    industrySpecificAdvisory2: "Advisory",
+    nicheSpecificAdvisory1: "Advisory",
+    nicheSpecificAdvisory2: "Advisory",
 
     emailResponseTime: "Communication",
     zoomCalls: "Communication",
@@ -172,8 +172,8 @@ export default function Result() {
     goalAndKPISetting: "Goal & KPI Setting",
     cashFlowForecasting: "Cash Flow Forecasting",
     budgetsAndProjections: "Budgets & Projections",
-    industrySpecificAdvisory1: industryAdvisory1,
-    industrySpecificAdvisory2: industryAdvisory2,
+    nicheSpecificAdvisory1: industryAdvisory1,
+    nicheSpecificAdvisory2: industryAdvisory2,
   
     emailResponseTime: "Email Response Time",
     zoomCalls: "Zoom Calls (30 min)",
@@ -185,8 +185,8 @@ export default function Result() {
     "goalAndKPISetting", 
     "cashFlowForecasting", 
     "budgetsAndProjections", 
-    "industrySpecificAdvisory1", 
-    "industrySpecificAdvisory2",
+    "nicheSpecificAdvisory1", 
+    "nicheSpecificAdvisory2",
     "emailResponseTime", 
     "zoomCalls"
   ];
@@ -310,9 +310,9 @@ export default function Result() {
     if ((industryAdvisory1 || industryAdvisory2) && services.length > 0) {
       // Create a new services array with updated names for the industry advisory services
       const updatedServices = services.map(service => {
-        if (service.id === 'industrySpecificAdvisory1') {
+        if (service.id === 'nicheSpecificAdvisory1') {
           return { ...service, name: industryAdvisory1 };
-        } else if (service.id === 'industrySpecificAdvisory2') {
+        } else if (service.id === 'nicheSpecificAdvisory2') {
           return { ...service, name: industryAdvisory2 };
         }
         return service;
@@ -420,7 +420,7 @@ export default function Result() {
                   </tr>
                   {categoryServices.map((service) => (
                     <tr key={service.id}     className={
-                      service.id === 'industrySpecificAdvisory1' || service.id === 'industrySpecificAdvisory2'
+                      service.id === 'nicheSpecificAdvisory1' || service.id === 'nicheSpecificAdvisory2'
                         ? 'bg-transparent' // Special background for advisory rows
                         : 'bg-transparent'
                     }>

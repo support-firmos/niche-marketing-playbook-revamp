@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Input from '@/app/find-your-segments/Input';
+import Input from '@/app/sales-navigator-strategy/Input';
 import Result from '@/app/sales-navigator-strategy/Result';
 import Sidebar from '@/components/Sidebar';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
@@ -10,6 +10,7 @@ import { Segment } from '../store/salesNavSegmentsStore';
 
 interface FormData {
   nicheConsideration: string;
+  segments?: string;
   profitability: string;
   experience: string;
   clientPercentage: string;
@@ -21,7 +22,7 @@ interface FormData {
 export default function SalesNavigatorStrategy() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [displayContent, setDisplayContent] = useState(false);
-    const [generatedResult, setGeneratedResult] = useState<Segment[] | []>([]);
+    const [generatedResult, setGeneratedResult] = useState<Segment[] | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { step3Segments, setStep3Segments } = useSalesNavSegmentsStore();
@@ -45,6 +46,7 @@ export default function SalesNavigatorStrategy() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nicheConsideration: formData.nicheConsideration,
+          segments: formData.segments || '',
           profitability: formData.profitability,
           experience: formData.experience,
           clientPercentage: formData.clientPercentage,
@@ -76,7 +78,8 @@ export default function SalesNavigatorStrategy() {
   };
 
   const handleReset = () => {
-    setGeneratedResult([]);
+    setGeneratedResult(null);
+    setStep3Segments(null);
     setStep3GeneratedSalesNav(null);
     setDisplayContent(false);
     setError(null);
@@ -104,9 +107,9 @@ export default function SalesNavigatorStrategy() {
                 {displayContent ? (
                         <section className="pt-12">
                         <div className="container mx-auto px-4 text-center">
-                            <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Your Sales Nav Parameters</h2>
+                            <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Your Target Segments</h2>
                             <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                            Here are your Sales Nav Parameters for each of your segments!
+                            Here are your recommended market segments based on your unique services and expertise.
                             </p>
                         </div>
                         </section>
@@ -114,9 +117,10 @@ export default function SalesNavigatorStrategy() {
                       <>
                         <section className="pt-12 mb-4">
                         <div className="container mx-auto px-4 text-center">
-                            <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Generate Your Sales Nav Parameters</h2>
+                            <h2 className="text-4xl font-bold text-titleColor mb-4 drop-shadow-sm">Find Your Segments</h2>
                             <p className="text-subtitleColor max-w-2xl mx-auto text-lg">
-                                By the power of AI, you can now determine all the parameters required in order to reach out to your segments. Input your target segments below or upload a file!
+                            Check the appropriate services you offer, answer some questions, and you&apos;ll be able to find your target segments in no time.
+                            Determine specific industry segments that would be the best fit for high-ticket, recurring advisory services.
                             </p>
                         </div>
                         </section>

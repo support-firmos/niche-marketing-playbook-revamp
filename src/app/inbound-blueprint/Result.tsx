@@ -3,30 +3,65 @@
 import { useState } from 'react';
 import Button from '@/components/Button';
 import ReactMarkdown from 'react-markdown';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Playbook } from '../store/playbookStore';
 
 interface ResultProps {
-    content: string;
+    playbooks: Playbook[] | null;
     onReset: () => void;
 }
-  
 
-export default function Result({ content, onReset }: ResultProps) {
+const formatPlaybooksToText = (playbooks: Playbook[]) => {
+    if (!playbooks) return '';
+    return playbooks.map(playbook => {
+        return `
+---
+Title: ${playbook.title}
+Target Audience: ${playbook.audience}
+Pain Points: ${playbook.pain}
+Fear/Risk: ${playbook.fear}
+Goals: ${playbook.goals}
+Common Objections: ${playbook.objection}
+Value Proposition: ${playbook.value}
+Decision Criteria: ${playbook.decision}
+Success Metrics: ${playbook.metrics}
+Communication Channels: ${playbook.communication}
+Content Strategy: ${playbook.content}
+Lead Generation: ${playbook.lead}
+        `.trim();
+    }).join('\n\n');
+};
+
+export default function Result({ playbooks, onReset }: ResultProps) {
+    const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
     const [copySuccess, setCopySuccess] = useState('');
 
+    const toggleSection = (playbookTitle: string, sectionTitle: string) => {
+        const key = `${playbookTitle}-${sectionTitle}`;
+        setOpenSections(prev => ({
+            ...prev,
+            [key]: !prev[key]
+        }));
+    };
+
     const handleCopy = async () => {
+        if (!playbooks) return;
         try {
-        await navigator.clipboard.writeText(content);
-        setCopySuccess('Copied!');
-        setTimeout(() => setCopySuccess(''), 2000);
+            const textContent = formatPlaybooksToText(playbooks);
+            await navigator.clipboard.writeText(textContent);
+            setCopySuccess('Copied!');
+            setTimeout(() => setCopySuccess(''), 2000);
         } catch {
-        setCopySuccess('Failed to copy');
+            setCopySuccess('Failed to copy');
         }
     };
 
     const handleDownload = () => {
+        if (!playbooks) return;
+        const content = formatPlaybooksToText(playbooks);
+        
         const element = document.createElement('a');
         const file = new Blob([content], { type: 'text/plain' });
         element.href = URL.createObjectURL(file);
@@ -35,64 +70,109 @@ export default function Result({ content, onReset }: ResultProps) {
         element.click();
         document.body.removeChild(element);
     };
+
     return (
         <div className="space-y-6">          
-          <div className="bg-gray-700 p-5 rounded-xl border border-[#8a8f98]/20 max-h-80 overflow-auto">
-            <div className="text-[#f7f8f8] font-inter text-sm markdown-content">
-              <ReactMarkdown 
-                components={{
-                  p: ({...props}) => <p className="mb-4" {...props} />,
-                  br: () => <br />,
-                  h1: ({...props}) => <h1 className="text-xl font-bold mb-4" {...props} />,
-                  h2: ({...props}) => <h2 className="text-lg font-bold mb-3" {...props} />,
-                  h3: ({...props}) => <h3 className="text-md font-bold mb-2" {...props} />,
-                  ul: ({...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
-                  ol: ({...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
-                  li: ({...props}) => <li className="mb-1" {...props} />
-                }}
-              >
-                {content.replace(/\n(?!\n)/g, '  \n')}
-              </ReactMarkdown>
-          </div>
-          </div>
-            <div className="flex justify-between items-center mb-4">
-            <div className="flex space-x-2">
-              <Button 
-                variant="primary" 
-                size="sm" 
-                onClick={handleCopy}
-                className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
-              >
-                {copySuccess || 'Copy'}
-              </Button>
-              <Button 
-                variant="primary" 
-                size="sm" 
-                onClick={handleDownload}
-                className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
-              >
-                Download
-              </Button>
-              <Button 
-                variant="primary" 
-                size="sm" 
-                onClick={onReset}
-                className="bg-slate-800 text-[#f7f8f8] hover:bg-slate-500"
-              >
-                Reset
-              </Button>
+            <div className="space-y-4">
+                {playbooks?.map((playbook, index) => (
+                    <div key={index} className="bg-slate-700 rounded-xl border border-[#8a8f98]/20">
+                        <div className="w-full p-4  bg-gray-800 ">
+                            <span className="font-semibold text-[#f7f8f8]">{playbook.title}</span>
+                        </div>
+                        
+                        <div className="p-4 border-t border-[#8a8f98]/20 text-[#f7f8f8]">
+                            <div className="space-y-3">
+                                {Object.entries({
+                                    'Target Audience': playbook.audience,
+                                    'Pain Points': playbook.pain,
+                                    'Fear/Risk': playbook.fear,
+                                    'Goals': playbook.goals,
+                                    'Common Objections': playbook.objection,
+                                    'Value Proposition': playbook.value,
+                                    'Decision Criteria': playbook.decision,
+                                    'Success Metrics': playbook.metrics,
+                                    'Communication Channels': playbook.communication,
+                                    'Content Strategy': playbook.content,
+                                    'Lead Generation': playbook.lead,
+                                }).map(([title, content]) => {
+                                    const sectionKey = `${playbook.title}-${title}`;
+                                    return (
+                                        <div key={title} className="border-b border-[#8a8f98]/20 pb-3 last:border-0 last:pb-0">
+                                            <button
+                                                onClick={() => toggleSection(playbook.title, title)}
+                                                className="w-full flex justify-between items-center hover:bg-gray-600 rounded-lg p-2"
+                                            >
+                                                <h3 className="font-semibold text-left">{title}</h3>
+                                                <FontAwesomeIcon 
+                                                    icon={openSections[sectionKey] ? faChevronUp : faChevronDown} 
+                                                    className="w-4 h-4"
+                                                />
+                                            </button>
+                                            
+                                            {openSections[sectionKey] && (
+                                                <div className="px-2 pt-2">
+                                                    <div className="prose prose-invert max-w-none">
+                                                        <ReactMarkdown
+                                                            components={{
+                                                                p: ({...props}) => <p className="mb-4" {...props} />,
+                                                                ul: ({...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
+                                                                ol: ({...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
+                                                                li: ({...props}) => <li className="mb-1" {...props} />,
+                                                                strong: ({...props}) => <strong className="font-semibold text-green-400" {...props} />
+                                                            }}
+                                                        >
+                                                            {content.replace(/\n/g, '  \n')}
+                                                        </ReactMarkdown>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
-            <Link href="/calculator">
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  className="text-white flex items-center space-x-2"
-                >
-                  <span>Go To Calculator</span>
-                  <FontAwesomeIcon icon={faArrowRight} className="w-4 h-4" />
-                </Button>
-            </Link>
-          </div>
+
+            <div className="flex justify-between items-center mb-4">
+                <div className="flex space-x-2">
+                    <Button 
+                        variant="primary" 
+                        size="sm" 
+                        onClick={handleCopy}
+                        className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
+                    >
+                        {copySuccess || 'Copy All'}
+                    </Button>
+                    <Button 
+                        variant="primary" 
+                        size="sm" 
+                        onClick={handleDownload}
+                        className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
+                    >
+                        Download All
+                    </Button>
+                    <Button 
+                        variant="primary" 
+                        size="sm" 
+                        onClick={onReset}
+                        className="bg-slate-800 text-[#f7f8f8] hover:bg-slate-500"
+                    >
+                        Reset
+                    </Button>
+                </div>
+                <Link href="/calculator">
+                    <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        className="text-white flex items-center space-x-2"
+                    >
+                        <span>Go To Calculator</span>
+                        <FontAwesomeIcon icon={faArrowRight} className="w-4 h-4" />
+                    </Button>
+                </Link>
+            </div>
         </div>
-      );
-    }
+    );
+}

@@ -202,17 +202,11 @@ ${segment}`;
 }
 
 function splitSegments(text: string) {
-  // Match any variation of segment headers
-  // This will match: "SEGMENT", "## SEGMENT", "##SEGMENT", "---\nSEGMENT", etc.
-  const segmentRegex = /(?:---\s*\n\s*)?(?:##\s*)?SEGMENT/gi;
-  
-  // Split the text
-  const segments = text.split(segmentRegex);
-  
-  // Remove empty segments and normalize the segment headers
+  const segments = text.split(/---/);
+
   const filteredSegments = segments
     .filter(segment => segment.trim() !== '')
-    .map((segment) => `## SEGMENT${segment}`);
+    .map(segment => segment.trim());
 
   return filteredSegments;
 }

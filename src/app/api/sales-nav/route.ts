@@ -13,6 +13,7 @@ export async function POST(request: Request) {
     const requestData = await request.json();
     const { 
       nicheConsideration, 
+      segments,
       profitability, 
       experience, 
       clientPercentage, 
@@ -26,6 +27,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Information lacking' }, { status: 400 });
     }
   
+    const hasValidSegments = (segments?: string) => {
+      if (!segments) return false;
+      const normalizedSegments = segments.trim().toLowerCase();
+      return normalizedSegments !== '' && 
+             normalizedSegments !== 'no' && 
+             normalizedSegments !== 'none';
+    };
+
     // Extract a brief niche summary for the header
     const nicheShortSummary = nicheConsideration.split('\n')[0].trim();
   
@@ -45,10 +54,19 @@ This is the target niche/industry: ${nicheConsideration}
 
 These are the services that the client wants to avail: ${selectedServices}
 
+${hasValidSegments(segments) ? `
+IMPORTANT: The following segments MUST be included and prioritized in your analysis (if they align with the criteria):
+${segments}
+` : ''}
+
 Determine 5-7 specific segments within that niche that aligns to the list of services that the client wants to avail, and a the same time are fit for high-ticket, recurring accounting advisory services.
 
 ###CRITERIA FOR SEGMENTS (ranked, so criteria #1 must be the first priority in consideration)
 
+${hasValidSegments(segments) ? `
+  CRITERIA #0 (HIGHEST PRIORITY): If any of these segments were provided, they MUST be included in the final list (assuming they meet the other criteria):
+  ${segments}
+  ` : ''}
 CRITERIA #1: Strictly, the segments, and the services for each each segment, must align and/or be connected to any of the services that the client wants
             to avail (${selectedServices}).
 CRITERIA #2: Getting to know the offerer:

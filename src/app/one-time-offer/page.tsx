@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import OneTimeOfferForm from '@/components/OneTimeOfferForm';
 import OneTimeOfferResult from '@/components/OneTimeOfferResult';
 import { usePlaybookStringStore } from '../store/playbookStringStore';
@@ -9,16 +9,11 @@ import Sidebar from '@/components/Sidebar';
 
 export default function OneTimeOfferPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const {step5StringPlaybook} = usePlaybookStringStore();
+  //const {step5StringPlaybook} = usePlaybookStringStore();
   const { generatedResult, setGeneratedResult } = useOneTimeOfferStore();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (step5StringPlaybook && !generatedResult && !isProcessing) {
-      handleSubmit(step5StringPlaybook);
-    }
-  }, [step5StringPlaybook, generatedResult, isProcessing]);
 
   const handleSubmit = async (fileContent: string) => {
     setError(null);

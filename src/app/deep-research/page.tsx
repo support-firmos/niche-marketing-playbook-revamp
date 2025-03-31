@@ -12,7 +12,7 @@ import { useDeepResearchStore, DeepResearchSegment } from '@/app/store/deepResea
 export default function DeepSegmentResearch() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [displayContent, setDisplayContent] = useState(false);
-    const [generatedResult, setGeneratedResult] = useState<DeepResearchSegment[] | []>([]);
+    const [generatedResult, setGeneratedResult] = useState<DeepResearchSegment[] | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -62,7 +62,8 @@ export default function DeepSegmentResearch() {
   };
 
   const handleReset = () => {
-    setGeneratedResult([]);
+    setGeneratedResult(null);
+    setDeepResearchSegments(null);
     setStep4DeepSegmentResearch(null);
     setDisplayContent(false);
     setError(null);
