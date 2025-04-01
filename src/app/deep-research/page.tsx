@@ -7,6 +7,7 @@ import Sidebar from '@/components/Sidebar';
 import Link from 'next/link';
 import {useDeepSegmentResearchStore} from '@/app/store/deepResearchStore';
 import { useDeepResearchStore, DeepResearchSegment } from '@/app/store/deepResearchStore2';
+import { useSalesNavSegmentsStore } from '@/app/store/salesNavSegmentsStore';
 
 
 export default function DeepSegmentResearch() {
@@ -18,16 +19,20 @@ export default function DeepSegmentResearch() {
 
     const { setStep4DeepSegmentResearch } = useDeepSegmentResearchStore();
     const { deepResearchSegments, setDeepResearchSegments } = useDeepResearchStore();
+    const { updateSegmentDeepResearch } = useSalesNavSegmentsStore();
 
     useEffect(() => {
       if (deepResearchSegments) {
           setGeneratedResult(deepResearchSegments);
           setDisplayContent(true);
+          
+          deepResearchSegments.forEach(segment => {
+            updateSegmentDeepResearch(segment.name, segment);
+          });
       }
-  }, [deepResearchSegments]);
+  }, [deepResearchSegments, updateSegmentDeepResearch]);
 
     const deepSegmentResearchLLMCall = async (content: string) => {
-
     setError(null);
     setIsProcessing(true);
     

@@ -146,7 +146,7 @@ export default function AirtableUpload() {
                                 clientPicked={!selectedClient ? false : true}
                             />     */}
                             <Card 
-                                title="Target Segments (Sales Nav Params)" 
+                                title="Target Segments" 
                                 data={formattedSalesNav} 
                                 onSendToApi={sendSalesNavToAirtable}
                                 isLoading={loading.salesNav}

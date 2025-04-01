@@ -1,3 +1,5 @@
+import { DeepResearchSegment } from '@/app/store/deepResearchStore2';
+
 // Format segments into human-readable text for display
 export function formatSegmentsForDisplay(segments: Array<{
     name: string;
@@ -10,6 +12,7 @@ export function formatSegmentsForDisplay(segments: Array<{
     keywords: string;
     boolean: string;
     intentdata: string;
+    deepResearch?: DeepResearchSegment;
   }>): string {
     if (!segments || segments.length === 0) {
       return "No segments available";
@@ -26,6 +29,38 @@ export function formatSegmentsForDisplay(segments: Array<{
       const keywords = segment.keywords || '';
       const boolean = segment.boolean || '';
       const intentdata = segment.intentdata || '';
+      
+      let deepResearchSection = '';
+      if (segment.deepResearch) {
+        const research = segment.deepResearch;
+        deepResearchSection = `
+**E. Deep Research Insights**
+
+**Fears:**
+${research.fears.map(fear => `- ${fear.title}\n  ${fear.explanation}\n  Advisory Help: ${fear.advisoryHelp}`).join('\n\n')}
+
+**Pains:**
+${research.pains.map(pain => `- ${pain.title}\n  ${pain.explanation}\n  Advisory Help: ${pain.advisoryHelp}`).join('\n\n')}
+
+**Objections:**
+${research.objections.map(obj => `- ${obj.title}\n  ${obj.explanation}\n  Advisory Help: ${obj.advisoryHelp}`).join('\n\n')}
+
+**Goals:**
+${research.goals.map(goal => `- ${goal.title}\n  ${goal.explanation}\n  Advisory Help: ${goal.advisoryHelp}`).join('\n\n')}
+
+**Values:**
+${research.values.map(value => `- ${value.title}\n  ${value.explanation}\n  Advisory Help: ${value.advisoryHelp}`).join('\n\n')}
+
+**Decision Making:**
+${research.decisionMaking.map(decision => `- ${decision.title}\n  ${decision.explanation}\n  Advisory Help: ${decision.advisoryHelp}`).join('\n\n')}
+
+**Influences:**
+${research.influences.map(influence => `- ${influence.title}\n  ${influence.explanation}\n  Advisory Help: ${influence.advisoryHelp}`).join('\n\n')}
+
+**Communication Preferences:**
+${research.communicationPreferences.map(comm => `- ${comm.title}\n  ${comm.explanation}\n  Advisory Help: ${comm.advisoryHelp}`).join('\n\n')}
+`;
+      }
       
       return `
 ---
@@ -59,6 +94,7 @@ ${boolean}
   
 **D. Best Intent Data Signals**
 ${intentdata}
+${deepResearchSection}
   
   `;
     }).join('\n\n');

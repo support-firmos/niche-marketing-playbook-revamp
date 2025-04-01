@@ -1,9 +1,21 @@
-
 import { NextResponse } from 'next/server';
 import {Segment} from '@/app/store/salesNavSegmentsStore';
 
 export const maxDuration = 60;
 export const runtime = 'edge';
+
+interface DeepResearchItem {
+  title: string;
+  explanation: string;
+  advisoryHelp: string;
+}
+
+function formatDeepResearchArray(arr: DeepResearchItem[] | undefined): string {
+  if (!Array.isArray(arr)) return '';
+  return arr.map(item => 
+    `Title: ${item.title}\nExplanation: ${item.explanation}\nAdvisory Help: ${item.advisoryHelp}`
+  ).join('\n\n');
+}
 
 export async function POST(request: Request) {
   try {
@@ -18,15 +30,21 @@ export async function POST(request: Request) {
           //challenges: segment.challenges,
           "Sales Nav Job Titles": segment.jobtitles,
           "Sales Nav Industries": segment.industries,
-          "Headcount_test": segment.headcount,
-          "CompanyType_test": segment.companytype,
+          "Headcount": segment.headcount,
+          "Company Type": segment.companytype,
           "Keywords": segment.keywords,
           //boolean: segment.boolean,
           "Other Intent Data": segment.intentdata,
+          "Fears": formatDeepResearchArray(segment.deepResearch?.fears),
+          "Pains": formatDeepResearchArray(segment.deepResearch?.pains),
+          "Objections": formatDeepResearchArray(segment.deepResearch?.objections),
+          "Goals": formatDeepResearchArray(segment.deepResearch?.goals),
+          "Values": formatDeepResearchArray(segment.deepResearch?.values),
+          "Decision Making Process": formatDeepResearchArray(segment.deepResearch?.decisionMaking),
+          "Influences": formatDeepResearchArray(segment.deepResearch?.influences),
+          "Communication Preferences": formatDeepResearchArray(segment.deepResearch?.communicationPreferences)
         }
       }));
-
-      //const requestBody = { records: records };
 
     if (!segments) {
       return NextResponse.json({ error: 'No information' }, { status: 400 });

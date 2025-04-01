@@ -155,7 +155,7 @@ return (
                     </button>
                     <div className="flex gap-2 m-3">
                             <Button 
-                                variant="outline" 
+                                variant="secondary" 
                                 size="sm" 
                                 onClick={() => handleCopySegment(segment)}
                                 className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
@@ -163,7 +163,7 @@ return (
                                 {copySuccess.includes(segment.name) ? copySuccess : 'Copy'}
                             </Button>
                             <Button 
-                                variant="outline" 
+                                variant="secondary" 
                                 size="sm" 
                                 onClick={() => handleDownloadSegment(segment)}
                                 className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"

@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Segment } from '../store/salesNavSegmentsStore';
 import ReactMarkdown from 'react-markdown';
+import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
+import { useServicesStore } from '../store/servicesStore';
 
 interface ResultProps {
   segments: Segment[] | null;
@@ -35,6 +37,42 @@ Intent Data: ${segment.intentdata}
 export default function Result({ segments, onReset }: ResultProps) {
     const [openSegments, setOpenSegments] = useState<{ [key: string]: boolean }>({});
     const [copySuccess, setCopySuccess] = useState('');
+    const [isRetrying, setIsRetrying] = useState<string | null>(null);
+    const { nicheConsideration, step3Segments, setStep3Segments } = useSalesNavSegmentsStore();
+    const { selectedServices } = useServicesStore();
+
+    const handleRetrySegment = async (segmentName: string) => {
+        if (!nicheConsideration || !step3Segments) return;
+        
+        setIsRetrying(segmentName);
+        try {
+          const response = await fetch('/api/retry-segment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nicheConsideration,
+              segmentToReplace: segmentName,
+              existingSegments: step3Segments,
+              selectedServices
+            }),
+          });
+    
+          if (!response.ok) throw new Error('Failed to retry segment');
+          
+          const data = await response.json();
+          
+          // Replace the old segment with the new one
+          const updatedSegments = step3Segments.map(seg => 
+            seg.name === segmentName ? data.result : seg
+          );
+          
+          setStep3Segments(updatedSegments);
+        } catch (error) {
+          console.error('Error retrying segment:', error);
+        } finally {
+          setIsRetrying(null);
+        }
+      };
 
     const toggleSegment = (segmentName: string) => {
       setOpenSegments(prev => ({
@@ -69,20 +107,33 @@ export default function Result({ segments, onReset }: ResultProps) {
   };
 
   return (
-    <div className="space-y-6">          
-        <div className="space-y-4">
-            {segments?.map((segment, index) => (
-                <div key={index} className="bg-gray-700 rounded-xl border border-[#8a8f98]/20">
-                    <button
-                        onClick={() => toggleSegment(segment.name)}
-                        className="w-full p-4 flex justify-between items-center text-[#f7f8f8] hover:bg-gray-600 rounded-xl"
-                    >
-                        <span className="font-semibold">{segment.name}</span>
-                        <FontAwesomeIcon 
-                            icon={openSegments[segment.name] ? faChevronUp : faChevronDown} 
-                            className="w-4 h-4"
-                        />
-                    </button>
+    <div className="space-y-6">
+      <div className="space-y-4">
+        {segments?.map((segment, index) => (
+          <div key={index} className="bg-gray-700 rounded-xl border border-[#8a8f98]/20">
+            <div className="w-full p-4 flex justify-between items-center">
+              <button
+                onClick={() => toggleSegment(segment.name)}
+                className="flex-1 text-left text-[#f7f8f8] hover:bg-gray-600 rounded-xl"
+              >
+                <span className="font-semibold">{segment.name}</span>
+              </button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleRetrySegment(segment.name)}
+                  isLoading={isRetrying === segment.name}
+                  className="text-[#f7f8f8] border border-[#8a8f98]/40 hover:bg-[#1A1A1A]"
+                >
+                  Retry
+                </Button>
+                <FontAwesomeIcon 
+                  icon={openSegments[segment.name] ? faChevronUp : faChevronDown} 
+                  className="w-4 h-4"
+                />
+              </div>
+            </div>
                     
                     {openSegments[segment.name] && (
                         <div className="p-4 border-t border-[#8a8f98]/20 text-[#f7f8f8]">

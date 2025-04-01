@@ -10,6 +10,7 @@ import Button from '@/components/Button';
 import { useRevenueStore } from '@/app/store/revenueStore';
 import { useServicesStore } from '@/app/store/servicesStore';
 import { serviceCategories } from '@/app/constants/services';
+import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 
 const formSchema = z.object({
   selectedServices: z.string().min(1, 'Please select at least one service'),
@@ -37,6 +38,7 @@ interface InputProps {
   const { revenue, setRevenue } = useRevenueStore();
   const { selectedServices, setSelectedServices } = useServicesStore();
   const [localSelectedServices, setLocalSelectedServices] = useState<Record<string, boolean>>({});
+  const { setNicheConsideration } = useSalesNavSegmentsStore();
   
   const {
     register,
@@ -109,6 +111,7 @@ interface InputProps {
         });
 
       setSelectedServices(selectedServicesArray);
+      setNicheConsideration(values.nicheConsideration);
       setRevenue(values.revenue != null ? values.revenue.toString() : null);
 
       const valuesWithServices = {

@@ -2,10 +2,7 @@
 import { NextResponse } from 'next/server';
 import { formatDeepResearchForDisplay } from '@/app/utilities/formatDeepResearch';
 
-// Set maximum duration to 60 seconds
 export const maxDuration = 60;
-
-// Use Edge runtime for better performance with long-running requests
 export const runtime = 'edge';
 
 export async function POST(request: Request) {
@@ -20,10 +17,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'content is required' }, { status: 400 });
     }
 
-    // Split the content into segments
     const segments = splitSegments(content);
     
-    // Process each segment in parallel
     const segmentPromises = segments.map(async (segment) => {
       const segmentPrompt = `
  You are an empathetic B2B Researcher capable of deeply understanding and embodying the Ideal Customer Profile (ICP) for high-ticket advisory and consulting services.
@@ -34,7 +29,7 @@ Provide exactly 5 items per category. There is a guide below to help you write e
 
 FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
 {
-  "name": "segment name here",
+  "name": "EXACT segment name here",
   "fears": [
     {
       "title": "Fear title here",
@@ -103,6 +98,7 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
 
 IMPORTANT INSTRUCTIONS:
 - Format your ENTIRE response as a valid JSON object that can be parsed with JSON.parse()
+- DO NOT change the segment name; Follow what is provided in the segment below.
 - Do NOT include any text before or after the JSON
 - Provide exactly 5 items for each category
 - Each explanation and advisoryHelp should be detailed and comprehensive
@@ -122,7 +118,6 @@ ${segment}`;
     
     let lastError = null;
     
-    // Try each model for this segment
     for (const model of availableModels) {
       try {
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -153,10 +148,9 @@ ${segment}`;
         const content = responseData.choices[0].message.content;
 
         try {
-          // Parse the JSON response and return it
           const parsedSegment = JSON.parse(content.replace(/```json|```/g, '').trim());
           console.log(`Successfully parsed segment for model ${model}`);
-          return parsedSegment; // Return the parsed segment data
+          return parsedSegment;
         } catch (parseError) {
           console.error(`Error parsing JSON from model ${model}:`, parseError);
           lastError = `JSON parsing error with model ${model}: ${parseError}`;
@@ -169,11 +163,9 @@ ${segment}`;
       }
     }
 
-    // If we get here, all models failed for this segment
     throw new Error(lastError || 'All models failed for this segment');
   });
 
-  // Wait for all segments to be processed
   try {
     const results = await Promise.all(segmentPromises);
     console.log(`Successfully processed ${results.length} segments`);
