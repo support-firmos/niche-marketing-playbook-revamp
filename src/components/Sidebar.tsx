@@ -11,8 +11,11 @@ import {
   faBars, 
   faTimes,
   faBuilding,
-  faSearchDollar
+  faBook,
+  faDollarSign,
+  faHourglass2
 } from '@fortawesome/free-solid-svg-icons';
+import { faParachuteBox } from '@fortawesome/free-solid-svg-icons/faParachuteBox';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -41,11 +44,36 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       label: 'Home',
       icon: faHome
     },
+    //{
+      //path: '/find-your-segments',
+      //label: 'Find Your Segments',
+      //icon: faSearchLocation
+    //},
     {
-      path: '/marketing-playbook',
-      label: 'Marketing Playbook',
-      icon: faSearchDollar
+      path: '/sales-navigator-strategy',
+      label: 'Find Your Segments',
+      icon: faParachuteBox
     },
+    {
+      path: '/deep-research',
+      label: 'Deep Research',
+      icon: faHourglass2
+    },
+    {
+      path: '/inbound-blueprint',
+      label: 'Marketing Blueprint',
+      icon: faBook
+    },
+    {
+      path: '/calculator',
+      label: 'Pricing Calculator',
+      icon: faDollarSign
+    },
+    //{
+      //path: '/marketing-playbook',
+      //label: 'Marketing Playbook',
+      //icon: faSearchDollar
+   // },
     {
       path: '/one-time-offer',
       label: 'One-Time Offer',

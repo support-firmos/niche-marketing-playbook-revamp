@@ -3,15 +3,15 @@
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import React from 'react'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Head from 'next/head';
-import { usePlaybookStringStore } from '../store/playbookStringStore';
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useServicesStore } from '../store/servicesStore';
 import { useRevenueStore } from '../store/revenueStore';
 import { useAdvisoriesState } from '../store/twoAdvisoriesStore';
 import Button from '@/components/Button';
-import PricingCard from '@/components/PricingCard';
+import { ExportToExcel } from '@/app/calculator/exportToExcel'; 
+import { usePlaybookStringStore } from '../store/playbookStringStore';
 
 interface ServiceItem {
   id: string;
@@ -29,19 +29,17 @@ interface TierData {
   [key: string]: TierStatus;
 }
 
-export default function ServiceTiersClient() {
+export default function Result() {
   const router = useRouter();
   const {step5StringPlaybook} = usePlaybookStringStore();
   const queryRevenue: number | null = useRevenueStore(state => state.revenue);
   const queryServices = useServicesStore(state => state.selectedServices);
 
-  useEffect(() => {
-    // If playbook data doesn't exist or is empty, redirect to homepage
-    if (!step5StringPlaybook || step5StringPlaybook === '') {
-      // Redirect to homepage
-      router.push('/service-selection');
-    }
-  }, [step5StringPlaybook, router]);
+  // useEffect(() => {
+  //   if (!step5StringPlaybook || step5StringPlaybook === '') {
+  //     router.push('/service-selection');
+  //   }
+  // }, [step5StringPlaybook, router]);
 
   const searchParams = useSearchParams();
   const [revenue, setRevenue] = useState<number>(0);
@@ -60,7 +58,6 @@ export default function ServiceTiersClient() {
   const [netRoiStandard, setNetRoiStandard] = useState<number>(0);
   const [netRoiPremium, setNetRoiPremium] = useState<number>(0);
 
-  // Updated tier data based on the provided image
   const tierData: TierData = {
     // Compliance
     businessTaxFiling: { top: true, middle: true, free: true },
@@ -98,8 +95,8 @@ export default function ServiceTiersClient() {
     goalAndKPISetting: { top: true, middle: true, free: false },
     cashFlowForecasting: { top: true, middle: false, free: false },
     budgetsAndProjections: { top: true, middle: false, free: false },
-    industrySpecificAdvisory1: { top: true, middle: true, free: false },
-    industrySpecificAdvisory2: { top: true, middle: true, free: false },
+    nicheSpecificAdvisory1: { top: true, middle: true, free: false },
+    nicheSpecificAdvisory2: { top: true, middle: true, free: false },
 
     // Communication - Add missing services
     emailResponseTime: { top: "1 Day", middle: "2 Days", free: "3 Days" },
@@ -137,8 +134,8 @@ export default function ServiceTiersClient() {
     goalAndKPISetting: "Advisory",
     cashFlowForecasting: "Advisory",
     budgetsAndProjections: "Advisory",
-    industrySpecificAdvisory1: "Advisory",
-    industrySpecificAdvisory2: "Advisory",
+    nicheSpecificAdvisory1: "Advisory",
+    nicheSpecificAdvisory2: "Advisory",
 
     emailResponseTime: "Communication",
     zoomCalls: "Communication",
@@ -175,31 +172,30 @@ export default function ServiceTiersClient() {
     goalAndKPISetting: "Goal & KPI Setting",
     cashFlowForecasting: "Cash Flow Forecasting",
     budgetsAndProjections: "Budgets & Projections",
-    industrySpecificAdvisory1: industryAdvisory1,
-    industrySpecificAdvisory2: industryAdvisory2,
+    nicheSpecificAdvisory1: industryAdvisory1,
+    nicheSpecificAdvisory2: industryAdvisory2,
   
     emailResponseTime: "Email Response Time",
     zoomCalls: "Zoom Calls (30 min)",
   }), [industryAdvisory1, industryAdvisory2]);
 
-  // Define which categories and services should always be shown
   const alwaysShowCategories = ["Advisory", "Communication"];
   const alwaysShowServices = [
     "reviewOfFinancials", 
     "goalAndKPISetting", 
     "cashFlowForecasting", 
     "budgetsAndProjections", 
-    "industrySpecificAdvisory1", 
-    "industrySpecificAdvisory2",
+    "nicheSpecificAdvisory1", 
+    "nicheSpecificAdvisory2",
     "emailResponseTime", 
     "zoomCalls"
   ];
 
-   //LLM to generate 2 advisories
-   const generateAdvisories = useCallback(
+  //  //LLM to generate 2 advisories
+  const generateAdvisories = useCallback(
     async (generatedPlaybook: string) => {
       if (!generatedPlaybook || generatedPlaybook === "") {
-       // setError("Data from previous step is not successfully read!");
+        // setError("Data from previous step is not successfully read!");
         return;
       }
       console.log("generated playbook: ", generatedPlaybook);
@@ -231,8 +227,6 @@ export default function ServiceTiersClient() {
           if (advisoriesExtracted.length >= 2) {
             setIndustryAdvisory2(advisoriesExtracted[1]);
           }
-        } else {
-          
         }
       } catch (e) {
         console.error("Error:", e);
@@ -241,13 +235,15 @@ export default function ServiceTiersClient() {
     [] // Dependencies go here
   );
 
-  // Add this before your main useEffect
   useEffect(() => {
-    // Only call when component first mounts
-    if (step5StringPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '' ) {
+    // Uncomment the following line to get the playbook string from the store
+    // const step5StringPlaybook = usePlaybookStringStore(state => state.step5StringPlaybook);
+    
+    // If you have the playbook string and advisories are not set yet, generate them
+    if (step5StringPlaybook && industryAdvisory1 === '' && industryAdvisory2 === '') {
       generateAdvisories(step5StringPlaybook);
     }
-  }, [generateAdvisories, step5StringPlaybook]);
+  }, [generateAdvisories, step5StringPlaybook, industryAdvisory1, industryAdvisory2]);
 
   useEffect(() => {
     // Get the query parameters using useSearchParams
@@ -314,9 +310,9 @@ export default function ServiceTiersClient() {
     if ((industryAdvisory1 || industryAdvisory2) && services.length > 0) {
       // Create a new services array with updated names for the industry advisory services
       const updatedServices = services.map(service => {
-        if (service.id === 'industrySpecificAdvisory1') {
+        if (service.id === 'nicheSpecificAdvisory1') {
           return { ...service, name: industryAdvisory1 };
-        } else if (service.id === 'industrySpecificAdvisory2') {
+        } else if (service.id === 'nicheSpecificAdvisory2') {
           return { ...service, name: industryAdvisory2 };
         }
         return service;
@@ -377,7 +373,7 @@ export default function ServiceTiersClient() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-5xl">
+    <div className="container mx-auto p-4 max-w-5xl items-center justify-center">
       <Head>
         <title>Pricing Calculator</title>
       </Head>
@@ -424,7 +420,7 @@ export default function ServiceTiersClient() {
                   </tr>
                   {categoryServices.map((service) => (
                     <tr key={service.id}     className={
-                      service.id === 'industrySpecificAdvisory1' || service.id === 'industrySpecificAdvisory2'
+                      service.id === 'nicheSpecificAdvisory1' || service.id === 'nicheSpecificAdvisory2'
                         ? 'bg-transparent' // Special background for advisory rows
                         : 'bg-transparent'
                     }>
@@ -443,32 +439,80 @@ export default function ServiceTiersClient() {
                 </React.Fragment>
               );
             })}
+          {/* New pricing rows */}
+          <tr className="bg-gray-600">
+            <td colSpan={4} className="py-2 px-4 font-semibold border-b bg-gray-600">
+              Pricing
+            </td>
+          </tr>
+          <tr className = ''>
+            <td className="py-3 px-4 border-b border-r">Monthly Subscription</td>
+            <td className="py-3 px-4 text-center border-b border-r">${premiumPricing}</td>
+            <td className="py-3 px-4 text-center border-b border-r">${standardPricing}</td>
+            <td className="py-3 px-4 text-center border-b">
+              <input
+                type="number"
+                value={basicPricing}
+                onChange={(e) => setBasicPricing(Number(e.target.value))}
+                className="w-20 text-center text-black bg-white border-2 rounded-sm"
+                min="0"
+                step="5"
+              />
+            </td>
+          </tr>
+          <tr className = ''>
+            <td className="py-3 px-4 border-b border-r">Annual Recurring Revenue (ARR) Per Client</td>
+            <td className="py-3 px-4 text-center border-b border-r">${arrPremium.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b border-r">${arrStandard.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b">${arrBasic.toLocaleString()}</td>
+          </tr>
+          <tr className = ''>
+            <td className="py-3 px-4 border-b border-r">Current Average ARR Per Client</td>
+            <td className="py-3 px-4 text-center border-b border-r">${convertedRevenue.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b border-r">${convertedRevenue.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b">${convertedRevenue.toLocaleString()}</td>
+          </tr>
+          <tr className="bg-green-900">
+            <td className="py-3 px-4 border-b border-r relative group">
+              Net Annual Gain From Service Repackaging
+            </td>
+            <td className="py-3 px-4 text-center border-b border-r">${netRoiPremium.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b border-r">${netRoiStandard.toLocaleString()}</td>
+            <td className="py-3 px-4 text-center border-b">${netRoiBasic.toLocaleString()}</td>
+          </tr>
           </tbody>
         </table>
+        <div className="text-xs text-gray-300 py-4">
+          Your Net Annual Gain represents the additional revenue generated by repackaging your current service offerings. It showcases the potential financial uplift from strategic pricing and service optimization.
+        </div>
       </div>
-
-            {/* New Pricing Card Component */}
-            <PricingCard 
-        basicPricing={basicPricing}
-        standardPricing={standardPricing}
-        premiumPricing={premiumPricing}
-        arrBasic={arrBasic}
-        arrStandard={arrStandard}
-        arrPremium={arrPremium}
-        convertedRevenue={convertedRevenue}
-        netRoiBasic={netRoiBasic}
-        netRoiStandard={netRoiStandard}
-        netRoiPremium={netRoiPremium}
-        setBasicPricing={setBasicPricing}
-      />
       
-      <div className="mt-8 text-center">
+      <div className="mt-8 text-center flex items-center gap-4">
+
         <Button 
           variant='primary'
           onClick={() => router.push('/one-time-offer')}
         >
           One Time Offer
         </Button>
+        
+        <ExportToExcel 
+          services={services}
+          tierData={tierData}
+          serviceNames={serviceNames}
+          pricingData={{
+            basicPricing,
+            standardPricing,
+            premiumPricing,
+            arrBasic,
+            arrStandard,
+            arrPremium,
+            convertedRevenue,
+            netRoiBasic,
+            netRoiStandard,
+            netRoiPremium
+          }}
+        />
       </div>
     </div>
   );

@@ -1,13 +1,12 @@
 'use client';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { SegmentResearch } from '@/app/store/deepResearchStore';
 import { Playbook } from '@/app/store/playbookStore';
 import Button from './Button';
 
 interface CardProps {
   title: string;
-  data: string | null | undefined | SegmentResearch | Playbook;
+  data: string | null | undefined | Playbook;
   onSendToApi?: () => Promise<void>;
   isLoading?: boolean;
   clientPicked: boolean;
@@ -62,7 +61,7 @@ export default function Card({ title, data, onSendToApi, isLoading = false, clie
             </pre>
           )
         ) : (
-          <p className="text-gray-400 italic">No research data yet. Please go to Marketing Playbook.</p>
+          <p className="text-gray-400 italic">No/incomplete research data yet!</p>
         )}
       </div>
     </div>

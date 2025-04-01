@@ -1,13 +1,9 @@
 import { create } from 'zustand';
 
-export interface SegmentResearch {
-  displayContent: string | null;
-  originalContent: Record<string, unknown>;
-}
 
 type DeepSegmentResearchStore = {
-  step4DeepSegmentResearch: SegmentResearch | null;
-  setStep4DeepSegmentResearch: (deepResearch: SegmentResearch | null) => void;
+  step4DeepSegmentResearch: string | null;
+  setStep4DeepSegmentResearch: (deepResearch: string | null) => void;
 };
 
 export const useDeepSegmentResearchStore = create<DeepSegmentResearchStore>((set) => ({

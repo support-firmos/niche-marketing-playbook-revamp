@@ -62,7 +62,6 @@ export default function ResearchResult({
 
   const handleNextStep = async () => {
     if (onNextSteps) {
-      // Call onNextSteps without any parameters since we're not selecting individual segments anymore
       await onNextSteps(content);
     }
   };
@@ -123,15 +122,11 @@ export default function ResearchResult({
         <div className="text-[#f7f8f8] font-inter text-sm markdown-content">
         <ReactMarkdown 
             components={{
-              // This ensures paragraphs have proper spacing
               p: ({...props}) => <p className="mb-4" {...props} />,
-              // Preserve newlines within paragraphs
               br: () => <br />,
-              // Custom styling for headings
               h1: ({...props}) => <h1 className="text-xl font-bold mb-4" {...props} />,
               h2: ({...props}) => <h2 className="text-lg font-bold mb-3" {...props} />,
               h3: ({...props}) => <h3 className="text-md font-bold mb-2" {...props} />,
-              // Custom styling for lists
               ul: ({...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
               ol: ({...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
               li: ({...props}) => <li className="mb-1" {...props} />
@@ -162,8 +157,7 @@ export default function ResearchResult({
         <p className="text-[#8a8f98]">
           {isRetrying ? 'Regenerating content...' : 
             resultType === 'salesNav'  ?  'Deep Industry Research in progress...' 
-            : resultType === 'segments' ? 'Enhancing segments...' 
-            : resultType === 'enhanced' ? 'Creating Sales Navigator Strategy...' 
+            : resultType === 'segments' ? 'Creating Sales Navigator Strategy...' 
             : resultType === 'deepSegment' ? 'Creating Inbound Marketing Blueprint...' : 'Processing' }
         </p>
       </div>

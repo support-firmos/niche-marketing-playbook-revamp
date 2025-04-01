@@ -2,29 +2,25 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import Button from './Button';
-import { usePlaybookStringStore } from '@/app/store/playbookStringStore';
+import Button from '@/components/Button';
+import { useSalesNavStore } from '../store/salesNavStore';
 
-interface OneTimeOfferFormProps {
-  onSubmit: (content: string) => void;
+interface InputProps {
+  onSubmit: (content: string) => Promise<void>;
   isProcessing: boolean;
 }
 
-export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOfferFormProps) {
-  // Directly access the store state
-  const {step5StringPlaybook, setStep5StringPlaybook} = usePlaybookStringStore();
-  
+export default function Input({ onSubmit, isProcessing }: InputProps) {
+  const {step3GeneratedSalesNav } = useSalesNavStore();
   const [file, setFile] = useState<File | null>(null);
-  const [fileContent, setFileContent] = useState<string>(step5StringPlaybook || '');
+  const [fileContent, setFileContent] = useState<string>(step3GeneratedSalesNav||'');
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setError(null);
     
-    if (acceptedFiles.length === 0) {
-      return;
-    }
+    if (acceptedFiles.length === 0) return;
     
     const selectedFile = acceptedFiles[0];
     
@@ -54,30 +50,23 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setFileContent(newContent);
-    
-    // Clear file association if the user manually edits the text
     if (file) setFile(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!fileContent.trim()) {
       setError('Please enter or upload some content');
       return;
     }
-    setStep5StringPlaybook(fileContent); // Update the store
-    onSubmit(fileContent);
+
+    await onSubmit(fileContent);
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-6">
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-titleColor mb-2">Inbound Marketing Blueprint</h3>
-        <p className="text-subtitleColor mb-6">
-          Upload a text file with your Inbound Marketing Blueprint or enter it directly in the field below.
-        </p>
-        
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors mb-4
@@ -106,7 +95,6 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
               <p className="text-subtitleColor">
                 <span className="font-medium text-titleColor">{file.name}</span> selected
                 <br />
-                <span className="text-sm text-subtitleColor/60">Drag a new file or click to replace</span>
               </p>
             ) : (
               <div>
@@ -115,7 +103,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
                     "Drop your text file here..."
                   ) : (
                     <>
-                      <span className="font-medium text-titleColor">Click to upload</span> or drag and drop
+                      <span className="font-medium text-titleColor">Upload Your Sales Nav Parameters</span>
                     </>
                   )}
                 </p>
@@ -131,7 +119,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
           ref={textareaRef}
           value={fileContent}
           onChange={handleTextChange}
-          placeholder="Enter your industry information here or upload a file above..."
+          placeholder="Paste your Sales Nav parameters"
           className="w-full h-64 px-4 py-3 mb-4 rounded-lg border focus:outline-none resize-none
                      bg-black/30 border-subtitleColor/30 text-titleColor placeholder-subtitleColor/40 
                      focus:border-titleColor/50 focus:ring-1 focus:ring-titleColor/30"
@@ -143,7 +131,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
           </div>
         )}
         
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <Button 
             type="submit" 
             disabled={isProcessing} 
@@ -163,10 +151,7 @@ export default function OneTimeOfferForm({ onSubmit, isProcessing }: OneTimeOffe
               </div>
             ) : (
               <div className="flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-                Generate One-Time Offer
+                Deep Segment Research
               </div>
             )}
           </Button>
