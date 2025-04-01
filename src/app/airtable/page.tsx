@@ -18,7 +18,9 @@ export default function AirtableUpload() {
     const { step5GeneratedPlaybook } = usePlaybookStore();
     let formattedSalesNav, formattedPlaybook;
 
-    if(step3Segments){
+    const hasDeepResearch = step3Segments?.some(segment => segment.deepResearch);
+
+    if(step3Segments && hasDeepResearch){
         formattedSalesNav = formatSegmentsForDisplay(step3Segments);
     }
 
@@ -44,7 +46,7 @@ export default function AirtableUpload() {
     };
     
     const sendSalesNavToAirtable = async () => {
-        if(!step3Segments || !selectedClient) return;
+        if(!step3Segments || !selectedClient || !hasDeepResearch) return;
         setLoading(prev => ({...prev, salesNav: true}));
 
         try{   
@@ -145,13 +147,14 @@ export default function AirtableUpload() {
                                 data={step2EnhancedResearch}
                                 clientPicked={!selectedClient ? false : true}
                             />     */}
-                            <Card 
-                                title="Target Segments" 
-                                data={formattedSalesNav} 
-                                onSendToApi={sendSalesNavToAirtable}
-                                isLoading={loading.salesNav}
-                                clientPicked={!selectedClient ? false : true}
-                            />        
+
+                                <Card 
+                                    title="Target Segments & Deep Research" 
+                                    data={formattedSalesNav} 
+                                    onSendToApi={sendSalesNavToAirtable}
+                                    isLoading={loading.salesNav}
+                                    clientPicked={!selectedClient ? false : true}
+                                />
                             {/* <Card 
                                 title="Deep Industry Research" 
                                 data={step4DeepSegmentResearch?.displayContent} 
