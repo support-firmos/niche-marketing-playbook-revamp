@@ -1,14 +1,20 @@
+'use client';
+
+
 // components/ResearchForm.tsx
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Button from './Button';
+import Button from '@/components/Button';
 import { useRevenueStore } from '@/app/store/revenueStore';
 import { useServicesStore } from '@/app/store/servicesStore';
 import { serviceCategories } from '@/app/constants/services';
+import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 
 const formSchema = z.object({
+  selectedServices: z.string().min(1, 'Please select at least one service'),
+  segments: z.string().optional(),
   nicheConsideration: z.string().min(10, 'Please provide more details about your niche consideration'),
   profitability: z.string().min(10, 'Please provide details about client profitability'),
   experience: z.string().min(10, 'Please describe your experience in this niche'),
@@ -22,11 +28,17 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValues) => Promise<void> }) {
+interface InputProps {
+    onSubmit: (values: FormValues) => Promise<void>;
+    isProcessing: boolean;
+  }
+
+  export default function Input({ onSubmit }: InputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { revenue, setRevenue } = useRevenueStore();
   const { selectedServices, setSelectedServices } = useServicesStore();
   const [localSelectedServices, setLocalSelectedServices] = useState<Record<string, boolean>>({});
+  const { setNicheConsideration } = useSalesNavSegmentsStore();
   
   const {
     register,
@@ -37,6 +49,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
     resolver: zodResolver(formSchema),
     defaultValues: {
       nicheConsideration: '',
+      segments: '',
       profitability: '',
       experience: '',
       clientPercentage: '',
@@ -69,22 +82,48 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
     setRevenue(e.target.value);
     setValue('revenue', e.target.value ? Number(e.target.value) : null);
   };
+
+  const getSelectedServicesString = (): string => {
+    const selectedServiceLabels = Object.entries(localSelectedServices)
+      .filter(([, isSelected]) => isSelected)
+      .map(([id]) => {
+        const service = serviceCategories
+          .flatMap(cat => cat.services)
+          .find(svc => svc.id === id);
+        return service?.label || id;
+      });
+    return selectedServiceLabels.join(', ');
+  };
+
+  useEffect(() => {
+    const servicesString = getSelectedServicesString();
+    setValue('selectedServices', servicesString);
+  }, [localSelectedServices, setValue]);
   
   const submitHandler = async (values: FormValues) => {
     setIsSubmitting(true);
     try {
-       const selectedServicesArray = Object.entries(localSelectedServices)
-       .filter(([, isSelected]) => isSelected)
-       .map(([id]) => {
-         const service = serviceCategories.flatMap(cat => cat.services).find(svc => svc.id === id);
-         return { id, label: service?.label || id };
-       });
+      const selectedServicesArray = Object.entries(localSelectedServices)
+        .filter(([, isSelected]) => isSelected)
+        .map(([id]) => {
+          const service = serviceCategories.flatMap(cat => cat.services).find(svc => svc.id === id);
+          return { id, label: service?.label || id };
+        });
 
-     setSelectedServices(selectedServicesArray);
-    setRevenue(values.revenue != null ? values.revenue.toString() : null);
-      await onSubmit(values);
+      setSelectedServices(selectedServicesArray);
+      setNicheConsideration(values.nicheConsideration);
+      setRevenue(values.revenue != null ? values.revenue.toString() : null);
+
+      const valuesWithServices = {
+        ...values,
+        selectedServices: getSelectedServicesString()
+      };
+      console.log(valuesWithServices);
+      await onSubmit(valuesWithServices);
+    } catch (error) {
+      console.error('Error submitting form:', error);
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
   };
 
@@ -94,12 +133,9 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
     <form onSubmit={handleSubmit(submitHandler)} className="space-y-8">
       {/* Services Selection Section */}
       <div className="rounded-lg p-6 shadow-inner">
-      <div className = "rounded-xl bg-green-900 mb-5 p-6">
-        <h1 className="block text-[#f7f8f8] font-medium mb-3 text-4xl">
-          Services Offered For Your Firm
-        </h1>
-        <label className="block text-white font-medium mb-3 text-md">
-          Below is a list of all services your firm can avail. These services ranage from tax, bookkeeping, auditing, and other specialized services. Please check out all that applies:
+      <div className = "rounded-xl bg-transparent mb-5">
+        <label className="block text-white font-medium mb-1 text-md">
+          Below is a list of all services for your firm. Please check out all that applies:
         </label>
         </div>
         <div className="space-y-6">
@@ -138,18 +174,15 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
       {/* Original form fields - styled consistently */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        <div className = "rounded-lg p-6 shadow-inner md:col-span-2 bg-green-900 mx-5">
+        <div className = "rounded-lg shadow-inner md:col-span-2 bg-transparent mx-5">
           <h1 className="block mb-1  text-[#f7f8f8] font-medium text-4xl ">
             We Want To Know About You
           </h1>
-          <label className="block text-white font-medium text-md">
-            Below is a series of questions for you to answer. Refer to the text below each question to guide your input.
-          </label>
         </div>
 
         <div className="rounded-lg px-6 shadow-inner md:col-span-2">
           <label htmlFor="nicheConsideration" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
-          Describe your niche in detail. Who are they? What industry do they belong to? What unique challenges do they face?
+          Describe your niche. Who are they? What industry do they belong to?
           </label>
           <label className="block text-gray-400 font-medium mb-4 text-xs">
           A niche is an industry or client segment where you can maximize profitability, standardize operations and demand premium pricing. A strong niche is one where you:
@@ -162,6 +195,7 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
           <br/>
           ✅ Deliver the best results 
           <br/>
+          <br/>Examples: <span className= 'text-green-700'>Real Estate, Healthcare, Construction, IT, Non-Profit Organizations</span>, etc.
           </label>
           <textarea
             id="nicheConsideration"
@@ -172,6 +206,23 @@ export default function ResearchForm({ onSubmit }: { onSubmit: (values: FormValu
             <p className="mt-2 text-orange-500 text-sm">{errors.nicheConsideration.message}</p>
           )}
         </div>
+
+        <div className="rounded-lg px-6 shadow-inner md:col-span-2">
+        <label htmlFor="segments" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
+          Do you have specific segments in mind? (Optional)
+        </label>
+        <label className="block text-gray-400 font-medium mb-4 text-xs">
+          If you already have specific segments you want to target, list them here. Separate multiple segments with commas.
+          <br/>
+          For example if your target industry is real estate, then you their are segments like <span className= 'text-green-700'>short term rentals, commercial development</span>, etc.)
+        </label>
+        <textarea
+          id="segments"
+          className="border-none resize-none input-field text-sm min-h-[60px] w-full bg-gray-800 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+          {...register('segments')}
+          placeholder="(Leave blank if none)"
+        />
+      </div>
 
         <div className="rounded-lg px-6 shadow-inner md:col-span-2">
           <label htmlFor="profitability" className="block text-[#f7f8f8] font-medium mb-3 text-lg">
