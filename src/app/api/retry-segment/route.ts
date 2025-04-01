@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { formatSegmentsForDisplay } from '@/app/utilities/formatSegments';
 import { Segment } from '@/app/store/salesNavSegmentsStore';
 export const maxDuration = 60;
 export const runtime = 'edge';
@@ -183,7 +182,7 @@ IMPORTANT INSTRUCTIONS:
       
       // Extract the content from the response
       const result = responseData.choices[0].message.content;
-      let newSegment = JSON.parse(result.replace(/```json|```/g, '').trim());
+      const newSegment = JSON.parse(result.replace(/```json|```/g, '').trim());
 
        
       return NextResponse.json({ result: newSegment });
