@@ -1,9 +1,46 @@
-
 import { NextResponse } from 'next/server';
 import { formatDeepResearchForDisplay } from '@/app/utilities/formatDeepResearch';
 
 export const maxDuration = 60;
 export const runtime = 'edge';
+
+// Helper function to clean and parse JSON
+function cleanAndParseJSON(content: string) {
+  try {
+    // Remove any markdown code block markers
+    let cleanedContent = content.replace(/```json|```/g, '').trim();
+    
+    // Find the first { and last }
+    const firstBrace = cleanedContent.indexOf('{');
+    const lastBrace = cleanedContent.lastIndexOf('}');
+    
+    if (firstBrace === -1 || lastBrace === -1) {
+      throw new Error('No valid JSON object found');
+    }
+    
+    // Extract only the JSON portion
+    cleanedContent = cleanedContent.substring(firstBrace, lastBrace + 1);
+    
+    // Remove any trailing commas before closing braces
+    cleanedContent = cleanedContent.replace(/,(\s*[}\]])/g, '$1');
+    
+    // Remove any comments
+    cleanedContent = cleanedContent.replace(/\/\/.*/g, '');
+    
+    // Try to parse the cleaned content
+    const parsed = JSON.parse(cleanedContent);
+    
+    // Validate the structure
+    if (!parsed.name || !Array.isArray(parsed.fears) || !Array.isArray(parsed.pains)) {
+      throw new Error('Invalid segment structure');
+    }
+    
+    return parsed;
+  } catch (error) {
+    console.error('Error cleaning and parsing JSON:', error);
+    throw error;
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -18,16 +55,28 @@ export async function POST(request: Request) {
     }
 
     const segments = splitSegments(content);
+    console.log("segments: ", segments)
     
     const segmentPromises = segments.map(async (segment) => {
       const segmentPrompt = `
- You are an empathetic B2B Researcher capable of deeply understanding and embodying the Ideal Customer Profile (ICP) for high-ticket advisory and consulting services.
+You are an empathetic B2B Researcher capable of deeply understanding and embodying the Ideal Customer Profile (ICP) for high-ticket advisory and consulting services.
 
 ## Your Task
 Analyze the ICP provided below and generate a comprehensive market research profile for the segment following the exact structure below. Use the information to identify the most relevant and impactful insights.
-Provide exactly 5 items per category. There is a guide below to help you write each item.
+Provide exactly 5 items per category.
 
-FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
+CRITICAL REQUIREMENTS:
+1. Your response must be ONLY a valid JSON object
+2. Do not include any text before or after the JSON
+3. DO NOT change the segment name from what is given below.
+3. Do not include any comments or explanations
+4. Ensure all arrays have exactly 5 items
+5. Do not include trailing commas
+6. Use double quotes for all strings
+7. Do not include any markdown formatting
+
+Here is the exact structure you must follow:
+
 {
   "name": "EXACT segment name here",
   "fears": [
@@ -36,7 +85,6 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
       "explanation": "Comprehensive explanation of the fear including real-world business impact",
       "advisoryHelp": "How high-ticket advisory services address this fear"
     }
-    // ... 4 more fears following the same structure
   ],
   "pains": [
     {
@@ -44,7 +92,6 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
       "explanation": "Comprehensive explanation of the pain including negative consequences",
       "advisoryHelp": "How high-ticket advisory services address this pain point"
     }
-    // ... 4 more pains following the same structure
   ],
   "objections": [
     {
@@ -52,7 +99,6 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
       "explanation": "Comprehensive explanation of the objection including client concerns",
       "advisoryHelp": "How to counter with benefits of high-ticket advisory services"
     }
-    // ... 4 more objections following the same structure
   ],
   "goals": [
     {
@@ -60,7 +106,6 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
       "explanation": "Comprehensive explanation of the goal including desired outcomes",
       "advisoryHelp": "How high-ticket advisory services help attain this goal"
     }
-    // ... 4 more goals following the same structure
   ],
   "values": [
     {
@@ -68,7 +113,6 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
       "explanation": "Comprehensive explanation of the value including impact on decision-making",
       "advisoryHelp": "How high-ticket advisory services align with this value"
     }
-    // ... 4 more values following the same structure
   ],
   "decisionMaking": [
     {
@@ -76,7 +120,6 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
       "explanation": "Comprehensive explanation including stakeholders and timeframes",
       "advisoryHelp": "How high-ticket advisory services fit into this process"
     }
-    // ... 4 more decision-making processes following the same structure
   ],
   "influences": [
     {
@@ -84,7 +127,6 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
       "explanation": "Comprehensive explanation of the influence including how it shapes perceptions",
       "advisoryHelp": "How high-ticket advisory services can leverage this influence"
     }
-    // ... 4 more influences following the same structure
   ],
   "communicationPreferences": [
     {
@@ -92,18 +134,8 @@ FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with the following structure:
       "explanation": "Comprehensive explanation including frequency and content type preferences",
       "advisoryHelp": "How high-ticket advisory services can adapt to this preference"
     }
-    // ... 4 more communication preferences following the same structure
   ]
 }
-
-IMPORTANT INSTRUCTIONS:
-- Format your ENTIRE response as a valid JSON object that can be parsed with JSON.parse()
-- DO NOT change the segment name; Follow what is provided in the segment below.
-- Do NOT include any text before or after the JSON
-- Provide exactly 5 items for each category
-- Each explanation and advisoryHelp should be detailed and comprehensive
-- Focus on practical, actionable insights
-- Ensure all advisoryHelp sections align with the services the client wants to provide
 
 Segment to Analyze:
 ${segment}`;
@@ -148,7 +180,7 @@ ${segment}`;
         const content = responseData.choices[0].message.content;
 
         try {
-          const parsedSegment = JSON.parse(content.replace(/```json|```/g, '').trim());
+          const parsedSegment = cleanAndParseJSON(content);
           console.log(`Successfully parsed segment for model ${model}`);
           return parsedSegment;
         } catch (parseError) {
