@@ -99,8 +99,8 @@ export default function Result() {
     nicheSpecificAdvisory2: { top: true, middle: true, free: false },
 
     // Communication - Add missing services
-    emailResponseTime: { top: "1 Day", middle: "2 Days", free: "3 Days" },
-    zoomCalls: { top: "Unlimited", middle: "Monthly", free: "Quarterly" },
+    emailResponseTime: { top: "24 hours", middle: "48 hours", free: "1 week" },
+    zoomCalls: { top: "Bi-weekly", middle: "Monthly", free: "Quarterly" },
   };
 
   const serviceCategories: Record<string, string> = {
@@ -387,7 +387,7 @@ export default function Result() {
         <table className="min-w-full">
           <thead>
             <tr className="bg-gray-800">
-              <th className="py-3 px-4 text-left border-b border-r">Service Category</th>
+              <th className="py-3 px-4 text-left border-b border-r h-20">Service Category</th>
               <th className="py-3 px-4 text-center border-b border-r">
                 <div className="font-bold">Top Tier</div>
                 <div className="text-sm text-gray-500">(Premium)</div>
@@ -440,9 +440,13 @@ export default function Result() {
               );
             })}
           {/* New pricing rows */}
+                    {/* Visual spacer row before Pricing */}
+                    <tr className="h-20"> {/* This adds empty space */}
+            <td colSpan={4}></td>
+          </tr>
           <tr className="bg-gray-600">
-            <td colSpan={4} className="py-2 px-4 font-semibold border-b bg-gray-600">
-              Pricing
+            <td colSpan={4} className="py-2 h-20 px-4 font-semibold border-b bg-slate-800">
+              ROI Calculator
             </td>
           </tr>
           <tr className = ''>

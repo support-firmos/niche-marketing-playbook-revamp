@@ -85,15 +85,15 @@ export default function Result({ playbooks, onReset }: ResultProps) {
                                 {Object.entries({
                                     'Target Audience': playbook.audience,
                                     'Pain Points': playbook.pain,
-                                    'Fear/Risk': playbook.fear,
-                                    'Goals': playbook.goals,
-                                    'Common Objections': playbook.objection,
-                                    'Value Proposition': playbook.value,
-                                    'Decision Criteria': playbook.decision,
-                                    'Success Metrics': playbook.metrics,
-                                    'Communication Channels': playbook.communication,
-                                    'Content Strategy': playbook.content,
-                                    'Lead Generation': playbook.lead,
+                                    'Fears and Concerns': playbook.fear,
+                                    'Goals and Aspirations': playbook.goals,
+                                    'Objections': playbook.objection,
+                                    'Core Values': playbook.value,
+                                    'Decision-Making Process': playbook.decision,
+                                    'Key Metrics': playbook.metrics,
+                                    'Communication Preferences': playbook.communication,
+                                    'Content Tone and Style': playbook.content,
+                                    'Lead Magnet Titles': playbook.lead,
                                 }).map(([title, content]) => {
                                     const sectionKey = `${playbook.title}-${title}`;
                                     return (
