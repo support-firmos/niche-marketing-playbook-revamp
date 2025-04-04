@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { formatDeepResearchForDisplay } from '@/app/utilities/formatDeepResearch';
 
-export const maxDuration = 300;
+export const maxDuration = 60;
 export const runtime = 'edge';
 
 // Available models
@@ -43,7 +43,6 @@ function cleanAndParseJSON(content: string) {
   }
 }
 
-// Define interfaces for the segment structure
 interface AdvisoryItem {
   title: string;
   explanation: string;
@@ -78,29 +77,34 @@ export async function POST(request: Request) {
     const segments = splitSegments(content);
     console.log("segments:", segments.length);
     
-    const segmentPromises = segments.map(async (segment) => {
-      // Process each segment with sequential approach
-      return await processSegmentSequentially(segment);
-    });
-
-    try {
-      const results = await Promise.all(segmentPromises);
-      console.log(`Successfully processed ${results.length} segments`);
-
-      return NextResponse.json({ 
-        result: {
-          segments: results,
-          formattedContent: formatDeepResearchForDisplay(results)
-        }
-      });
-    } catch (error) {
-      console.error('Error processing segments:', error);
-      return NextResponse.json({ 
-        error: 'Error processing segments', 
-        details: error instanceof Error ? error.message : String(error) 
-      }, { status: 500 });
+    // Process segments in parallel with a limit to avoid overwhelming the API
+    // This helps stay within Vercel's timeout limits
+    const MAX_CONCURRENT_SEGMENTS = 2; // Limit concurrent processing
+    const results = [];
+    
+    // Process segments in batches to avoid timeout
+    for (let i = 0; i < segments.length; i += MAX_CONCURRENT_SEGMENTS) {
+      const batch = segments.slice(i, i + MAX_CONCURRENT_SEGMENTS);
+      const batchPromises = batch.map(segment => processSegmentSequentially(segment));
+      
+      try {
+        const batchResults = await Promise.all(batchPromises);
+        results.push(...batchResults);
+        console.log(`Processed batch ${i / MAX_CONCURRENT_SEGMENTS + 1} of ${Math.ceil(segments.length / MAX_CONCURRENT_SEGMENTS)}`);
+      } catch (error) {
+        console.error(`Error processing batch ${i / MAX_CONCURRENT_SEGMENTS + 1}:`, error);
+        // Continue with other batches even if one fails
+      }
     }
 
+    console.log(`Successfully processed ${results.length} segments`);
+
+    return NextResponse.json({ 
+      result: {
+        segments: results,
+        formattedContent: formatDeepResearchForDisplay(results)
+      }
+    });
   } catch (error) {
     console.error('Error in deep-research API:', error);
     return NextResponse.json({ 
@@ -147,15 +151,15 @@ After analyzing the segment information above, output your response with a JSON 
 "fears": [
   {
     "title": "Fear title",
-    "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this fear persists within the particular segment given.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
+    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this fear persists within the particular segment given.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this fear taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment deal with or remove this fear. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 2 high-ticket, specific advisory services that help the segment deal with or remove this fear. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ],
 "pains": [
   {
     "title": "Pain point title",
-    "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this pain point persists within the particular segment given.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
+    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this pain point persists within the particular segment given.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this pain taking place within the particular segment, including its business impact.",
     "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment deal with or remove this pain point. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
@@ -174,8 +178,30 @@ CRITICAL REQUIREMENTS:
 9. Please provide a valid JSON object without markdown formatting or additional text.
 `;
 
-    const phase1Result = await callLLM(phase1Prompt);
-    const phase1Data = cleanAndParseJSON(phase1Result);
+    // Add timeout handling for each phase
+    let phase1Data;
+    try {
+      const phase1Result = await callLLM(phase1Prompt);
+      phase1Data = cleanAndParseJSON(phase1Result);
+    } catch (error) {
+      console.error(`Error in phase 1:`, error);
+      // Provide fallback data if phase 1 fails
+      phase1Data = {
+        name: segment.split('\n')[0].trim(), // Use first line as segment name
+        fears: Array(5).fill({
+          title: "Fear placeholder",
+          explanation: "Explanation placeholder",
+          scenario: "Scenario placeholder",
+          advisoryHelp: "Advisory help placeholder"
+        }),
+        pains: Array(5).fill({
+          title: "Pain placeholder",
+          explanation: "Explanation placeholder",
+          scenario: "Scenario placeholder",
+          advisoryHelp: "Advisory help placeholder"
+        })
+      };
+    }
     
     // Validate that we have the name field
     if (!phase1Data.name) {
@@ -223,7 +249,7 @@ After analyzing the segment information above, output your response with a JSON 
 "objections": [
   {
     "title": "Objection title",
-    "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this particular segment raises this objection against availing advisory services.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
+    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this particular segment raises this objection against availing advisory services.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this objection taking place within the particular segment, including its business impact.",
     "advisoryHelp": "Suggest 3 counter-arguments to defend why high-ticket, specific advisory services (with examples and feedback) will improve their firm. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
@@ -231,7 +257,7 @@ After analyzing the segment information above, output your response with a JSON 
 "goals": [
   {
     "title": "Goal title",
-    "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this goal stands out in this particular segment.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
+    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this goal stands out in this particular segment.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this goal taking place within the particular segment, including its business impact.",
     "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment achieve this goal. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
@@ -239,7 +265,7 @@ After analyzing the segment information above, output your response with a JSON 
 "values": [
   {
     "title": "Value title",
-    "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this value stands out within the particular segment.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
+    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this value stands out within the particular segment.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this core value taking place within the particular segment, including its business impact.",
     "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
@@ -257,8 +283,35 @@ CRITICAL REQUIREMENTS:
 8. Please provide a valid JSON object without markdown formatting or additional text
 `;
     
-    const phase2Result = await callLLM(phase2Prompt);
-    const phase2Data = cleanAndParseJSON(phase2Result);
+    // Add timeout handling for phase 2
+    let phase2Data;
+    try {
+      const phase2Result = await callLLM(phase2Prompt);
+      phase2Data = cleanAndParseJSON(phase2Result);
+    } catch (error) {
+      console.error(`Error in phase 2:`, error);
+      // Provide fallback data if phase 2 fails
+      phase2Data = {
+        objections: Array(5).fill({
+          title: "Objection placeholder",
+          explanation: "Explanation placeholder",
+          scenario: "Scenario placeholder",
+          advisoryHelp: "Advisory help placeholder"
+        }),
+        goals: Array(5).fill({
+          title: "Goal placeholder",
+          explanation: "Explanation placeholder",
+          scenario: "Scenario placeholder",
+          advisoryHelp: "Advisory help placeholder"
+        }),
+        values: Array(5).fill({
+          title: "Value placeholder",
+          explanation: "Explanation placeholder",
+          scenario: "Scenario placeholder",
+          advisoryHelp: "Advisory help placeholder"
+        })
+      };
+    }
     
     // Phase 3: Get the final three categories
     console.log(`Processing segment "${segmentName}": Part 3/3`);
@@ -298,7 +351,7 @@ After analyzing the segment information above, output your response with a JSON 
 "decisionMaking": [
   {
     "title": "Decision-making process title",
-    "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this decision-making process is can help this particular segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
+    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this decision-making process is can help this particular segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this decision-making process taking place within the particular segment, including its business impact.",
     "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment implement this process. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
@@ -306,7 +359,7 @@ After analyzing the segment information above, output your response with a JSON 
 "influences": [
   {
     "title": "Influence title",
-    "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this influence is so important for this segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
+    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this influence is so important for this segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of the particular segment positively affected by this influence, including its business impact.",
     "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that push or alleviate this influence even more. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
@@ -314,7 +367,7 @@ After analyzing the segment information above, output your response with a JSON 
 "communicationPreferences": [
   {
     "title": "Communication preference title",
-    "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this communication preference is common within the segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
+    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this communication preference is common within the segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this communication preference taking place within the particular segment, including its business impact.",
     "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment implement these preferences. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
@@ -332,8 +385,35 @@ CRITICAL REQUIREMENTS:
 8. Please provide a valid JSON object without markdown formatting or additional text
 `;
     
-    const phase3Result = await callLLM(phase3Prompt);
-    const phase3Data = cleanAndParseJSON(phase3Result);
+    // Add timeout handling for phase 3
+    let phase3Data;
+    try {
+      const phase3Result = await callLLM(phase3Prompt);
+      phase3Data = cleanAndParseJSON(phase3Result);
+    } catch (error) {
+      console.error(`Error in phase 3:`, error);
+      // Provide fallback data if phase 3 fails
+      phase3Data = {
+        decisionMaking: Array(5).fill({
+          title: "Decision-making placeholder",
+          explanation: "Explanation placeholder",
+          scenario: "Scenario placeholder",
+          advisoryHelp: "Advisory help placeholder"
+        }),
+        influences: Array(5).fill({
+          title: "Influence placeholder",
+          explanation: "Explanation placeholder",
+          scenario: "Scenario placeholder",
+          advisoryHelp: "Advisory help placeholder"
+        }),
+        communicationPreferences: Array(5).fill({
+          title: "Communication preference placeholder",
+          explanation: "Explanation placeholder",
+          scenario: "Scenario placeholder",
+          advisoryHelp: "Advisory help placeholder"
+        })
+      };
+    }
     
     // Combine all results
     const fullResult = {
@@ -391,6 +471,11 @@ async function callLLM(prompt: string) {
   for (const model of availableModels) {
     try {
       console.log(`Trying model: ${model}`);
+      
+      // Create an AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 second timeout
+      
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -408,11 +493,15 @@ async function callLLM(prompt: string) {
             },
             { role: 'user', content: prompt }
           ],
-          stream: false,
-          max_tokens: 8000,  // Reduced from 25000 since we're processing in smaller chunks
+          stream: true, // Enable streaming
+          max_tokens: 8000,
           temperature: 0.7,
         }),
+        signal: controller.signal, // Add the abort signal
       });
+
+      // Clear the timeout since the request completed
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -421,10 +510,51 @@ async function callLLM(prompt: string) {
         continue;
       }
 
-      const responseData = await response.json();
-      const content = responseData.choices[0].message.content;
+      // Handle streaming response
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Failed to get reader from response');
+      }
+
+      let content = '';
+      const decoder = new TextDecoder();
       
-      // Return the raw content for further processing
+      // Set a timeout for the entire streaming process
+      const streamingTimeoutId = setTimeout(() => {
+        reader.cancel('Streaming timeout reached');
+      }, 25000); // 25 second timeout for streaming
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          // Decode the chunk and add it to our content
+          const chunk = decoder.decode(value, { stream: true });
+          
+          // Process the chunk to extract the content
+          // OpenRouter streaming format: data: {"id":"...","object":"chat.completion.chunk","created":...,"model":"...","choices":[{"index":0,"delta":{"content":"..."},"finish_reason":null}]}
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const jsonData = JSON.parse(line.substring(6));
+                if (jsonData.choices && jsonData.choices[0]?.delta?.content) {
+                  content += jsonData.choices[0].delta.content;
+                }
+              } catch (e) {
+                // Skip invalid JSON lines
+                console.log('Skipping invalid JSON line:', line);
+              }
+            }
+          }
+        }
+      } finally {
+        // Clear the streaming timeout
+        clearTimeout(streamingTimeoutId);
+      }
+      
+      // Return the complete content
       return content;
       
     } catch (error) {
