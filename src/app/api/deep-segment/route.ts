@@ -107,6 +107,20 @@ For your content, ALWAYS output useful, industry-specific insights over generic 
 
 Provide the EXACT segment name and EXACTLY 5 items for each of these categories: fears, pains
 
+Guide questions for fear's 5 items:
+1. What keeps your ideal customer up at night regarding their business?
+2. What are the worst-case scenarios they imagine could happen to their company?
+3. How do they perceive potential threats to their job security or business stability?
+4. What industry changes or market trends do they fear the most?
+5. How do they feel about the possibility of making a wrong decision in their role?
+
+Guide questions for pain's 5 items:
+1. What are the biggest daily frustrations your ideal customer experiences in their role?
+2. What tasks or processes do they find most time-consuming or inefficient?
+3. How do they describe their main challenges when talking to peers or colleagues?
+4. What negative experiences have they had with similar products or services in the past?
+5. How do their current problems affect their ability to achieve their business goals?
+
 After analyzing the segment information above, output your response with a JSON structure EXACTLY like this:
 {
 "name": "EXACT segment name",
@@ -115,7 +129,7 @@ After analyzing the segment information above, output your response with a JSON 
     "title": "Fear title",
     "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this fear persists within the particular segment given.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this fear taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment deal with or remove this fear. Explain them with detail and industry specifics. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment deal with or remove this fear. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ],
 "pains": [
@@ -123,7 +137,7 @@ After analyzing the segment information above, output your response with a JSON 
     "title": "Pain point title",
     "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this pain point persists within the particular segment given.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this pain taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment deal with or remove this pain point. Explain them with detail and industry specifics. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment deal with or remove this pain point. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ]
 }
@@ -163,6 +177,27 @@ For your content, ALWAYS output useful, industry-specific insights over generic 
 
 Provide EXACTLY 5 items for each of these categories: objections, goals, values
 
+Guide questions for objection's 5 items:
+1. What are the primary reasons your ideal customer might be skeptical about your product or service?
+2. How do they evaluate the risks versus the benefits of adopting a new solution?
+3. What previous experiences with other providers might make them wary of trying your solution?
+4. What financial or budgetary concerns do they have regarding your offering?
+5. How do they perceive the difficulty of integrating your product or service into their existing workflows?
+
+Guide questions for goal's 5 items:
+1. What are the top three goals your ideal customer aims to achieve in the next year?
+2. How do they measure success in their role or business?
+3. What long-term visions or ambitions do they have for their company?
+4. What are the immediate milestones they are working towards?
+5. How do they prioritize their goals in the context of their daily responsibilities?
+
+Guide questions for values' 5 items:
+1. What ethical considerations are most important to your ideal customer when choosing a provider?
+2. How do they define quality and value in a product or service?
+3. What company culture aspects do they value in their own organization?
+4. How do they prefer to build relationships with vendors and partners?
+5. What do they value most in their business relationships (e.g., transparency, reliability, innovation)?
+
 After analyzing the segment information above, output your response with a JSON structure EXACTLY like this:
 {
 "objections": [
@@ -170,7 +205,7 @@ After analyzing the segment information above, output your response with a JSON 
     "title": "Objection title",
     "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this particular segment raises this objection against availing advisory services.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this objection taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 counter-arguments to defend why high-ticket, specific advisory services (with examples and feedback) will improve their firm. Explain them with detail and industry specifics. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 3 counter-arguments to defend why high-ticket, specific advisory services (with examples and feedback) will improve their firm. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ],
 "goals": [
@@ -178,7 +213,7 @@ After analyzing the segment information above, output your response with a JSON 
     "title": "Goal title",
     "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this goal stands out in this particular segment.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this goal taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment achieve this goal. Explain them with detail and industry specifics. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment achieve this goal. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ],
 "values": [
@@ -186,7 +221,7 @@ After analyzing the segment information above, output your response with a JSON 
     "title": "Value title",
     "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this value stands out within the particular segment.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this core value taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ]
 }
@@ -217,6 +252,27 @@ For your content, ALWAYS output useful, industry-specific insights over generic 
 
 Provide EXACTLY 5 items for each of these categories: decisionMaking, influences, communicationPreferences
 
+Guide questions for decisionMaking' 5 items:
+1. What steps do they typically follow when evaluating a new product or service?
+2. Who else is involved in the decision-making process within their company?
+3. What criteria are most important to them when selecting a solution?
+4. How do they gather and assess information before making a decision?
+5. What external resources (reviews, testimonials, case studies) do they rely on during the decision-making process?
+
+Guide questions for influences' 5 items:
+1. Who are the thought leaders or industry experts your ideal customer trusts the most?
+2. What publications, blogs, or websites do they frequently read for industry news and insights?
+3. How do they engage with their professional network to seek advice or recommendations?
+4. What role do customer reviews and testimonials play in their purchasing decisions?
+5. How do industry events, conferences, and webinars influence their perceptions and decisions?
+
+Guide questions for communicationPreferences' 5 items:
+1. What communication channels do they use most frequently (email, social media, phone, etc.)?
+2. How do they prefer to receive information about new products or services?
+3. What type of content (articles, videos, infographics) do they find most engaging and useful?
+4. How often do they like to be contacted by potential vendors?
+5. What tone and style of communication do they respond to best (formal, casual, informative, etc.)?
+
 After analyzing the segment information above, output your response with a JSON structure EXACTLY like this:
 {
 "decisionMaking": [
@@ -224,7 +280,7 @@ After analyzing the segment information above, output your response with a JSON 
     "title": "Decision-making process title",
     "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this decision-making process is can help this particular segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this decision-making process taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment implement this process. Explain them with detail and industry specifics. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment implement this process. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ],
 "influences": [
@@ -232,7 +288,7 @@ After analyzing the segment information above, output your response with a JSON 
     "title": "Influence title",
     "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this influence is so important for this segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of the particular segment positively affected by this influence, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that push or alleviate this influence even more. Explain them with detail and industry specifics. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that push or alleviate this influence even more. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ],
 "communicationPreferences": [
@@ -240,7 +296,7 @@ After analyzing the segment information above, output your response with a JSON 
     "title": "Communication preference title",
     "explanation": "In 3 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this communication preference is common within the segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
     "scenario": "A real-world scenario of this communication preference taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment implement these preferences. Explain them with detail and industry specifics. In this format:\\n1.\\n2.\\n3."
+    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment implement these preferences. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
   }
 ]
 }
