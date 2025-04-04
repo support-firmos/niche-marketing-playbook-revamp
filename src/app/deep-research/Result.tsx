@@ -114,6 +114,8 @@ export default function Result({ segments, onReset }: ResultProps) {
         segmentName: string) => {
 const isOpen = openSections[`${segmentName}-${title}`];
 
+
+
 return (
 <div className="mb-6">
 <button
@@ -133,7 +135,19 @@ return (
            <div key={index} className="bg-gray-600/50 p-4 rounded-lg">
                <h4 className="font-medium strong mb-2">{item.title}</h4>
                <h4 className="font-medium mb-2 text-green-400">Why?</h4>
-               <p className="mb-3 text-gray-300">{item.explanation}</p>
+               <div className="prose prose-invert max-w-none">
+                       <ReactMarkdown
+                           components={{
+                               p: ({...props}) => <p className="mb-4 text-gray-300" {...props} />,
+                               ul: ({...props}) => <ul className="list-disc pl-6 mb-4 text-gray-300" {...props} />,
+                               ol: ({...props}) => <ol className="list-decimal pl-6 mb-4 text-gray-300" {...props} />,
+                               li: ({...props}) => <li className="mb-1" {...props} />,
+                               strong: ({...props}) => <strong className="font-semibold text-green-400" {...props} />
+                           }}
+                       >
+                           {item.explanation.replace(/\n/g, '  \n')}
+                       </ReactMarkdown>
+                   </div>
                <h4 className="font-medium mb-2 text-green-400">Real-World Scenario</h4>
                <p className="mb-3 text-gray-300">{item.scenario}</p>
                <div className="bg-gray-700/50 p-3 rounded">
@@ -145,7 +159,7 @@ return (
                                ul: ({...props}) => <ul className="list-disc pl-6 mb-4 text-gray-300" {...props} />,
                                ol: ({...props}) => <ol className="list-decimal pl-6 mb-4 text-gray-300" {...props} />,
                                li: ({...props}) => <li className="mb-1" {...props} />,
-                               strong: ({...props}) => <strong className="font-semibold text-green-400" {...props} />
+                               strong: ({...props}) => <strong className="font-semibold" {...props} />
                            }}
                        >
                            {item.advisoryHelp.replace(/\n/g, '  \n')}
