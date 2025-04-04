@@ -6,6 +6,7 @@ import { faArrowRight, faChevronDown, faChevronUp } from '@fortawesome/free-soli
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DeepResearchSegment } from '../store/deepResearchStore2';
+import ReactMarkdown from 'react-markdown';
 
 interface ResultProps {
     segments: DeepResearchSegment[] | null;
@@ -13,26 +14,32 @@ interface ResultProps {
 }
 
 const formatSegmentToText = (segment: DeepResearchSegment) => {
-    const formatSection = (items: Array<{ title: string; explanation: string; advisoryHelp: string }>, sectionName: string) => {
-        return `\n## ${sectionName}\n` + items.map((item, index) => `
-${index + 1}. ${item.title}
-   ${item.explanation}
+    const formatSection = (items: Array<{ title: string; explanation: string; scenario: string; advisoryHelp: string }>, sectionName: string) => {
+        return `\n## ${sectionName}\n\n` + items.map((item, index) => `
+### ${index + 1}. ${item.title}
 
-   **How Advisory Services Can Help**
-   ${item.advisoryHelp}
-`).join('\n');
+#### Why
+${item.explanation.replace(/\n/g, '\n\n')}
+
+### Scenario
+${item.scenario.replace(/\n/g, '\n\n')}
+
+#### How Advisory Services Can Help
+${item.advisoryHelp.replace(/\n/g, '\n\n')}
+`).join('\n---\n');
     };
 
     return `
-# DEEP SEGMENT RESEARCH: ${segment.name}
-${formatSection(segment.fears, 'FEARS')}
-${formatSection(segment.pains, 'PAINS')}
-${formatSection(segment.objections, 'OBJECTIONS')}
-${formatSection(segment.goals, 'GOALS')}
-${formatSection(segment.values, 'VALUES')}
-${formatSection(segment.decisionMaking, 'DECISION-MAKING PROCESSES')}
-${formatSection(segment.influences, 'INFLUENCES')}
-${formatSection(segment.communicationPreferences, 'COMMUNICATION PREFERENCES')}
+# Deep Segment Research: ${segment.name}
+
+${formatSection(segment.fears, 'Fears')}
+${formatSection(segment.pains, 'Pains')}
+${formatSection(segment.objections, 'Objections')}
+${formatSection(segment.goals, 'Goals')}
+${formatSection(segment.values, 'Values')}
+${formatSection(segment.decisionMaking, 'Decision-Making Processes')}
+${formatSection(segment.influences, 'Influences')}
+${formatSection(segment.communicationPreferences, 'Communication Preferences')}
     `.trim();
 };
 
@@ -102,10 +109,12 @@ export default function Result({ segments, onReset }: ResultProps) {
         document.body.removeChild(element);
     };
 
-    const renderSection = (items: Array<{ title: string; explanation: string; advisoryHelp: string }>, 
+    const renderSection = (items: Array<{ title: string; explanation: string; scenario: string; advisoryHelp: string }>, 
         title: string, 
         segmentName: string) => {
 const isOpen = openSections[`${segmentName}-${title}`];
+
+
 
 return (
 <div className="mb-6">
@@ -124,11 +133,38 @@ return (
    <div className="space-y-4">
        {items.map((item, index) => (
            <div key={index} className="bg-gray-600/50 p-4 rounded-lg">
-               <h4 className="font-medium mb-2">{item.title}</h4>
-               <p className="mb-3 text-gray-300">{item.explanation}</p>
+               <h4 className="font-medium strong mb-2">{item.title}</h4>
+               <h4 className="font-medium mb-2 text-green-400">Why?</h4>
+               <div className="prose prose-invert max-w-none">
+                       <ReactMarkdown
+                           components={{
+                               p: ({...props}) => <p className="mb-4 text-gray-300" {...props} />,
+                               ul: ({...props}) => <ul className="list-disc pl-6 mb-4 text-gray-300" {...props} />,
+                               ol: ({...props}) => <ol className="list-decimal pl-6 mb-4 text-gray-300" {...props} />,
+                               li: ({...props}) => <li className="mb-1" {...props} />,
+                               strong: ({...props}) => <strong className="font-semibold text-green-400" {...props} />
+                           }}
+                       >
+                           {item.explanation.replace(/\n/g, '  \n')}
+                       </ReactMarkdown>
+                   </div>
+               <h4 className="font-medium mb-2 text-green-400">Real-World Scenario</h4>
+               <p className="mb-3 text-gray-300">{item.scenario}</p>
                <div className="bg-gray-700/50 p-3 rounded">
                    <h5 className="font-medium mb-2 text-green-400">How Advisory Services Can Help</h5>
-                   <p className="text-gray-300">{item.advisoryHelp}</p>
+                   <div className="prose prose-invert max-w-none">
+                       <ReactMarkdown
+                           components={{
+                               p: ({...props}) => <p className="mb-4 text-gray-300" {...props} />,
+                               ul: ({...props}) => <ul className="list-disc pl-6 mb-4 text-gray-300" {...props} />,
+                               ol: ({...props}) => <ol className="list-decimal pl-6 mb-4 text-gray-300" {...props} />,
+                               li: ({...props}) => <li className="mb-1" {...props} />,
+                               strong: ({...props}) => <strong className="font-semibold" {...props} />
+                           }}
+                       >
+                           {item.advisoryHelp.replace(/\n/g, '  \n')}
+                       </ReactMarkdown>
+                   </div>
                </div>
            </div>
        ))}

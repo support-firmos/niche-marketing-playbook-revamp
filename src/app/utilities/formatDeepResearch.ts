@@ -32,10 +32,14 @@ ${formatSection(segment.communicationPreferences)}
   }).join('\n\n---\n\n');
 }
 
-function formatSection(items: Array<{ title: string; explanation: string; advisoryHelp: string }>) {
+function formatSection(items: Array<{ title: string; explanation: string; scenario: string; advisoryHelp: string }>) {
   return items.map((item, index) => `
 ${index + 1}. ${item.title}
+  **Why**
    ${item.explanation}
+
+   **Scenario**
+   ${item.scenario}
 
    **How Advisory Services Can Help**
    ${item.advisoryHelp}

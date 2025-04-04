@@ -7,13 +7,14 @@ export const runtime = 'edge';
 interface DeepResearchItem {
   title: string;
   explanation: string;
+  scenario: string;
   advisoryHelp: string;
 }
 
 function formatDeepResearchArray(arr: DeepResearchItem[] | undefined): string {
   if (!Array.isArray(arr)) return '';
   return arr.map(item => 
-    `Title: ${item.title}\nExplanation: ${item.explanation}\nAdvisory Help: ${item.advisoryHelp}`
+    `Title: ${item.title}\nExplanation: ${item.explanation}\n\nScenario:  ${item.scenario}\n\nAdvisory Help: ${item.advisoryHelp}`
   ).join('\n\n');
 }
 

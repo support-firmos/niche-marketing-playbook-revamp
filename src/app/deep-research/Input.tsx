@@ -119,7 +119,7 @@ export default function Input({ onSubmit, isProcessing }: InputProps) {
           ref={textareaRef}
           value={fileContent}
           onChange={handleTextChange}
-          placeholder="Paste your Sales Nav parameters"
+          placeholder="Importante Note: If you are researching two or more segments, kindly separate them with a line break and '---'"
           className="w-full h-64 px-4 py-3 mb-4 rounded-lg border focus:outline-none resize-none
                      bg-black/30 border-subtitleColor/30 text-titleColor placeholder-subtitleColor/40 
                      focus:border-titleColor/50 focus:ring-1 focus:ring-titleColor/30"

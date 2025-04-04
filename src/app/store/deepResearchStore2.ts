@@ -5,41 +5,49 @@ export interface DeepResearchSegment {
   fears: Array<{
     title: string;
     explanation: string;
+    scenario: string;
     advisoryHelp: string;
   }>;
   pains: Array<{
     title: string;
     explanation: string;
+    scenario: string;
     advisoryHelp: string;
   }>;
   objections: Array<{
     title: string;
     explanation: string;
+    scenario: string;
     advisoryHelp: string;
   }>;
   goals: Array<{
     title: string;
     explanation: string;
+    scenario: string;
     advisoryHelp: string;
   }>;
   values: Array<{
     title: string;
     explanation: string;
+    scenario: string;
     advisoryHelp: string;
   }>;
   decisionMaking: Array<{
     title: string;
     explanation: string;
+    scenario: string;
     advisoryHelp: string;
   }>;
   influences: Array<{
     title: string;
     explanation: string;
+    scenario: string;
     advisoryHelp: string;
   }>;
   communicationPreferences: Array<{
     title: string;
     explanation: string;
+    scenario: string;
     advisoryHelp: string;
   }>;
 }

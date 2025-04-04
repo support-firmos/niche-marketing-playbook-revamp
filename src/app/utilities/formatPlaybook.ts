@@ -37,7 +37,7 @@ export function formatPlaybookForDisplay(playbook: Array<{
 
 ---
 
-## Audience Approach
+## Target Audience
 ${audience}
 
 ---
@@ -47,7 +47,7 @@ ${pain}
 
 ---
 
-## Fear Mitigation
+## Fears and Concerns
 ${fear}
 
 ---
@@ -57,37 +57,37 @@ ${goals}
 
 ---
 
-## Objection Handling
+## Objections
 ${objection}
 
 ---
 
-## Core Value Proposition
+## Core Values
 ${value}
 
 ---
 
-## Decision-making Framework
+## Decision-making Process
 ${decision}
 
 ---
 
-## Metrics and KPIs
+## Key Metrics
 ${metrics}
 
 ---
 
-## Communication Stragey
+## Communication Preferences
 ${communication}
 
 ---
 
-## Content Framework
+## Content Tone and Style
 ${content}
 
 ---
 
-## Lead Magnets
+## Lead Magnet Titles
 ${lead}
   `;
     }).join('\n\n');

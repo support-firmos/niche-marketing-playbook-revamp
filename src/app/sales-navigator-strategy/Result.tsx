@@ -9,6 +9,8 @@ import { Segment } from '../store/salesNavSegmentsStore';
 import ReactMarkdown from 'react-markdown';
 import { useSalesNavSegmentsStore } from '../store/salesNavSegmentsStore';
 import { useServicesStore } from '../store/servicesStore';
+import { formatSegmentsForDisplay } from '../utilities/formatSegments';
+import { useSalesNavStore } from '../store/salesNavStore';
 
 interface ResultProps {
   segments: Segment[] | null;
@@ -40,6 +42,7 @@ export default function Result({ segments, onReset }: ResultProps) {
     const [isRetrying, setIsRetrying] = useState<string | null>(null);
     const { nicheConsideration, step3Segments, setStep3Segments } = useSalesNavSegmentsStore();
     const { selectedServices } = useServicesStore();
+    const { setStep3GeneratedSalesNav } = useSalesNavStore();
 
     const handleRetrySegment = async (segmentName: string) => {
         if (!nicheConsideration || !step3Segments) return;
@@ -65,8 +68,10 @@ export default function Result({ segments, onReset }: ResultProps) {
           const updatedSegments = step3Segments.map(seg => 
             seg.name === segmentName ? data.result : seg
           );
-          
+          const formattedContent = formatSegmentsForDisplay(updatedSegments);
           setStep3Segments(updatedSegments);
+          setStep3GeneratedSalesNav(formattedContent);
+
         } catch (error) {
           console.error('Error retrying segment:', error);
         } finally {
