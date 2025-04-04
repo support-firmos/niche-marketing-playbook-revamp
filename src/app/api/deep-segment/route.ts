@@ -75,65 +75,65 @@ After analysis of the segment information above, output your response with a JSO
 "fears": [
 {
 "title": "Fear title",
-"explanation": " In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this fear persists within the particular segment given.",
+"explanation": "In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this fear persists within the particular segment given.",
 "scenario: "A real-world scenario of this fear taking place within the particular segment, including its business impact.",
-"advisoryHelp":"1. Suggest a high-ticket, specific advisory service to alleviate this fear. Explain it with detail and industry specifics. \\n2. Suggest a high-ticket, specific advisory service to alleviate this fear. Explain it with detail and industry specifics. \\n3. Suggest a high-ticket, specific advisory service to alleviate this fear. Explain it with detail and industry specifics."
+"advisoryHelp":"Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics."
 }
 ],
 "pains": [
 {
 "title": "Pain point title",
-"explanation": " In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this pain point persists within the particular segment given.",
+"explanation": "In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this pain point persists within the particular segment given.",
 "scenario": "A real-world scenario of this pain taking place within the particular segment, including its business impact.",
-"advisoryHelp": "1. Suggest a high-ticket, specific advisory service to alleviate this pain point. Explain it with detail and industry specifics. \\n2. Suggest a high-ticket, specific advisory service to alleviate this pain point. Explain it with detail and industry specifics. \\n3. Suggest a high-ticket, specific advisory service to alleviate this pain point. Explain it with detail and industry specifics."
+"advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics."
 }
 ],
 "objections": [
 {
 "title": "Objection title",
-"explanation": " In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this particular segment raises this objection against availing advisory services.",
+"explanation": "In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this particular segment raises this objection against availing advisory services.",
 "scenario": "A real-world scenario of this objection taking place within the particular segment, including its business impact.",
-"advisoryHelp": "1. Suggest a strong counterargument by providing benefits of high-ticket advisory services with detail, precision, and industry specifics. \\n2. Suggest a strong counterargument by providing benefits of high-ticket advisory services with detail, precision, and industry specifics. \\n3. Suggest a strong counterargument by providing benefits of high-ticket advisory services with detail, precision, and industry specifics."
+"advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics."
 }
 ],
 "goals": [
 {
 "title": "Goal title",
-"explanation": " In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this goal stands out in this particular segment.",
+"explanation": "In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this goal stands out in this particular segment.",
 "scenario": "A real-world scenario of this goal taking place within the particular segment, including its business impact.",
-"advisoryHelp": "1. Suggest a high-ticket, specific advisory service that helps the segment attain this goal. Explain it with detail and industry specifics.\\n2. Suggest a high-ticket, specific advisory service that helps the segment attain this goal. Explain it with detail and industry specifics. \\n3. Suggest a high-ticket, specific advisory service that helps the segment attain this goal. Explain it with detail and industry specifics."
+"advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics."
 }
 ],
 "values": [
 {
 "title": "Value title",
-"explanation": " In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this value stands out within the particular segment.",
+"explanation": "In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this value stands out within the particular segment.",
 "scenario": "A real-world scenario of this core value taking place within the particular segment, including its business impact.",
-"advisoryHelp": "1. Suggest a high-ticket, specific advisory service that help the segment maintain and preserve this core value. Explain it with detail and industry specifics. \\n2. Suggest a high-ticket, specific advisory service that help the segment maintain and preserve this core value. Explain it with detail and industry specifics. \\n3. Suggest a high-ticket, specific advisory service that help the segment maintain and preserve this core value. Explain it with detail and industry specifics."
+"advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics."
 }
 ],
 "decisionMaking": [
 {
 "title": "Decision-making process title",
-"explanation": " In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this decision-making process is important within this particular segment.",
+"explanation": "In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this decision-making process is important within this particular segment.",
 "scenario": "A real-world scenario of this decision-making process taking place within the particular segment, including its business impact.",
-"advisoryHelp": "1. Suggest a high-ticket, specific advisory service that helps the segment maintain or improve this process. Explain it with detail and industry specifics. \\n2. Suggest a high-ticket, specific advisory service that helps the segment maintain or improve this process. Explain it with detail and industry specifics. \\n3. Suggest a high-ticket, specific advisory service that helps the segment maintain or improve this process. Explain it with detail and industry specifics."
+"advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics."
 }
 ],
 "influences": [
 {
 "title": "Influence title",
-"explanation": " In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this influence is so important for this segment.",
+"explanation": "In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this influence is so important for this segment.",
 "scenario": "A real-world scenario of the particular segment positively affected by this influence, including its business impact.",
-"advisoryHelp": "1. Suggest a high-ticket, specific advisory service that helps the influence preserve its effect on the particular segment. Explain it with detail and industry specifics. \\n2. Suggest a high-ticket, specific advisory service that helps the influence preserve its effect on the particular segment. Explain it with detail and industry specifics. \\n3. Suggest a high-ticket, specific advisory service that helps the influence preserve its effect on the particular segment. Explain it with detail and industry specifics."
+"advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics."
 }
 ],
 "communicationPreferences": [
 {
 "title": "Communication preference title",
-"explanation": " In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this communication preference is common within the segment.",
+"explanation": "In 4 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this communication preference is common within the segment.",
 "scenario": "A real-world scenario of this communication preference taking place within the particular segment, including its business impact.",
-"advisoryHelp": "1. Suggest a high-ticket, specific advisory service that helps this communication preference more seamless and effective for the segment. Explain it with detail and industry specifics. \\n2. Suggest a high-ticket, specific advisory service that helps this communication preference more seamless and effective for the segment. Explain it with detail and industry specifics. \\n3. Suggest a high-ticket, specific advisory service that helps this communication preference more seamless and effective for the segment. Explain it with detail and industry specifics."
+"advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics."
 }
 ]
 }

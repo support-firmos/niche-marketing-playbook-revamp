@@ -131,10 +131,10 @@ return (
    <div className="space-y-4">
        {items.map((item, index) => (
            <div key={index} className="bg-gray-600/50 p-4 rounded-lg">
-               <h4 className="font-medium mb-2">{item.title}</h4>
-               <h4 className="font-medium mb-2">Why?</h4>
+               <h4 className="font-medium strong mb-2">{item.title}</h4>
+               <h4 className="font-medium mb-2 text-green-400">Why?</h4>
                <p className="mb-3 text-gray-300">{item.explanation}</p>
-               <h4 className="font-medium mb-2">Real-World Scenario</h4>
+               <h4 className="font-medium mb-2 text-green-400">Real-World Scenario</h4>
                <p className="mb-3 text-gray-300">{item.scenario}</p>
                <div className="bg-gray-700/50 p-3 rounded">
                    <h5 className="font-medium mb-2 text-green-400">How Advisory Services Can Help</h5>
