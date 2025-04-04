@@ -43,6 +43,26 @@ function cleanAndParseJSON(content: string) {
   }
 }
 
+// Define interfaces for the segment structure
+interface AdvisoryItem {
+  title: string;
+  explanation: string;
+  scenario: string;
+  advisoryHelp: string;
+}
+
+interface SegmentStructure {
+  name: string;
+  fears: AdvisoryItem[];
+  pains: AdvisoryItem[];
+  objections: AdvisoryItem[];
+  goals: AdvisoryItem[];
+  values: AdvisoryItem[];
+  decisionMaking: AdvisoryItem[];
+  influences: AdvisoryItem[];
+  communicationPreferences: AdvisoryItem[];
+}
+
 export async function POST(request: Request) {
   try {
     console.log('Generate-segments API called');
@@ -341,18 +361,24 @@ CRITICAL REQUIREMENTS:
 }
 
 // Validate segment structure to ensure it has all required fields
-function validateSegmentStructure(segment: any) {
-  const requiredCategories = [
-    'name', 'fears', 'pains', 'objections', 'goals', 'values', 
+function validateSegmentStructure(segment: SegmentStructure) {
+  // Check if name exists
+  if (!segment.name) {
+    throw new Error(`Missing required category: name`);
+  }
+  
+  // Check array categories
+  const arrayCategories: (keyof SegmentStructure)[] = [
+    'fears', 'pains', 'objections', 'goals', 'values', 
     'decisionMaking', 'influences', 'communicationPreferences'
   ];
   
-  for (const category of requiredCategories) {
+  for (const category of arrayCategories) {
     if (!segment[category]) {
       throw new Error(`Missing required category: ${category}`);
     }
     
-    if (category !== 'name' && (!Array.isArray(segment[category]) || segment[category].length !== 5)) {
+    if (!Array.isArray(segment[category]) || segment[category].length !== 5) {
       throw new Error(`Category ${category} must have exactly 5 items`);
     }
   }
