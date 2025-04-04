@@ -544,7 +544,7 @@ async function callLLM(prompt: string) {
                 }
               } catch (e) {
                 // Skip invalid JSON lines
-                console.log('Skipping invalid JSON line:', line);
+                console.log('Skipping invalid JSON line:', e);
               }
             }
           }
