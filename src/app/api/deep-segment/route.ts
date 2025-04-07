@@ -145,17 +145,17 @@ After analyzing the segment information above, output your response with a JSON 
 "fears": [
   {
     "title": "Fear title",
-    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this fear persists within the particular segment given.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
-    "scenario": "A real-world scenario of this fear taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 2 high-ticket, specific advisory services that help the segment deal with or remove this fear. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "explanation": "In a sentence,, write a comprehensive, data-driven, insightful and specific explanation about why and how this fear persists within the particular segment given.\\n• Data-driven insight to support paragraph above",
+    "scenario": "A real-world scenario of this fear taking place within the particular segment.",
+    "advisoryHelp": "Explain simply and shortly 2 high-ticket, specific advisory services that help the segment deal with or remove this fear. In this format:\\n1.\\n2."
   }
 ],
 "pains": [
   {
     "title": "Pain point title",
-    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why and how this pain point persists within the particular segment given.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
-    "scenario": "A real-world scenario of this pain taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment deal with or remove this pain point. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "explanation": "In a sentence,, write a comprehensive, data-driven, insightful and specific explanation about why and how this pain point persists within the particular segment given.\\n• Data-driven insight to support paragraph above",
+    "scenario": "A real-world scenario of this pain taking place within the particular segment.",
+    "advisoryHelp": "Explain simply and shortly 2 high-ticket, specific advisory services that help the segment deal with or remove this pain point. In this format:\\n1.\\n2."
   }
 ]
 }
@@ -221,25 +221,25 @@ After analyzing the segment information above, output your response with a JSON 
 "objections": [
   {
     "title": "Objection title",
-    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this particular segment raises this objection against availing advisory services.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
-    "scenario": "A real-world scenario of this objection taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 counter-arguments to defend why high-ticket, specific advisory services (with examples and feedback) will improve their firm. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "explanation": "In a sentence,, write a comprehensive, data-driven, insightful and specific explanation about why this particular segment raises this objection against availing advisory services.\\n• Data-driven insight to support paragraph above",
+    "scenario": "A real-world scenario of this objection taking place within the particular segment.",
+    "advisoryHelp": "Explain simply and shortly 2 counter-arguments to defend why high-ticket, specific advisory services (with examples and feedback) will improve their firm. In this format:\\n1.\\n2."
   }
 ],
 "goals": [
   {
     "title": "Goal title",
-    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this goal stands out in this particular segment.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
-    "scenario": "A real-world scenario of this goal taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment achieve this goal. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "explanation": "In a sentence,, write a comprehensive, data-driven, insightful and specific explanation about why this goal stands out in this particular segment.\\n• Data-driven insight to support paragraph above",
+    "scenario": "A real-world scenario of this goal taking place within the particular segment.",
+    "advisoryHelp": "Explain simply and shortly 2 high-ticket, specific advisory services that help the segment achieve this goal. In this format:\\n1.\\n2."
   }
 ],
 "values": [
   {
     "title": "Value title",
-    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this value stands out within the particular segment.\\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
-    "scenario": "A real-world scenario of this core value taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment maintain and preserve this core value. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "explanation": "In a sentence,, write a comprehensive, data-driven, insightful and specific explanation about how and why this value stands out within the particular segment.\\n• Data-driven insight to support paragraph above",
+    "scenario": "A real-world scenario of this core value taking place within the particular segment.",
+    "advisoryHelp": "Explain simply and shortly 2 high-ticket, specific advisory services that help the segment maintain and preserve this core value. In this format:\\n1.\\n2."
   }
 ]
 }
@@ -296,25 +296,25 @@ After analyzing the segment information above, output your response with a JSON 
 "decisionMaking": [
   {
     "title": "Decision-making process title",
-    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this decision-making process is can help this particular segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
-    "scenario": "A real-world scenario of this decision-making process taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment implement this process. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "explanation": "In a sentence,, write a comprehensive, data-driven, insightful and specific explanation about how and why this decision-making process is can help this particular segment. \\n• Data-driven insight to support paragraph above",
+    "scenario": "A real-world scenario of this decision-making process taking place within the particular segment.",
+    "advisoryHelp": "Explain simply and shortly 2 high-ticket, specific advisory services that help the segment implement this process. In this format:\\n1.\\n2."
   }
 ],
 "influences": [
   {
     "title": "Influence title",
-    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about why this influence is so important for this segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
-    "scenario": "A real-world scenario of the particular segment positively affected by this influence, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that push or alleviate this influence even more. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "explanation": "In a sentence,, write a comprehensive, data-driven, insightful and specific explanation about why this influence is so important for this segment. \\n• Data-driven insight to support paragraph above",
+    "scenario": "A real-world scenario of the particular segment positively affected by this influence.",
+    "advisoryHelp": "Explain simply and shortly 2 high-ticket, specific advisory services that push or alleviate this influence even more. In this format:\\n1.\\n2."
   }
 ],
 "communicationPreferences": [
   {
     "title": "Communication preference title",
-    "explanation": "In 2 sentences, write a comprehensive, data-driven, insightful and specific explanation about how and why this communication preference is common within the segment. \\n• Data-driven insight to support paragraph above\\n• Data-driven insight to support paragraph above",
-    "scenario": "A real-world scenario of this communication preference taking place within the particular segment, including its business impact.",
-    "advisoryHelp": "Suggest 3 high-ticket, specific advisory services that help the segment implement these preferences. Explain them with detail and industry specifics in 1 sentence. In this format:\\n1.\\n2.\\n3."
+    "explanation": "In a sentence,, write a comprehensive, data-driven, insightful and specific explanation about how and why this communication preference is common within the segment. \\n• Data-driven insight to support paragraph above",
+    "scenario": "A real-world scenario of this communication preference taking place within the particular segment.",
+    "advisoryHelp": "Explain simply and shortly 2 high-ticket, specific advisory services that help the segment implement these preferences. In this format:\\n1.\\n2."
   }
 ]
 }

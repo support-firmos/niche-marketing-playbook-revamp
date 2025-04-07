@@ -2,8 +2,7 @@
 import { formatPlaybookForDisplay } from '@/app/utilities/formatPlaybook';
 import { NextResponse } from 'next/server';
 
-export const maxDuration = 300;
-export const runtime = 'edge';
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
